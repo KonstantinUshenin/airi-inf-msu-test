@@ -1,13 +1,54 @@
+% ---------------- Packages ----------------
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{microtype}
 \usepackage{amsmath, amssymb}
 \usepackage{graphicx}
 
+% ---------------- Fonts (XeLaTeX) ----------------
+\usepackage{fontspec}
+
+% Inter (убедись, что установлен в системе)
+\setsansfont{Inter}[
+  Scale=MatchLowercase,
+  UprightFont = *-Regular,
+  BoldFont    = *-SemiBold,
+  ItalicFont  = *-Italic,
+  BoldItalicFont = *-SemiBoldItalic
+]
+\setmainfont{Inter}
+\setmonofont{DejaVu Sans Mono}
+
+
+% Разрешить beamer использовать fontspec
+% \usefonttheme{professionalfonts}
+
+% ---------------- Force sans-serif everywhere ----------------
+\AtBeginDocument{%
+  % базовый шрифт
+  \renewcommand{\familydefault}{\sfdefault}
+
+  % ВСЕ заголовки
+  \setbeamerfont{title}{family=\sffamily}
+  \setbeamerfont{subtitle}{family=\sffamily}
+  \setbeamerfont{frametitle}{family=\sffamily}
+  \setbeamerfont{framesubtitle}{family=\sffamily}
+
+  % Структура
+  \setbeamerfont{section title}{family=\sffamily}
+  \setbeamerfont{subsection title}{family=\sffamily}
+
+  % Footer / header
+  \setbeamerfont{author}{family=\sffamily}
+  \setbeamerfont{date}{family=\sffamily}
+  \setbeamerfont{institute}{family=\sffamily}
+}
+
+% ---------------- Beamer UI tweaks ----------------
 % Remove navigation icons
 \setbeamertemplate{navigation symbols}{}
 
-% A simple footer with slide numbers
+% Footer with title + slide numbers
 \setbeamertemplate{footline}{
   \leavevmode%
   \hbox{%
@@ -20,3 +61,9 @@
   }%
   \vskip0pt%
 }
+
+
+% --- Smaller bullets for itemize ---
+\setbeamertemplate{itemize item}{\scriptsize\raise1.25pt\hbox{$\bullet$}}
+\setbeamertemplate{itemize subitem}{\scriptsize\raise1.25pt\hbox{$\bullet$}}
+\setbeamertemplate{itemize subsubitem}{\tiny\raise1.25pt\hbox{$\bullet$}}
