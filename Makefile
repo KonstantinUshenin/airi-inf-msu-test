@@ -3,5 +3,7 @@ all:
 
 clean:
 	rm -rf _quarto
-	rm -f slides.pdf slides.tex
+	rm -rf .quarto
+	rm -rf pdf
+
 
