@@ -1,0 +1,20 @@
+project:
+  type: default
+  output-dir: lectures_pdf
+  render:
+    - lectures/*.qmd
+
+execute:
+  echo: true
+  warning: false
+  message: false
+
+format:
+  beamer:
+    slide-level: 0
+    aspectratio: 169
+    theme: Dresden
+    colortheme: dolphin
+    fonttheme: professionalfonts
+    keep-tex: true
+    include-in-header: styles/macros.tex

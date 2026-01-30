@@ -1,0 +1,209 @@
+---
+title: "Informatics. Basics of Software Development"
+subtitle: "Lecture 1"
+author: "Konstantin Ushenin"
+date: "2026"
+format:
+  beamer:
+    slide-level: 0          # YOU separate slides with ---
+    aspectratio: 169        # 16:9
+    theme: Dresden           # clean base theme
+    colortheme: dolphin     # subtle color palette
+    fonttheme: professionalfonts
+    keep-tex: true          # useful for debugging / tweaking LaTeX
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{tabularx}
+  - \usepackage{graphicx}
+  - \usepackage{microtype}
+  - \usepackage{amsmath, amssymb}
+  - \usepackage{xcolor}
+---
+
+# (Optional) Title slide is generated automatically by Beamer
+
+---
+
+## Informatics. Basics of Software Development
+Konstantin Ushenin — MSU — 2026
+
+---
+
+## What this is
+- Built with **Pandoc/Quarto**
+- Output: **Beamer PDF**
+- Source: Markdown + YAML metadata[^1]
+
+[^1]: Example footnote: you can put references/sources here.
+
+---
+
+## Plan
+1. Text data
+2. Hierarchical data
+
+---
+
+## Slide 1
+Hello 👋
+
+---
+
+## Slide 2
+- Point A
+- Point B
+
+---
+
+## Slide 3 — Math
+Inline: $E = mc^2$.
+
+Block:
+
+$$
+\hat{\beta} = (X^\top X)^{-1}X^\top y
+$$
+
+---
+
+## Slide 4 — Footnote + math together
+We often write a Gaussian as
+$p(x)=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}$.[^gauss]
+
+[^gauss]: This is the normal distribution PDF.
+
+---
+
+
+## Informatics. Basics of Software Development
+Konstantin Ushenin — MSU — 2026
+
+---
+
+## Plan
+1. Text data
+2. Hierarchical data
+3. Code & reproducibility
+4. Math & models
+
+---
+
+## Two columns: concepts vs examples
+
+::: {.columns}
+::: {.column width="50%"}
+### Concepts
+- Data types
+- Control flow
+- Functions
+- Testing
+- Version control
+:::
+
+::: {.column width="50%"}
+### Examples
+- Parse a CSV
+- Validate input
+- Unit tests
+- Git workflow
+- Small pipelines
+:::
+:::
+
+---
+
+## Two columns: comparison table-ish (simple)
+
+::: {.columns}
+::: {.column width="55%"}
+### Markdown / Quarto
+- Text-first workflow
+- Easy math ($E=mc^2$)
+- Reproducible code blocks
+- Great for teaching
+
+$$E=mc^2$$
+:::
+
+::: {.column width="45%"}
+### PowerPoint
+- Familiar for аудитория
+- Presenter view
+- Slide-by-slide pacing
+:::
+:::
+
+---
+
+## Code example: Python (syntax highlighted)
+
+```python
+from dataclasses import dataclass
+
+@dataclass
+class Student:
+    name: str
+    grade: float
+
+def top_students(students, threshold=90.0):
+    return [s for s in students if s.grade >= threshold]
+
+group = [Student("Ann", 91), Student("Bob", 88), Student("Cara", 95)]
+print(top_students(group))
+
+```
+::: notes
+Mention: this is a pure-code example. In Quarto you can also EXECUTE code blocks,
+but that requires adding an engine (Python) and allowing evaluation.
+:::
+
+---
+
+## One column + image
+
+### Quarto workflow (high level)
+- Write content in `.qmd`
+- Render to `.pptx`
+- Present in PowerPoint
+
+![](images/quarto-logo.png){width=55%}
+
+---
+
+## Font sizes (examples)
+
+Normal text (default).
+
+{\Large Large text} — good for a key point.
+
+{\LARGE Very large text} — use sparingly.
+
+{\small Small text} — for details.
+
+{\footnotesize Footnote-size text} — references, extra notes.
+
+{\scriptsize Script-size text} — only if you really must.
+
+---
+
+## Table (normal size)
+
+| Topic | What it is | Example |
+|---|---|---|
+| Text data | Sequences of tokens/characters | log files, documents |
+| Hierarchical data | Nested structure | JSON, XML, YAML |
+| Graph data | Nodes + edges | molecules, social networks |
+
+---
+
+
+## Table + small font (readable)
+
+\footnotesize
+
+| Topic | What it is | Example |
+|---|---|---|
+| Text data | Sequences of tokens/characters | log files, documents |
+| Hierarchical data | Nested structure | JSON, XML, YAML |
+| Graph data | Nodes + edges | molecules, social networks |
+

@@ -1,0 +1,44 @@
+---
+title: "Informatics. Basics of Software Development"
+subtitle: "Lecture 1 — Course intro"
+author: "Konstantin Ushenin"
+date: "2026"
+---
+
+---
+
+## Informatics. Basics of Software Development
+Konstantin Ushenin — MSU — 2026
+
+---
+
+## What this is
+- Built with **Quarto** (Pandoc + LaTeX)
+- Output: **Beamer PDF**
+- Slides separated with `---` only[^1]
+
+[^1]: Footnotes work well in Beamer PDF.
+
+---
+
+## Two columns example
+
+::: {.columns}
+::: {.column width="52%"}
+### Concepts
+- Data types
+- Control flow
+- Functions
+- Testing
+:::
+
+::: {.column width="48%"}
+### Examples
+- Parse a CSV
+- Validate input
+- Unit tests
+- Small pipelines
+:::
+:::
+
+---

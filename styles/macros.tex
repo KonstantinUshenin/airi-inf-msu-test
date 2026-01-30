@@ -1,0 +1,22 @@
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+
+% Remove navigation icons
+\setbeamertemplate{navigation symbols}{}
+
+% A simple footer with slide numbers
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.80\paperwidth,ht=2.6ex,dp=1.2ex,left]{author in head/foot}
+      \hspace*{1ex}\insertshorttitle
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.20\paperwidth,ht=2.6ex,dp=1.2ex,right]{date in head/foot}
+      \insertframenumber/\inserttotalframenumber\hspace*{1ex}
+    \end{beamercolorbox}%
+  }%
+  \vskip0pt%
+}

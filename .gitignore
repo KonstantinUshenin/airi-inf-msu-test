@@ -1,0 +1,35 @@
+# -----------------------------
+# Quarto / Pandoc
+# -----------------------------
+_quarto/
+*.log
+*.out
+*.aux
+*.toc
+*.nav
+*.snm
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.vrb
+*.lof
+*.lot
+
+# -----------------------------
+# Intermediate LaTeX files
+# -----------------------------
+*.tex
+!styles/
+!styles/**/*.tex
+
+# -----------------------------
+# Build outputs
+# -----------------------------
+lectures_pdf/
+
+# -----------------------------
+# OS / editor junk
+# -----------------------------
+.DS_Store
+Thumbs.db
+*~
