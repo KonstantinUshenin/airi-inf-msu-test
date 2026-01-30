@@ -1,0 +1,265 @@
+---
+title: "Informatics. Basics of Software Development"
+subtitle: "Lecture 7 — Text data"
+author: "Konstantin Ushenin"
+date: "2026"
+---
+
+## Binary-Coded Decimal (BCD) — 1950s
+
+::: columns
+::: {.column width="60%"}
+
+- Idea
+  - Decimal digits encoded separately
+  - One digit → one 4-bit nibble
+  - No positional binary value across digits
+
+- Encoding rules
+  - `0–9` → valid
+  - `1010–1111` → invalid / reserved
+
+:::
+
+::: {.column width="40%"}
+
+| Decimal | BCD (binary) | Hex |
+|--------:|--------------|-----|
+| 0 | 0000 | 0x0 |
+| 1 | 0001 | 0x1 |
+| 2 | 0010 | 0x2 |
+| 3 | 0011 | 0x3 |
+| 4 | 0100 | 0x4 |
+| 5 | 0101 | 0x5 |
+| 6 | 0110 | 0x6 |
+| 7 | 0111 | 0x7 |
+| 8 | 1000 | 0x8 |
+| 9 | 1001 | 0x9 |
+
+:::
+:::
+
+---
+
+## Morse Code — 1830s–1840s
+
+::: columns
+::: {.column width="60%"}
+
+- Type
+  - Variable-length code
+  - Time-based (dots and dashes)
+  - Not binary in storage sense
+
+- Encoding
+  - Short signals for frequent letters
+  - Long signals for rare letters
+  - Explicit symbol boundaries (pauses)
+
+- Properties
+  - Human-decodable
+  - No fixed symbol width
+  - Optimized for manual transmission
+
+- Usage
+  - Telegraphy
+  - Radio communication
+  - Emergency signaling
+
+:::
+
+::: {.column width="40%"}
+
+![](images/International_Morse_Code.png)
+
+:::
+:::
+
+---
+
+## ITA2 / Baudot–Murray Code — 1930s
+
+::: columns
+::: {.column width="60%"}
+
+- Type
+  - Fixed-length binary code
+  - 5 bits → 32 code points
+
+- Control symbols
+  - LTRS / FIGS — mode shift control codes
+  - CR (Carriage Return) — move to line start
+  - LF (Line Feed) — move to next line
+
+- Decoding
+  - Context-dependent
+  - Same bit pattern → different symbol
+  - Mode persists until next shift
+
+:::
+
+::: {.column width="40%"}
+
+![](images/Ita2.png)
+
+:::
+:::
+
+---
+
+
+# What types of encodings exist?
+
+- **Number of bits per symbol**: 4, 5, 7, 8, 16, …
+  - Examples: BCD (4), Baudot (5), ASCII (7), Latin-1 (8), UTF-16 (16)
+
+- **Fixed-length vs variable-length**
+  - Fixed-length: BCD, Baudot, ASCII
+  - Variable-length: Morse code, UTF-8
+
+- **Control symbols**
+  - Explicit control codes: Baudot (LTRS / FIGS), ASCII (CR, LF, ESC)
+  - Implicit control via structure: Morse code (pauses)
+  
+---
+
+## American Standard Code for Information Interchange (ASCII) — 1963
+
+![](images/ASCII_Code_Chart.png)
+
+---
+
+## ASCII — 1963
+
+::: columns
+::: column
+
+- Control characters
+  - `0–31`, `127`
+  - Non-printing (`CR`, `LF`, `ESC`)
+
+- Letters
+  - `A–Z`: `65–90`
+  - `a–z`: `97–122`
+
+**Notes**
+
+- Character ranges are non-contiguous
+- Uppercase and lowercase letters have
+  - Fixed offset (`+32`)
+  - Equal distance in the code table
+
+:::
+
+::: column
+
+- Punctuation ranges
+
+  - `33–47`: `! " # $ % & ' ( ) * + , - . /`
+  - `58–64`: `: ; < = > ? @`
+  - `91–96`: `[ \ ] ^ _ \``
+  - `123–126`: `{ | } ~`
+
+:::
+:::
+
+---
+
+## ASCII Control Characters (Key Ones)
+
+::: columns
+::: column
+
+BS (Backspace, 0x08)
+
+ - Moves cursor one position left
+ - Overwrites previous character
+ - Used on teletypes for character composition
+
+CR (Carriage Return, 0x0D)
+
+ - Move cursor to start of line
+
+LF (Line Feed, 0x0A)
+
+ - Move cursor to next line
+
+ESC (Escape, 0x1B)
+
+ - Starts control sequences
+ - Basis for ANSI terminal commands
+
+DEL (Delete, 0x7F)
+
+ - Erase character (historical)
+
+:::
+
+::: column
+
+Diacritic composition using BS
+
+- `a BS ' → á`
+- `a BS \ → à`
+- `a BS ^ → â`
+- `a BS " → ä`
+- `o BS / → ø`
+- `c BS , → ç`
+- `n BS ~ → ñ`
+
+Neutral / no-op cases
+
+- `a BS a → a`
+- `a BS _ → a`
+
+Idea
+
+- Diacritics were created by overprinting
+- No dedicated accented characters in ASCII
+
+:::
+:::
+
+---
+
+## Encoding (CP866 and Windows-1251)
+
+::: columns
+::: column
+
+![](images/CP866.png)
+
+:::
+
+::: column
+
+![](images/Windows-1251.png)
+
+:::
+:::
+
+- Симоволы от 0x00 до 0x7F - ASCII и обычно универсальны.  0x80-0xFF - задавалась национальной частью таблицы кодировки
+- Кодировок существует несколько сотен. Разница в кодировках предложенных даже в одной компании могла быть критической
+- Отображение документов и Интернет страниц оставалось непредсказуемым
+
+---
+
+## Terminal User Interface
+
+::: columns
+::: column
+
+![](images/mc.png)
+
+:::
+
+::: column
+
+![](images/htop.png)
+
+:::
+:::
+
+- Появление символов 0xOB-0xFD привело к расцвету приложений с псевдоинтерфейсом
+- Современные представители: tqdm (Python), htop, top, mc
+- Современные фреймворки: Python (textual, npyscreen), Rust (Ratatui, tui-rs)

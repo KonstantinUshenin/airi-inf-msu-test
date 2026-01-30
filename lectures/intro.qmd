@@ -5,39 +5,34 @@ author: "Konstantin Ushenin"
 date: "2026"
 ---
 
----
+## Lecture 10 — Text Data Formats
 
-## Informatics. Basics of Software Development
-Konstantin Ushenin — MSU — 2026
+::: columns
+::: column
+**Text encodings**
 
----
+- ASCII, Latin-1
+- UTF-8, UTF-16
+- Encoding autodetection
 
-## What this is
-- Built with **Quarto** (Pandoc + LaTeX)
-- Output: **Beamer PDF**
-- Slides separated with `---` only[^1]
+**Text storage & representation**
 
-[^1]: Footnotes work well in Beamer PDF.
+- Text storage models
+- C / Pascal strings
+- Mutable vs immutable strings
 
----
-
-## Two columns example
-
-::: {.columns}
-::: {.column width="52%"}
-### Concepts
-- Data types
-- Control flow
-- Functions
-- Testing
 :::
 
-::: {.column width="48%"}
-### Examples
-- Parse a CSV
-- Validate input
-- Unit tests
-- Small pipelines
+::: column
+**Safety & memory**
+
+- Security issues in C/C++ strings
+- Passing and returning strings from functions
+
+**Text processing**
+
+- Wildcards
+- Regular expressions
 :::
 :::
 
