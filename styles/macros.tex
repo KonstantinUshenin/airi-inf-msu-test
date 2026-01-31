@@ -67,3 +67,15 @@
 \setbeamertemplate{itemize item}{\scriptsize\raise1.25pt\hbox{$\bullet$}}
 \setbeamertemplate{itemize subitem}{\scriptsize\raise1.25pt\hbox{$\bullet$}}
 \setbeamertemplate{itemize subsubitem}{\tiny\raise1.25pt\hbox{$\bullet$}}
+
+
+% Create a section divider slide at each new \section
+\AtBeginSection[]{
+  \begin{frame}[plain]
+    \vfill
+    \centering
+    {\fontsize{40}{48}\selectfont\insertsection\par}
+    \vfill
+  \end{frame}
+}
+

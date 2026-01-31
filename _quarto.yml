@@ -1,6 +1,6 @@
 project:
   type: default
-  output-dir: lectures_pdf
+  output-dir: pdf
   render:
     - lectures/*.qmd
 
@@ -9,12 +9,16 @@ execute:
   warning: false
   message: false
 
+lang: ru
+
 format:
   beamer:
-    slide-level: 0
+    pdf-engine: xelatex
+    classoption: 10pt
+    slide-level: 2
     aspectratio: 169
     theme: Dresden
     colortheme: dolphin
-    fonttheme: professionalfonts
     keep-tex: true
     include-in-header: styles/macros.tex
+
