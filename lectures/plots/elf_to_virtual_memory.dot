@@ -1,0 +1,279 @@
+digraph ELF_Disk_to_VirtualMemory_2col {
+  rankdir=TB;
+  splines=ortho;
+
+  graph [
+    fontname="Inter, Helvetica, Arial",
+    fontsize=16,
+    labelloc="t",
+    label="ELF on disk \u2192 Process virtual memory",
+    nodesep="0.28",
+    ranksep="0.34",
+    pad="0.30",
+    bgcolor="white"
+  ];
+
+  edge [
+    color="#B8C0CC",
+    penwidth=1.3,
+    arrowsize=0.8,
+    fontname="Inter, Helvetica, Arial",
+    fontsize=11,
+    fontcolor="#9CA3AF"
+  ];
+
+  node [
+    shape=plaintext,
+    fontname="Inter, Helvetica, Arial",
+    fontsize=14,
+    fontcolor="#111827"
+  ];
+
+  /* ---------- Column anchors (lock X alignment) ---------- */
+  disk_anchor [label="", width=0.01, height=0.01, fixedsize=true];
+  mem_anchor  [label="", width=0.01, height=0.01, fixedsize=true];
+
+  /* ---------- Column headers ---------- */
+  hdr_disk [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+      <TR><TD ALIGN="LEFT"><B>ELF on disk</B></TD></TR>
+    </TABLE>
+  >];
+
+  hdr_mem [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+      <TR><TD ALIGN="LEFT"><B>Process virtual memory</B></TD></TR>
+    </TABLE>
+  >];
+
+  { rank=same; disk_anchor; hdr_disk; mem_anchor; hdr_mem; }
+
+  /* ---------- Blocks ---------- */
+
+  disk_hdr [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#F8FAFC" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>ELF header + PHT</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10">
+            <FONT COLOR="#374151">bytes at file offset 0; PHT describes segments</FONT>
+          </TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  mem_hdr_note [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#F8FAFC" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>headers</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10">
+            <FONT COLOR="#374151">usually mapped as part of first PT_LOAD (p_offset = 0)</FONT>
+          </TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  disk_rx [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>PT_LOAD</B> <FONT COLOR="#6B7280">(R-X)</FONT></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10">
+            <FONT COLOR="#374151">.text, .plt, .init, … (often starts at offset 0)</FONT>
+          </TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  mem_code [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>VMA: code</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10">
+            <FONT COLOR="#374151">R-X; file-backed pages (base may be randomized for PIE)</FONT>
+          </TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  disk_ro [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>PT_LOAD</B> <FONT COLOR="#6B7280">(R--)</FONT></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">.rodata, .eh_frame, …</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  mem_rodata [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>VMA: rodata</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">R--; file-backed pages</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  disk_rw [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="TOP" CELLPADDING="10"><B>PT_LOAD</B> <FONT COLOR="#6B7280">(RW-)</FONT></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="TOP" CELLPADDING="10">
+            <FONT COLOR="#374151">.data + .bss tail (p_memsz &gt; p_filesz)</FONT>
+          </TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  mem_data_file [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>VMA: .data</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10">
+            <FONT COLOR="#374151">RW-; file-backed (covers p_filesz bytes)</FONT>
+          </TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  /* --------- IMPORTANT: add a LEFT spacer for the mem-only .bss row --------- */
+  disk_sp_bss [label=""];
+
+  mem_bss [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>VMA: .bss tail</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10">
+            <FONT COLOR="#374151">RW-; anonymous zero-fill (p_memsz - p_filesz)</FONT>
+          </TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  disk_dyn [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="TOP" CELLPADDING="10"><B>PHT entry: PT_DYNAMIC</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="TOP" CELLPADDING="10">
+            <FONT COLOR="#374151">points into .dynamic (inside some PT_LOAD, often RW-)</FONT>
+          </TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  mem_dyn [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="TOP" CELLPADDING="10"><B>dynamic section &amp; tables</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="TOP" CELLPADDING="10">
+            <FONT COLOR="#374151">mapped as part of a PT_LOAD; used by ld.so</FONT>
+          </TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  disk_relro [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>PHT entry: PT_GNU_RELRO</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10">
+            <FONT COLOR="#374151">region becomes read-only after relocations</FONT>
+          </TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  mem_relro [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>VMA: RELRO</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10">
+            <FONT COLOR="#374151">ends up R-- (often .got, .data.rel.ro)</FONT>
+          </TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  disk_sp2 [label=""];
+
+  mem_other [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#F8FAFC" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="TOP" CELLPADDING="10"><B>other mappings</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="TOP" CELLPADDING="10">
+            <FONT COLOR="#374151">libc.so, ld-linux.so, mmap files, stack, vDSO</FONT>
+          </TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  /* ---------- Row alignment: EVERY row has 2 nodes ---------- */
+  { rank=same; disk_hdr;     mem_hdr_note; }
+  { rank=same; disk_rx;      mem_code; }
+  { rank=same; disk_ro;      mem_rodata; }
+  { rank=same; disk_rw;      mem_data_file; }
+  { rank=same; disk_sp_bss;  mem_bss; }          /* <-- fixes the “third column” */
+  { rank=same; disk_dyn;     mem_dyn; }
+  { rank=same; disk_relro;   mem_relro; }
+  { rank=same; disk_sp2;     mem_other; }
+
+  /* ---------- Strong vertical alignment inside each column ---------- */
+  disk_anchor -> hdr_disk [style=invis, weight=100];
+  mem_anchor  -> hdr_mem  [style=invis, weight=100];
+
+  hdr_disk -> disk_hdr -> disk_rx -> disk_ro -> disk_rw -> disk_sp_bss -> disk_dyn -> disk_relro -> disk_sp2 [style=invis, weight=100];
+  hdr_mem  -> mem_hdr_note -> mem_code -> mem_rodata -> mem_data_file -> mem_bss -> mem_dyn -> mem_relro -> mem_other [style=invis, weight=100];
+
+  /* ---------- Mapping arrows (do NOT affect layout) ---------- */
+  disk_hdr -> mem_hdr_note [constraint=false];
+  disk_rx  -> mem_code     [constraint=false];
+  disk_ro  -> mem_rodata   [constraint=false];
+
+  disk_rw  -> mem_data_file [constraint=false, label="p_filesz bytes"];
+  disk_rw  -> mem_bss       [constraint=false, label="zero-fill tail"];
+
+  disk_dyn   -> mem_dyn   [constraint=false];
+  disk_relro -> mem_relro [constraint=false];
+
+  mem_dyn -> mem_other [style=dashed, arrowhead=none, color="#CBD5E1", constraint=false];
+}
