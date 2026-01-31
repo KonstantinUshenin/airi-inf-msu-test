@@ -263,3 +263,407 @@ Idea
 - Появление символов 0xOB-0xFD привело к расцвету приложений с псевдоинтерфейсом
 - Современные представители: tqdm (Python), htop, top, mc
 - Современные фреймворки: Python (textual, npyscreen), Rust (Ratatui, tui-rs)
+
+---
+
+## Wildcards (glob) vs Regular Expressions
+
+::: columns
+::: column
+
+### Wildcards (glob)
+- Filename pattern matching
+- Implemented by shell / filesystem libraries
+- Expanded **before** program execution
+- Operates on paths
+- Limited expressive power
+- No groups or alternation
+- Linear-time matching
+
+:::
+
+::: column
+
+### Regular expressions
+- Pattern matching over strings
+- Implemented by programs / libraries
+- Evaluated **during** program execution
+- Operate on text streams
+- High expressive power
+- Groups, alternation, repetition
+- DFA / NFA / backtracking engines
+
+:::
+:::
+
+---
+
+### Glob syntax
+
+| Pattern | Meaning | Example |
+|--------|---------|---------|
+| `*` | any string (incl. empty) | `*.txt` |
+| `?` | exactly one character | `file_?.dat` |
+| `[abc]` | one of listed characters | `img_[abc].png` |
+| `[a-z]` | character range | `data_[0-9].csv` |
+| `[^a-z]` | negation | `[^._]*` |
+| `**` | recursive match | `src/**/*.py` |
+
+- `/` is not matched by `*` or `?`
+- `**` is shell- and library-dependent
+
+---
+
+## Wildcards (glob) — Python Example
+
+**Scenario:** concatenate all log files from a directory
+
+```python
+from pathlib import Path
+
+log_dir = Path("logs")
+output = Path("all_logs.txt")
+
+with output.open("w") as out:
+    for log_file in sorted(log_dir.glob("*.log")):
+        out.write(f"\n=== {log_file.name} ===\n")
+        out.write(log_file.read_text())
+```
+
+---
+
+## Wildcards (glob) — Bash Usage Examples
+
+```bash
+ls *.txt # List all text files
+
+rm *.tmp *.bak # Remove temporary files
+
+gcc src/*.c -o app # Compile all C sources
+
+tar -czf logs.tar.gz logs/2025-*.log # Archive logs by date
+
+grep "ERROR" /var/log/app/app_*.log # Search errors in rotated logs
+
+cp images/*.{png,jpg} backup/ # Copy all images
+
+wc -l data_??.csv # Count lines in CSV files
+
+ls src/**/test_*.py # Find test files recursively (bash ≥ 4)
+
+ls [!.]* # Exclude hidden files
+```
+
+---
+
+## Wildcards (glob) — Usage in Programming Languages
+
+| Language | Import / Tool | Example usage |
+|---------|---------------|---------------|
+| Python | `import glob` | `glob.glob("*.txt")` |
+| Python | `from pathlib import Path` | `Path(".").glob("*.py")` |
+| Bash | shell builtin | `ls *.txt` |
+| Make | implicit glob | `SRC = *.c` |
+| C | `<glob.h>` | `glob("*.log", 0, NULL, &g)` |
+| C++ | `<filesystem>` | `for (auto& p : fs::directory_iterator("."))` |
+| C# | `System.IO` | `Directory.GetFiles(".", "*.txt")` |
+| Java | `java.nio.file` | `Files.newDirectoryStream(p, "*.txt")` |
+| JavaScript | `glob` (npm) | `glob("**/*.js", cb)` |
+| Haskell | `System.FilePath.Glob` | `glob "*.hs"` |
+| Rust | `glob` crate | `glob("**/*.rs")?` |
+| Go | `path/filepath` | `filepath.Glob("*.md")` |
+
+---
+
+## Regular Expressions — Syntax Overview
+
+::: columns
+::: column
+
+### Basic syntax
+
+| Construct | Meaning | Example |
+|----------|---------|---------|
+| `a` | literal character | `cat` |
+| `.` | any character | `c.t` |
+| `*` | 0 or more | `a*` |
+| `+` | 1 or more | `a+` |
+| `?` | 0 or 1 | `colou?r` |
+| `{n}` | exactly *n* | `\d{4}` |
+| `{n,m}` | from *n* to *m* | `\w{2,5}` |
+| `[]` | character class | `[A-Z_]` |
+| `[^]` | negated class | `[^0-9]` |
+| `^` | start of string | `^https?` |
+| `$` | end of string | `\.txt$` |
+
+:::
+
+::: column
+
+### Groups and composition
+
+| Construct | Meaning | Example |
+|----------|---------|---------|
+| `(re)` | capturing group | `(ab)+` |
+| `(?:re)` | non-capturing group | `(?:ab)+` |
+| `|` | alternation | `cat|dog` |
+| `{n,m}` | group repetition | `(ab){2,4}` |
+| nested `()` | composition | `(a(bc))*` |
+| `^…$` | full match | `^(ab)+$` |
+| precedence | `* + ?` > concat > `|` | `ab|cd*` |
+
+:::
+:::
+
+---
+
+## Regular Expressions — Example, Groups (Python)
+
+```python
+import re
+
+text = "user:alice id:42"
+
+m = re.search(r"user:(\w+)\s+id:(\d+)", text)
+
+m.group(0)   # full match
+m.group(1)   # 'alice'
+m.group(2)   # '42'
+m.groups()   # ('alice', '42')
+```
+
+* groups define submatches
+* alternation applies to whole group
+
+---
+
+## Python `re` Module — Overview
+
+::: columns
+::: column
+
+### Main functions
+
+\footnotesize
+
+| Function | Purpose | Notes |
+|---------|---------|-------|
+| `re.match()` | match at start | implicit `^` |
+| `re.search()` | find first match | most common |
+| `re.findall()` | find all matches | returns list |
+| `re.finditer()` | match iterator | memory-efficient |
+| `re.fullmatch()` | full string match | implicit `^...$` |
+| `re.split()` | split string | regex delimiter |
+| `re.sub()` | replace matches | supports groups |
+| `re.compile()` | compile pattern | reuse + flags |
+
+\normalsize
+
+:::
+
+::: column
+
+### Flags and notes
+
+**Flags**
+- `re.IGNORECASE` / `re.I`
+- `re.MULTILINE` / `re.M`
+- `re.DOTALL` / `re.S`
+- `re.VERBOSE` / `re.X`
+
+**Engine**
+- backtracking NFA
+- possible exponential behavior
+
+**Practice**
+- prefer raw strings: `r"..."`
+
+:::
+:::
+
+---
+
+## Regular Expressions — Basic Syntax (Python)
+
+```python
+import re
+
+text = "Error 404 at line 23"
+
+re.search(r"\d+", text)          # match number
+# <re.Match object; span=(6, 9), match='404'>
+
+re.findall(r"[A-Z][a-z]+", text) # words starting with capital
+# ['Error']
+
+re.match(r"Error", text)         # match at start
+# <re.Match object; span=(0, 5), match='Error'>
+
+re.fullmatch(r".*\d{2}", text)   # full string match
+# <re.Match object; span=(0, 20), match='Error 404 at line 23'>
+````
+---
+
+## Regular Expressions — Usage in Programming Languages
+
+**Example pattern:** match a sequence of digits (`[0-9]+`)
+
+| Language | Import / Tool | Example usage |
+|---------|---------------|---------------|
+| Python | `import re` | `re.search(r"[0-9]+", text)` |
+| Bash | `grep -E` | `grep -E "[0-9]+" file` |
+| Bash | `sed` | `sed -n '/[0-9]+/p' file` |
+| C | `<regex.h>` | `regexec(&re, str, 0, NULL, 0)` |
+| C++ | `<regex>` | `std::regex_search(s, std::regex("[0-9]+"))` |
+| C# | `System.Text.RegularExpressions` | `Regex.Match(s, "[0-9]+")` |
+| Java | `java.util.regex` | `Pattern.compile("[0-9]+").matcher(s)` |
+| JavaScript | built-in | `text.match(/[0-9]+/)` |
+| Rust | `regex` crate | `Regex::new("[0-9]+")?.is_match(text)` |
+| Go | `regexp` | `regexp.MatchString("[0-9]+", s)` |
+| Haskell | `regex-tdfa` | `text =~ "[0-9]+"` |
+
+- same logical pattern across languages
+- syntax and API differ
+- engine behavior may differ
+
+---
+
+## `sed` — Stream Editor
+
+::: columns
+::: column
+
+### Theory and model
+
+- Line-oriented stream editor
+- Processes input sequentially
+- Regex-driven commands
+- No global memory
+- Designed for text transformation
+- Typical operations: substitute, delete, print
+
+:::
+
+::: column
+
+### Examples
+
+```bash
+# Substitute numbers
+sed 's/[0-9]\+/NUM/g' file.txt
+````
+
+```bash
+# Print matching lines
+sed -n '/ERROR/p' app.log
+```
+
+```bash
+# Delete comments
+sed '/^#/d' config.conf
+```
+
+```bash
+# In-place edit
+sed -i 's/foo/bar/g' *.txt
+```
+
+:::
+:::
+
+---
+
+## `awk` — Pattern–Action Language
+
+::: columns
+::: column
+
+### Theory and model
+
+* Line-based processing language
+* Regex as conditions
+* Automatic field splitting
+* Variables and expressions
+* Implicit loop over lines
+* Small programs, not just filters
+
+:::
+
+::: column
+
+### Examples
+
+```bash
+# Print selected fields
+awk '{print $1, $3}' data.txt
+```
+
+```bash
+# Filter by regex
+awk '/ERROR/ {print}' app.log
+```
+
+```bash
+# Simple condition
+awk '$3 > 100 {print $1}' table.txt
+```
+
+```bash
+# Custom separator
+awk -F: '{print $1}' /etc/passwd
+```
+
+:::
+:::
+
+---
+
+## `awk` + `sed` — Combined Usage Example
+
+**Process application logs:** extract error records and anonymize numeric values
+
+```bash
+awk '/ERROR/ {print $2, $0}' app.log | sed 's/[0-9]\+/NUM/g'
+````
+
+::: columns
+::: column
+
+### Explanation
+
+* `awk '/ERROR/ {print $2, $0}'`
+
+  * selects only lines containing `ERROR`
+  * prints second field (e.g. module name)
+  * keeps the full original line
+
+* `sed 's/[0-9]\+/NUM/g'`
+
+  * replaces all numbers
+  * removes IDs, counters, timestamps
+
+:::
+::: column
+
+### Example
+
+Input:
+
+```
+2025-01-30 ERROR auth failed after 3 attempts
+```
+
+Output:
+
+```
+auth 2025-01-30 ERROR auth failed after NUM attempts
+```
+
+* `awk` → filtering and restructuring
+* `sed` → text normalization
+
+:::
+:::
+
+
+
