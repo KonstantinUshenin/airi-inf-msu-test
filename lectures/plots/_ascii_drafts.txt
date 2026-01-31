@@ -1,0 +1,101 @@
+ELF file on disk (bytes offset increasing →)
+
++-------------------------------+ 0x0000
+| ELF Header (Ehdr)             |
+|  - magic: 0x7F 'E' 'L' 'F'    |
+|  - class: 32/64-bit           |
+|  - endianness                 |
+|  - e_entry, e_phoff, e_shoff  |
++-------------------------------+
+| Program Header Table (PHT)    |  e_phoff
+| [PHDR #0] [PHDR #1] ...       |
+|  (segments for loader)        |
++-------------------------------+
+| .text   (code)                |
++-------------------------------+
+| .rodata (read-only data)      |
++-------------------------------+
+| .data   (initialized data)    |
++-------------------------------+
+| .bss    (not stored; size only)|  (conceptually here)
++-------------------------------+
+| .dynsym / .dynstr / .rela.*   |  (dynamic linking info)
++-------------------------------+
+| .symtab / .strtab (optional)  |  (debug/full symbols)
++-------------------------------+
+| Section Header Table (SHT)    |  e_shoff
+| [SHDR #0] [SHDR #1] ...       |
+|  (sections for tools/linker)  |
++-------------------------------+ EOF
+
+
+
+
+
+Process virtual address space (low → high)
+
+0x00000000
++-----------------------------+
+|   (NULL / unmapped guard)   |
++-----------------------------+
+|   .text  (R-X)              |
+|   .rodata (R--)             |
+|   .data  (RW-)              |
+|   .bss   (RW-, zero fill)   |
++-----------------------------+
+|   heap (RW-)                |
+|   (malloc/new grows ↑)      |
++-----------------------------+
+|   memory-mapped region      |
+|   shared libs, mmap files   |
+|   anonymous mmap            |
++-----------------------------+
+|   stack (RW-)               |
+|   (grows ↓)                 |
++-----------------------------+
+|   vDSO / vvar (kernel help) |
++-----------------------------+
+|   (kernel space, not user)  |
++-----------------------------+
+0xFFFFFFFF (or high canonical on x86_64)
+
+
+
+
+ELF on disk                           Process virtual memory
+
++---------------------------+          +---------------------------+
+| ELF Header + PHT          |          | (not mapped as-is)        |
++---------------------------+          +---------------------------+
+
+SEGMENT: PT_LOAD  (R-X)                VMA: code
++---------------------------+          +---------------------------+
+| .text (part of segment)   |  ----->  | 0x400000  ...  R-X        |
+| .plt / .init / ...        |          | file-backed pages         |
++---------------------------+          +---------------------------+
+
+SEGMENT: PT_LOAD  (R--)                 VMA: rodata
++---------------------------+          +---------------------------+
+| .rodata                   |  ----->  | ...  R--                  |
++---------------------------+          +---------------------------+
+
+SEGMENT: PT_LOAD  (RW-)                 VMA: data + bss tail
++---------------------------+          +---------------------------+
+| .data (bytes in file)     |  ----->  | ...  RW- (file-backed)    |
+| (end of file bytes)       |          +---------------------------+
+| .bss (NOT in file)        |  ----->  | ...  RW- (zero-filled)    |
+| (p_memsz > p_filesz)      |          | (anonymous pages)         |
++---------------------------+          +---------------------------+
+
+SEGMENT: PT_DYNAMIC (usually inside a LOAD)
++---------------------------+          +---------------------------+
+| .dynamic, relocations,    |  ----->  | mapped with RW-/R--       |
+| dynsym/dynstr, got/plt... |          | used by dynamic linker    |
++---------------------------+          +---------------------------+
+
+Other mappings (not “your” ELF)
+                                    +---------------------------+
+                                    | libc.so, ld-linux.so ...  |
+                                    | mmap()ed files            |
+                                    | stack, vdso               |
+                                    +---------------------------+
