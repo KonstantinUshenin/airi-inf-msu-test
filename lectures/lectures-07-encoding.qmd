@@ -1,8 +1,12 @@
 ---
 title: "Informatics. Basics of Software Development"
-subtitle: "Lecture 7 — Text data"
+subtitle: "Lecture 7 — Text data [EARLY DRAFT]"
 author: "Konstantin Ushenin"
 date: "2026"
+---
+
+# Encoding
+
 ---
 
 ## Binary-Coded Decimal (BCD) — 1950s
@@ -108,7 +112,7 @@ date: "2026"
 ---
 
 
-# What types of encodings exist?
+## What types of encodings exist?
 
 - **Number of bits per symbol**: 4, 5, 7, 8, 16, …
   - Examples: BCD (4), Baudot (5), ASCII (7), Latin-1 (8), UTF-16 (16)
@@ -266,6 +270,19 @@ Idea
 
 ---
 
+# String in Memory
+
+---
+
+
+
+---
+
+
+# Regular Expression
+
+---
+
 ## Wildcards (glob) vs Regular Expressions
 
 ::: columns
@@ -334,6 +351,8 @@ with output.open("w") as out:
 
 ## Wildcards (glob) — Bash Usage Examples
 
+\footnotesize
+
 ```bash
 ls *.txt # List all text files
 
@@ -353,6 +372,8 @@ ls src/**/test_*.py # Find test files recursively (bash ≥ 4)
 
 ls [!.]* # Exclude hidden files
 ```
+
+\normalsize
 
 ---
 
