@@ -1,0 +1,179 @@
+digraph ELF_OnDisk_Modern_Compact {
+  rankdir=TB;
+  splines=ortho;
+
+  graph [
+    fontname="Inter, Helvetica, Arial",
+    fontsize=16,
+    labelloc="t",
+    label=<
+      <B>ELF file on disk</B><BR/><FONT POINT-SIZE="13">bytes offset increasing →</FONT>
+    >,
+    nodesep="0.28",
+    ranksep="0.34",
+    pad="0.30",
+    bgcolor="white"
+  ];
+
+  edge [
+    arrowhead=none,
+    color="#B8C0CC",
+    penwidth=1.3
+  ];
+
+  /* Left column: offsets */
+  node [
+    shape=plaintext,
+    fontname="Inter, Helvetica, Arial",
+    fontsize=13,
+    fontcolor="#4B5563"
+  ];
+
+  off0  [label="0x0000"];
+  offph [label="e_phoff"];
+  off1  [label=""];
+  off2  [label=""];
+  off3  [label=""];
+  off4  [label=""];
+  off5  [label=""];
+  off6  [label=""];
+  offsh [label="e_shoff"];
+  offe  [label=""];
+
+  /* Right column: blocks */
+  node [
+    shape=plaintext,
+    fontname="Inter, Helvetica, Arial",
+    fontsize=14,
+    fontcolor="#111827"
+  ];
+
+  /* Reusable visual: name | 1px separator | description */
+  ehdr [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#F8FAFC" CELLBORDER="0" CELLSPACING="0" WIDTH="550">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>ELF Header (Ehdr)</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="329" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">magic, class, endianness, e_entry, e_phoff, e_shoff</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  pht [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#F8FAFC" CELLBORDER="0" CELLSPACING="0" WIDTH="550">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>Program Header Table (PHT)</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="329" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">segments for loader; [PHDR #0] [PHDR #1] ...</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  text [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="550">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>.text</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="329" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">code</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  ro [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="550">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>.rodata</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="230" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">read-only data</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  data [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="550">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>.data</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="329" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">initialized data</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  bss [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="550">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>.bss</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="329" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">not stored (size only)</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  dyn [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="550">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>.dynsym/.dynstr/.rela.*</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="329" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">dynamic linking info</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  sym [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="550">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>.symtab/.strtab</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="329" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">debug/full symbols (optional)</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  sht [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#F8FAFC" CELLBORDER="0" CELLSPACING="0" WIDTH="550">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>Section Header Table (SHT)</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="329" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">sections for tools/linker; [SHDR #0] [SHDR #1] ...</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  eof [shape=plaintext, fontcolor="#6B7280", fontsize=13, label="EOF"];
+
+  /* Grid alignment (offset | block) */
+  { rank=same; off0;  ehdr; }
+  { rank=same; offph; pht;  }
+  { rank=same; off1;  text; }
+  { rank=same; off2;  ro;   }
+  { rank=same; off3;  data; }
+  { rank=same; off4;  bss;  }
+  { rank=same; off5;  dyn;  }
+  { rank=same; off6;  sym;  }
+  { rank=same; offsh; sht;  }
+  { rank=same; offe;  eof;  }
+
+  /* Keep left column ordered */
+  off0 -> offph -> off1 -> off2 -> off3 -> off4 -> off5 -> off6 -> offsh -> offe [style=invis];
+
+  /* Vertical chain */
+  ehdr -> pht -> text -> ro -> data -> bss -> dyn -> sym -> sht -> eof;
+}
