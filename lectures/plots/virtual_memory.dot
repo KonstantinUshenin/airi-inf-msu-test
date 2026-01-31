@@ -1,0 +1,193 @@
+digraph Process_VAS_Compact {
+  rankdir=TB;
+  splines=ortho;
+
+  graph [
+    fontname="Inter, Helvetica, Arial",
+    fontsize=16,
+    labelloc="t",
+    label="Process virtual address space (low \u2192 high)",
+    nodesep="0.28",
+    ranksep="0.34",
+    pad="0.30",
+    bgcolor="white"
+  ];
+
+  edge [
+    arrowhead=none,
+    color="#B8C0CC",
+    penwidth=1.3
+  ];
+
+  /* Left column: addresses */
+  node [
+    shape=plaintext,
+    fontname="Inter, Helvetica, Arial",
+    fontsize=13,
+    fontcolor="#4B5563"
+  ];
+
+  a0 [label="0x00000000"];
+  a1 [label=""];
+  a2 [label=""];
+  a3 [label=""];
+  a4 [label=""];
+  a5 [label=""];
+  a6 [label=""];
+  a7 [label=""];
+
+  /* Right column: regions (blocks) */
+  node [
+    shape=plaintext,
+    fontname="Inter, Helvetica, Arial",
+    fontsize=14,
+    fontcolor="#111827"
+  ];
+
+  guard [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#F8FAFC" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>NULL / guard</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">(unmapped)</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  textseg [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>.text</B> <FONT COLOR="#6B7280">(R-X)</FONT></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">code</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  rodseg [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>.rodata</B> <FONT COLOR="#6B7280">(R--)</FONT></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">constants / read-only data</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  dataseg [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>.data</B> <FONT COLOR="#6B7280">(RW-)</FONT></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">initialized globals</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  bssseg [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>.bss</B> <FONT COLOR="#6B7280">(RW-)</FONT></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">zero-fill (not stored in file)</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  heap [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>heap</B> <FONT COLOR="#6B7280">(RW-)</FONT></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">malloc/new grows &#8593;</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  mmap [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>memory-mapped region</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">shared libs; mmap files; anonymous mmap</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  stack [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#FFFFFF" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>stack</B> <FONT COLOR="#6B7280">(RW-)</FONT></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">grows &#8595;</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  vdso [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#F8FAFC" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>vDSO / vvar</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">kernel-provided helper pages</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  kernel [
+    label=<
+      <TABLE BORDER="1" COLOR="#CBD5E1" BGCOLOR="#F8FAFC" CELLBORDER="0" CELLSPACING="0" WIDTH="560">
+        <TR>
+          <TD WIDTH="220" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><B>kernel space</B></TD>
+          <TD WIDTH="1" BGCOLOR="#E2E8F0"></TD>
+          <TD WIDTH="339" ALIGN="LEFT" VALIGN="MIDDLE" CELLPADDING="10"><FONT COLOR="#374151">not user-accessible</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  eof [shape=plaintext, fontcolor="#6B7280", fontsize=13, label="END"];
+
+  /* Grid alignment (address | region) */
+  { rank=same; a0; guard;   }
+  { rank=same; a1; textseg; }
+  { rank=same; a2; rodseg;  }
+  { rank=same; a3; dataseg; }
+  { rank=same; a4; bssseg;  }
+  { rank=same; a5; heap;    }
+  { rank=same; a6; mmap;    }
+  { rank=same; a7; stack;   }
+  { rank=same; a8; vdso;    }
+  { rank=same; a9; kernel;  }
+  { rank=same; a10; eof;    }
+
+  /* Add extra empty offsets for alignment depth */
+  node [shape=plaintext, fontsize=13, fontcolor="#4B5563", fontname="Inter, Helvetica, Arial"];
+  a8  [label=""];
+  a9  [label=""];
+  a10 [label="0xFFFFFFFF (x86)"];
+
+  /* Keep left column ordered */
+  a0 -> a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7 -> a8 -> a9 -> a10 [style=invis];
+
+  /* Vertical chain (low -> high) */
+  guard -> textseg -> rodseg -> dataseg -> bssseg -> heap -> mmap -> stack -> vdso -> kernel -> eof;
+}
