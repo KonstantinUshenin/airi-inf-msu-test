@@ -9,6 +9,14 @@ date: "2026"
 
 ---
 
+## Plan
+
+### Encoding
+### String in Memory
+### Reqular Expression
+
+---
+
 ## Binary-Coded Decimal (BCD) — 1950s
 
 ::: columns
@@ -797,6 +805,316 @@ void *memchr(const void *s, int c, size_t n);
 
 ---
 
+## Python strings: creation and basic operations
+
+::: columns
+::: column
+
+```python
+s1 = "Hello"
+s2 = 'World'
+s3 = s1 + " " + s2
+
+print(s3)          # Hello World
+print(s3.upper()) # HELLO WORLD
+print(s3[0])      # H
+print(s3[1:5])    # ello
+```
+
+:::
+
+::: column
+
+**String creation**
+
+* Strings are created with single or double quotes
+* Resulting object type is `str`
+* Strings are sequences (support indexing and slicing)
+
+**Basic operations**
+
+* Concatenation creates a new string
+* Indexing and slicing are safe
+* No null terminator, no manual memory handling
+
+:::
+:::
+
+---
+
+## Python strings: encodings and storage
+
+::: columns
+::: column
+
+```python
+s = "Привет"
+
+print(type(s))        # <class 'str'>
+print(len(s))         # 6
+
+b = s.encode("utf-8")
+print(b)              # bytes
+```
+
+:::
+
+::: column
+
+**Encoding model**
+
+* `str` is a sequence of Unicode code points
+* Encoding is not visible at language level
+* Internally Python uses UCS-1 / UCS-2 / UCS-4
+  (chosen automatically)
+
+**Text vs bytes**
+
+* `str` = text (Unicode)
+* `bytes` = raw byte sequence
+* Encoding converts text to bytes explicitly
+
+:::
+:::
+
+---
+
+## Python strings: immutability
+
+::: columns
+::: column
+
+```python
+s = "Hello"
+s[0] = "h"     # TypeError
+
+t = s.replace("H", "h")
+
+print(s)       # Hello
+print(t)       # hello
+```
+
+:::
+
+::: column
+
+**Immutability**
+
+* Python strings cannot be modified in place
+* Any operation that looks like modification
+  creates a new `str` object
+
+**Consequences**
+
+* Strings are safe to share
+* Hash value can be cached
+* Efficient use as dictionary keys
+
+:::
+:::
+
+---
+
+## Python strings: length, hash, interning
+
+::: columns
+::: column
+
+```python
+s = "hello"
+
+print(len(s))      # O(1)
+print(hash(s))     # cached
+
+a = "world"
+b = "world"
+print(a is b)      # may be True
+
+import sys
+c = sys.intern("test")
+```
+
+:::
+
+::: column
+
+**Length**
+
+* String length is stored explicitly
+* `len(s)` works in O(1)
+
+**Hash**
+
+* Hash value is computed lazily
+* Cached inside the string object
+* Safe due to immutability
+
+**Interning**
+
+* Some strings are interned automatically
+* Explicit interning via `sys.intern`
+* Interning is an optimization, not a guarantee
+
+:::
+:::
+
+---
+
+## Efficient string concatenation
+
+::: columns
+::: column
+
+### Python
+
+```python
+# Inefficient
+s = ""
+for x in parts:
+    s += x
+````
+
+```python
+# Efficient
+s = "".join(parts)
+```
+
+* `str` is immutable
+* `s += x` creates a new string each time, leads to O(n²) total copying
+
+
+* `join` computes total length first
+* allocates memory once and copies each part exactly once
+* overall complexity: O(n)
+
+:::
+
+::: column
+
+### Java
+
+```java
+// Inefficient
+String s = "";
+for (String x : parts) {
+    s += x;
+}
+```
+
+```java
+// Efficient
+StringBuilder sb = new StringBuilder();
+for (String x : parts) {
+    sb.append(x);
+}
+String s = sb.toString();
+```
+
+* `String` is immutable
+* `+` creates temporary objects
+* compiler cannot optimize loops
+
+* `StringBuilder` is a mutable buffer
+* amortized O(1) append one final string allocation
+
+:::
+:::
+
+---
+
+## Выделение строк: стек vs куча
+
+\footnotesize
+
+| Язык | Пример (стек / static) | Пример (куча) |
+|----|------------------------|---------------|
+| **C** | `char s[16] = "hi";` | `char *s = malloc(16);` |
+| **C++** | `char s[] = "hi";` | `std::string s = "hi";` |
+| **Rust** (str) | `let s: &str = "hi";` | — |
+| **Rust** (String) | — | `let s = String::from("hi");` |
+| **Java (≤ 8)** | — | `String s = "hi";` |
+| **Java (9+)** | — | `String s = "hi";` |
+| **Go** | — | `s := "hi"` |
+| **C#** | — | `string s = "hi";` |
+| **Python** | — | `s = "hi"` |
+| **JavaScript** | — | `let s = "hi";` |
+| **Swift** | — | `var s = "hi"` |
+
+\normalsize
+
+Во всех языках со сборкой мусора вы не можете заставить объекты явно выделяться на стеке.
+
+---
+
+## Какие кодировки используют языки (уточнённая таблица)
+
+\footnotesize
+
+| Язык | Тип строки | Внутренняя модель | Кодировка | Базовая единица |
+|----|-----------|------------------|-----------|------------------|
+| **C** | `char *` | массив байт | не определена | байт |
+| **C++** | `std::string` | массив байт | не определена | байт |
+| **Java (≤ 8)** | `String` | `char[]` | UTF-16 | UTF-16 code unit |
+| **Java (9+)** | `String` | `byte[] + coder` | Latin-1 / UTF-16 | code unit |
+| **C#** | `string` | `char[]` | UTF-16 | UTF-16 code unit |
+| **Python** | `str` | Unicode object | UCS-1/2/4 | code point |
+| **Go** | `string` | `(ptr, len)` | UTF-8 (соглашение) | байт |
+| **Rust (`&str`)** | slice | `(ptr, len)` | UTF-8 (обязательно) | байт |
+| **Rust (`String`)** | owning buffer | `Vec<u8>` | UTF-8 (обязательно) | байт |
+| **JavaScript** | `string` | UTF-16 | UTF-16 | code unit |
+| **Swift** | `String` | Unicode | UTF-8/16/32 (авто) | grapheme cluster |
+| **PHP** | `string` | байты | не определена | байт |
+
+\normalsize
+
+---
+
+## Строки: мутабельность, хеширование, интернинг
+
+\footnotesize
+
+| Язык | Мутабельность | Хранение хеша | Интернинг |
+|----|---------------------|--------------------------|-----------------|
+| **C** | да | нет | нет |
+| **C++** | да (`std::string`) | нет | нет |
+| **Java** | нет (immutable) | да | да (литералы, `intern()`) |
+| **C#** | нет (immutable) | да | да (литералы, `String.Intern`) |
+| **Python** | нет (immutable) | да | частично (реализация, `sys.intern`) |
+| **Go** | нет (immutable) | нет | нет |
+| **Rust (`String`)** | да | нет | нет |
+| **Rust (`&str`)** | нет | нет | нет |
+| **JavaScript** | нет (immutable) | нет | реализация движка |
+| **Swift** | логически нет (CoW) | нет | реализация |
+| **Ruby** | да | частично (инвалидируется) | нет (интернятся `Symbol`) |
+| **PHP** | да | нет | нет |
+
+\normalsize
+
+---
+
+## Строки: длина и сложность доступа
+
+\footnotesize
+
+| Язык | Длина | Кодир. | len | n-й байт | n-я ед. |
+|----|-------|--------|-----|----------|---------|
+| **C** | нет | — | **O(n)** | O(1) | O(1) |
+| **C++** | да | — | O(1) | O(1) | O(1) |
+| **Java ≤8** | да | UTF-16 | O(1) | O(1) | O(1) |
+| **Java 9+** | да | L1/16 | O(1) | O(1) | O(1) |
+| **C#** | да | UTF-16 | O(1) | O(1) | O(1) |
+| **Python** | да | auto | O(1) | O(1) | O(1) |
+| **Go** | да | **UTF-8** | O(1) | O(1) | **O(n)** |
+| **Rust** `&str` | да | **UTF-8** | O(1) | O(1) | **O(n)** |
+| **Rust** `String` | да | **UTF-8** | O(1) | O(1) | **O(n)** |
+| **JS** | да | UTF-16 | O(1) | O(1) | O(1) |
+| **Swift** | да | auto | **O(n)** | O(1) | **O(n)** |
+| **PHP** | да | — | O(1) | O(1) | O(1) |
+
+\normalsize
+
+---
+
 # Regular Expression
 
 ---
@@ -1204,5 +1522,5 @@ auth 2025-01-30 ERROR auth failed after NUM attempts
 :::
 :::
 
-
+---
 
