@@ -274,10 +274,528 @@ Idea
 
 ---
 
+## ELF executable file (REPEAT)
 
+::: columns
+::: column
+
+
+:::
+
+::: column
+
+
+![](plots/elf_layout.png)
+
+:::
+:::
 
 ---
 
+## Virtual memory of the process (REPEAT)
+
+::: columns
+::: column
+
+
+:::
+
+::: column
+
+![](plots/virtual_memory.png)
+
+:::
+:::
+
+---
+
+## String literals and memory (.rodata)
+
+::: columns
+::: column
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    const char *p = "Hello";
+    printf("%s\n", p);
+    return 0;
+}
+````
+
+:::
+
+::: column
+
+
+**String literal `"Hello"`**
+
+* Stored in ELF section `.rodata`
+* Mapped into process memory as **read-only**
+* May be shared between processes
+* Lifetime: whole program execution
+* Attempt to modify → **undefined behavior**
+
+
+:::
+:::
+
+---
+
+## `"Hello"` vs `{'H','e','l','l','o'}`
+
+::: columns
+::: column
+
+```c
+char a[] = "Hello";
+char b[] = {'H','e','l','l','o'};
+```
+
+Memory layout:
+
+```
+a: 'H' 'e' 'l' 'l' 'o' '\0'
+b: 'H' 'e' 'l' 'l' 'o'
+```
+
+:::
+
+::: column
+
+
+**Key difference**
+
+* `"Hello"` is a string literal
+
+  * includes implicit `'\0'`
+* Character list does **not**
+
+  * no terminator
+  * not a C-string
+
+**Consequences**
+
+* `a` is a valid C-string
+* `b` is a raw character array
+* Using `b` as string → **undefined behavior**
+
+
+:::
+:::
+
+---
+
+## C strings (null-terminated)
+
+::: columns
+::: column
+
+```c
+char s[] = "Hello";
+
+printf("%s\n", s);      // OK
+printf("%zu\n", strlen(s)); // O(n)
+```
+
+Memory layout:
+
+```
+'H' 'e' 'l' 'l' 'o' '\0'
+```
+
+:::
+
+::: column
+
+
+**C-string model**
+
+* Sequence of `char`
+* Terminated by `'\0'`
+* Length is **not stored**
+
+**Complexity**
+
+* Access to character — **O(1)**
+* `strlen`, `printf`, `strcpy` — **O(n)**
+  (scan until `'\0'`)
+
+**Risks**
+
+* Missing terminator → out-of-bounds read
+* Buffer overflow → undefined behavior
+
+
+:::
+:::
+
+---
+
+## Pascal strings (length-prefixed)
+
+::: columns
+::: column
+
+```pascal
+var
+  s: string[5];
+begin
+  s := 'Hello';
+  writeln(s);
+end;
+```
+
+Memory layout:
+
+```
+5 'H' 'e' 'l' 'l' 'o'
+```
+
+:::
+
+::: column
+
+
+**Pascal string model**
+
+* First byte stores string length
+* Characters follow
+* No terminating `'\0'`
+
+**Complexity**
+
+* Length access — **O(1)**
+* Character access — **O(1)**
+
+**Properties**
+
+* Binary-safe (may contain zero bytes)
+* Maximum length is fixed
+* No scanning, no missing-terminator bugs
+
+
+:::
+:::
+
+---
+
+## Dynamic allocation of a C-string
+
+```c
+#include <stdlib.h>
+#include <string.h>
+
+int main(void) {
+    const char *src = "Hello";   // string literal in .rodata
+
+    size_t len = strlen(src);    // number of bytes before '\0' (O(n))
+
+    char *dst = malloc(len + 1); // allocate bytes on heap (+1 for '\0')
+
+    memcpy(dst, src, len + 1);   // copy all bytes including terminator
+
+    free(dst);                   // release heap memory
+
+    return 0;
+}
+```
+
+---
+
+## Memory leak via function call (C-strings)
+
+```c
+void set_string(char **dst) {
+    *dst = malloc(6);             // allocate memory on heap
+    memcpy(*dst, "Hello", 6);     // copy "Hello\0"
+}
+
+char *s = NULL;
+set_string(&s);               // s -> heap ("Hello")
+set_string(&s);               // previous pointer overwritten
+free(s);                      // only second allocation is freed
+}
+```
+
+* Losing the last pointer to heap-allocated string means losing the ability to `free` it.
+* unreachable memory cannot be freed → **memory leak**
+
+---
+
+## Double free (C-strings)
+
+```c
+void destroy(char *s) {
+    free(s);          // first free
+}
+
+char *s = malloc(6);
+memcpy(s, "Hello", 6);
+
+destroy(s);           // memory freed
+free(s);              // second free (UB)
+````
+
+* The same heap pointer is freed twice
+* Heap allocator state becomes corrupted
+* Result: crash, memory corruption, or silent bugs
+
+---
+
+## String vulnerability: obvious buffer overflow
+
+::: columns
+::: column
+
+```c
+void vulnerable(const char *input) {
+    char buf[8];
+    // no bounds checking
+    strcpy(buf, input);
+}
+```
+
+Stack layout (simplified):
+
+```
+buf[8]
+saved frame pointer
+return address   ← overwritten
+```
+
+:::
+
+::: column
+
+* `strcpy` copies until `'\0'`
+* buffer size is not checked
+* long input overwrites stack data
+* stack control data may be corrupted
+* leads to crash or code execution
+
+Any C-string function that ignores buffer size is a potential security vulnerability.
+
+:::
+:::
+
+---
+
+## String vulnerability: non-obvious overflow
+
+::: columns
+::: column
+
+```c
+void subtle(const char *a, const char *b) {
+    char buf[16] = "user: ";
+    // looks safe
+    strcat(buf, a);
+    // overflow depends on data
+    strcat(buf, b);
+}
+```
+
+Comment:
+
+```
+"user: " + a + b  > 16 bytes → overflow
+```
+
+:::
+
+::: column
+
+Why this is dangerous:
+
+* `buf` already contains data
+* `strcat` scans for `'\0'` (**O(n)**)
+* remaining capacity is unknown
+* overflow depends on **combined lengths**
+* often missed during code review
+
+Seemingly safe string code can become vulnerable when multiple operations share the same buffer.
+
+:::
+:::
+
+---
+
+
+
+## `<string.h>` — C-string functions
+
+\footnotesize
+
+::: columns
+::: column
+
+```c
+size_t strlen(const char *s);
+````
+
+* Length of C-string (bytes before `'\0'`)
+* Requires scanning the string (O(n))
+
+```c
+char *strcpy(char *dst, const char *src);
+char *strncpy(char *dst, const char *src, size_t n);
+```
+
+* Copy strings
+* No bounds checking
+* `strncpy` may not add `'\0'`
+
+```c
+char *strcat(char *dst, const char *src);
+char *strncat(char *dst, const char *src, size_t n);
+```
+
+* Append strings
+* Destination must already be a valid C-string
+* Risk of overflow if buffer is too small
+
+:::
+
+::: column
+
+```c
+int strcmp(const char *a, const char *b);
+int strncmp(const char *a, const char *b, size_t n);
+```
+
+* Lexicographic comparison
+* Stops at first difference or `'\0'`
+
+```c
+char *strchr(const char *s, int c);
+char *strrchr(const char *s, int c);
+char *strstr(const char *s, const char *sub);
+```
+
+* Search for character or substring
+* Return pointer into original string
+
+```c
+char *strtok(char *s, const char *delim);
+```
+
+* Tokenizes string in-place
+* Uses hidden global state
+* Not thread-safe
+
+:::
+:::
+
+\normalsize
+
+---
+
+## `<string.h>` — memory functions
+
+\footnotesize
+
+::: columns
+::: column
+
+```c
+void *memcpy(void *dst, const void *src, size_t n);
+```
+
+* Copy raw bytes
+* Undefined behavior if memory overlaps
+
+```c
+void *memmove(void *dst, const void *src, size_t n);
+```
+
+* Copy raw bytes
+* Safe for overlapping regions
+
+```c
+void *memset(void *s, int c, size_t n);
+```
+
+* Fill memory with a byte value
+* Often used to zero memory
+
+:::
+
+::: column
+
+```c
+int memcmp(const void *a, const void *b, size_t n);
+```
+
+* Compare memory byte by byte
+* Does not stop at `'\0'`
+
+```c
+void *memchr(const void *s, int c, size_t n);
+```
+
+* Search for a byte in memory
+* Works on arbitrary binary data
+
+**General properties**
+
+* Functions do not know buffer sizes
+* No automatic bounds checking
+* Operate on bytes, not characters
+* Correct usage is responsibility of programmer
+
+:::
+:::
+
+\normalsize
+
+---
+
+## C-string pitfalls and vulnerabilities
+
+::: columns
+::: column
+
+**Memory safety**
+
+* Buffer overflow (stack / heap)
+* Off-by-one errors
+* Missing `'\0'` terminator
+* Use-after-free
+* Double free
+* Memory leaks
+
+**Lifetime and ownership**
+
+* Unclear ownership rules
+* Losing last pointer to allocation
+* Freeing memory in wrong scope
+* Mixing literals and heap strings
+
+:::
+
+::: column
+
+**Logic and API pitfalls**
+
+* No stored length information
+* `strlen` and friends are O(n)
+* Unsafe standard functions
+  (`strcpy`, `strcat`, `sprintf`)
+* Misuse of `strncpy`
+
+**Security and correctness**
+
+* Format string vulnerabilities
+* Integer overflow in size calculations
+* Encoding confusion (UTF-8 byte length)
+* Path truncation and TOCTOU bugs
+
+:::
+:::
+
+---
 
 # Regular Expression
 
