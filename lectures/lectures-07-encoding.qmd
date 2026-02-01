@@ -5,15 +5,16 @@ author: "Konstantin Ushenin"
 date: "2026"
 ---
 
-# Encoding
-
----
 
 ## Plan
 
 ### Encoding
 ### String in Memory
 ### Reqular Expression
+
+---
+
+# Encoding
 
 ---
 
@@ -590,173 +591,68 @@ Any C-string function that ignores buffer size is a potential security vulnerabi
 
 ---
 
-## String vulnerability: non-obvious overflow
+## `<string.h>` — strings and memory (overview)
+
 
 ::: columns
 ::: column
-
-```c
-void subtle(const char *a, const char *b) {
-    char buf[16] = "user: ";
-    // looks safe
-    strcat(buf, a);
-    // overflow depends on data
-    strcat(buf, b);
-}
-```
-
-Comment:
-
-```
-"user: " + a + b  > 16 bytes → overflow
-```
-
-:::
-
-::: column
-
-Why this is dangerous:
-
-* `buf` already contains data
-* `strcat` scans for `'\0'` (**O(n)**)
-* remaining capacity is unknown
-* overflow depends on **combined lengths**
-* often missed during code review
-
-Seemingly safe string code can become vulnerable when multiple operations share the same buffer.
-
-:::
-:::
-
----
-
-
-
-## `<string.h>` — C-string functions
 
 \footnotesize
-
-::: columns
-::: column
-
 ```c
+/* string length */
 size_t strlen(const char *s);
-````
-
-* Length of C-string (bytes before `'\0'`)
-* Requires scanning the string (O(n))
-
-```c
+/* string copy */
 char *strcpy(char *dst, const char *src);
 char *strncpy(char *dst, const char *src, size_t n);
-```
-
-* Copy strings
-* No bounds checking
-* `strncpy` may not add `'\0'`
-
-```c
+/* string concatenation */
 char *strcat(char *dst, const char *src);
 char *strncat(char *dst, const char *src, size_t n);
-```
-
-* Append strings
-* Destination must already be a valid C-string
-* Risk of overflow if buffer is too small
-
-:::
-
-::: column
-
-```c
+/* string comparison */
 int strcmp(const char *a, const char *b);
 int strncmp(const char *a, const char *b, size_t n);
-```
-
-* Lexicographic comparison
-* Stops at first difference or `'\0'`
-
-```c
+/* string search */
 char *strchr(const char *s, int c);
 char *strrchr(const char *s, int c);
 char *strstr(const char *s, const char *sub);
-```
-
-* Search for character or substring
-* Return pointer into original string
-
-```c
+/* tokenization */
 char *strtok(char *s, const char *delim);
-```
-
-* Tokenizes string in-place
-* Uses hidden global state
-* Not thread-safe
-
-:::
-:::
-
-\normalsize
-
----
-
-## `<string.h>` — memory functions
-
-\footnotesize
-
-::: columns
-::: column
-
-```c
+/* memory operations */
 void *memcpy(void *dst, const void *src, size_t n);
-```
-
-* Copy raw bytes
-* Undefined behavior if memory overlaps
-
-```c
 void *memmove(void *dst, const void *src, size_t n);
-```
-
-* Copy raw bytes
-* Safe for overlapping regions
-
-```c
 void *memset(void *s, int c, size_t n);
-```
-
-* Fill memory with a byte value
-* Often used to zero memory
-
-:::
-
-::: column
-
-```c
-int memcmp(const void *a, const void *b, size_t n);
-```
-
-* Compare memory byte by byte
-* Does not stop at `'\0'`
-
-```c
+int   memcmp(const void *a, const void *b, size_t n);
 void *memchr(const void *s, int c, size_t n);
 ```
 
-* Search for a byte in memory
-* Works on arbitrary binary data
-
-**General properties**
-
-* Functions do not know buffer sizes
-* No automatic bounds checking
-* Operate on bytes, not characters
-* Correct usage is responsibility of programmer
-
+\normalsize
 :::
-:::
+
+::: column
+
+\footnotesize
+
+**Two families of functions**
+
+* *String functions* — work with `'\0'`-terminated data
+* *Memory functions* — work with raw bytes, length is explicit
+
+**Two variants for most operations**
+
+* unbounded: `strcpy`, `strcat`, `strcmp`
+* bounded: `strncpy`, `strncat`, `strncmp`
+
+**Important consequences**
+
+* String functions do **not** know buffer size
+* Length is discovered by scanning for `'\0'` (often O(n))
+* Memory functions always require explicit size
+* `memcpy` vs `memmove`: overlap unsafe vs safe
 
 \normalsize
+
+:::
+:::
+
 
 ---
 
@@ -1019,6 +915,59 @@ String s = sb.toString();
 
 :::
 :::
+
+---
+
+## Python strings and memory — overview
+
+\footnotesize
+
+::: columns
+::: column
+
+```python
+# string length
+len(s)
+# string concatenation
+s + t
+"".join(iterable)
+# comparison
+s == t
+s < t
+# search
+s.find(sub)
+s.index(sub)
+sub in s
+# replacement
+s.replace(old, new)
+# splitting / joining
+s.split(sep)
+sep.join(parts)
+# encoding / decoding
+b = s.encode("utf-8")
+s = b.decode("utf-8")
+```
+
+:::
+
+::: column
+
+**Two distinct types**
+
+* `str` — text (Unicode code points)
+* `bytes` — raw binary data
+
+**Explicit separation**
+
+* text and binary data are different types
+* encoding / decoding is always explicit
+* prevents accidental mixing of bytes and text
+
+
+:::
+:::
+
+\normalsize
 
 ---
 
