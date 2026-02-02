@@ -2,6 +2,7 @@
 # Quarto / Pandoc
 # -----------------------------
 _quarto/
+.quarto
 *.log
 *.out
 *.aux
@@ -33,3 +34,6 @@ lectures_pdf/
 .DS_Store
 Thumbs.db
 *~
+
+/.quarto/
+**/*.quarto_ipynb
