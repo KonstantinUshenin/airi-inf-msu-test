@@ -10,7 +10,7 @@ date: "2026"
 
 ### Encoding
 ### String in Memory
-### Reqular Expression
+### Regular Expression
 
 ---
 
@@ -257,6 +257,94 @@ Idea
 
 ---
 
+## Unicode and UTF-8
+
+::: columns
+::: column
+
+**Unicode**
+
+* Universal character set
+* Assigns unique code point to every character
+* Code points: U+0000 to U+10FFFF
+* Over 150,000 characters defined
+
+**UTF-8 Encoding**
+
+* Variable-length: 1–4 bytes per character
+* ASCII-compatible (0x00–0x7F unchanged)
+* Self-synchronizing (can find char boundaries)
+* No byte-order issues (no BOM needed)
+
+:::
+
+::: column
+
+**UTF-8 Byte Patterns**
+
+| Code point range | Bytes | Byte pattern |
+|------------------|-------|--------------|
+| U+0000–U+007F | 1 | `0xxxxxxx` |
+| U+0080–U+07FF | 2 | `110xxxxx 10xxxxxx` |
+| U+0800–U+FFFF | 3 | `1110xxxx 10xxxxxx 10xxxxxx` |
+| U+10000–U+10FFFF | 4 | `11110xxx 10xxxxxx 10xxxxxx 10xxxxxx` |
+
+**Examples**
+
+* `A` (U+0041) → `0x41` (1 byte)
+* `й` (U+0439) → `0xD0 0xB9` (2 bytes)
+* `€` (U+20AC) → `0xE2 0x82 0xAC` (3 bytes)
+* `😀` (U+1F600) → `0xF0 0x9F 0x98 0x80` (4 bytes)
+
+:::
+:::
+
+---
+
+## Common Encoding Problems
+
+::: columns
+::: column
+
+**Mojibake (文字化け)**
+
+* Text displayed as garbage characters
+* Cause: wrong encoding assumed by reader
+* Example: UTF-8 text read as Windows-1251
+
+```
+"Привет" (UTF-8) → "ÐŸÑ€Ð¸Ð²ÐµÑ‚" (as Latin-1)
+```
+
+**Кракозябры**
+
+* Russian term for garbled text
+* Common in legacy systems
+* Often CP866 ↔ Windows-1251 mismatch
+
+:::
+
+::: column
+
+**BOM (Byte Order Mark)**
+
+* U+FEFF at file start
+* Indicates byte order (UTF-16/32)
+* UTF-8 BOM: `0xEF 0xBB 0xBF`
+* Often causes issues in scripts/configs
+
+**Surrogate Pairs (UTF-16)**
+
+* Characters beyond U+FFFF
+* Encoded as two 16-bit code units
+* U+1F600 → `0xD83D 0xDE00`
+* Source of bugs in JavaScript, Java, C#
+
+:::
+:::
+
+---
+
 ## Terminal User Interface
 
 ::: columns
@@ -273,7 +361,7 @@ Idea
 :::
 :::
 
-- Появление символов 0xOB-0xFD привело к расцвету приложений с псевдоинтерфейсом
+- Появление символов 0x0B-0xFD привело к расцвету приложений с псевдоинтерфейсом
 - Современные представители: tqdm (Python), htop, top, mc
 - Современные фреймворки: Python (textual, npyscreen), Rust (Ratatui, tui-rs)
 
@@ -331,7 +419,7 @@ int main(void) {
     printf("%s\n", p);
     return 0;
 }
-````
+```
 
 :::
 
@@ -525,7 +613,6 @@ char *s = NULL;
 set_string(&s);               // s -> heap ("Hello")
 set_string(&s);               // previous pointer overwritten
 free(s);                      // only second allocation is freed
-}
 ```
 
 * Losing the last pointer to heap-allocated string means losing the ability to `free` it.
@@ -545,7 +632,7 @@ memcpy(s, "Hello", 6);
 
 destroy(s);           // memory freed
 free(s);              // second free (UB)
-````
+```
 
 * The same heap pointer is freed twice
 * Heap allocator state becomes corrupted
@@ -775,6 +862,61 @@ print(b)              # bytes
 
 ---
 
+## Python strings: emoji and encoding errors
+
+::: columns
+::: column
+
+```python
+# Emoji handling
+s = "Hello 😀"
+print(len(s))         # 7 (code points)
+
+b = s.encode("utf-8")
+print(len(b))         # 10 (bytes)
+
+# Encoding errors
+s = "Привет"
+s.encode("ascii")     # UnicodeEncodeError
+
+s.encode("ascii", errors="ignore")
+# b''
+
+s.encode("ascii", errors="replace")
+# b'??????'
+```
+
+:::
+
+::: column
+
+**Emoji in Python**
+
+* Emoji are single code points (mostly)
+* `len()` counts code points, not bytes
+* Some emoji use multiple code points (ZWJ sequences)
+
+**Handling encoding errors**
+
+* `errors="strict"` — raise exception (default)
+* `errors="ignore"` — skip unencodable chars
+* `errors="replace"` — use `?` or `\ufffd`
+* `errors="backslashreplace"` — use `\xNN` escapes
+
+**Decoding errors**
+
+```python
+b = b'\xff\xfe'
+b.decode("utf-8")  # UnicodeDecodeError
+b.decode("utf-8", errors="replace")
+# '��'
+```
+
+:::
+:::
+
+---
+
 ## Python strings: immutability
 
 ::: columns
@@ -868,7 +1010,7 @@ c = sys.intern("test")
 s = ""
 for x in parts:
     s += x
-````
+```
 
 ```python
 # Efficient
@@ -1307,7 +1449,7 @@ re.match(r"Error", text)         # match at start
 
 re.fullmatch(r".*\d{2}", text)   # full string match
 # <re.Match object; span=(0, 20), match='Error 404 at line 23'>
-````
+```
 ---
 
 ## Regular Expressions — Usage in Programming Languages
@@ -1357,7 +1499,7 @@ re.fullmatch(r".*\d{2}", text)   # full string match
 ```bash
 # Substitute numbers
 sed 's/[0-9]\+/NUM/g' file.txt
-````
+```
 
 ```bash
 # Print matching lines
@@ -1430,7 +1572,7 @@ awk -F: '{print $1}' /etc/passwd
 
 ```bash
 awk '/ERROR/ {print $2, $0}' app.log | sed 's/[0-9]\+/NUM/g'
-````
+```
 
 ::: columns
 ::: column
