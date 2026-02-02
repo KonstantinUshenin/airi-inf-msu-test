@@ -1076,7 +1076,8 @@ s = b.decode("utf-8")
 ### Wildcards (glob)
 - Filename pattern matching
 - Implemented by shell / filesystem libraries
-- Expanded **before** program execution
+- In shell: expanded **before** program execution
+- In libraries: evaluated at runtime (`glob.glob`, `Path.glob`)
 - Operates on paths
 - Limited expressive power
 - No groups or alternation
