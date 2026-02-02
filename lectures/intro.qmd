@@ -1,8 +1,12 @@
 ---
-title: "Informatics. Basics of Software Development"
-subtitle: "Lecture 1 — Course intro"
+title: "Informatics. Foundations of Software Development"
+subtitle: "Lecture 0 — Course Intro"
 author: "Konstantin Ushenin"
 date: "2026"
+---
+
+# Encoding
+
 ---
 
 ## Lecture 10 — Text Data Formats

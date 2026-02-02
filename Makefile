@@ -3,17 +3,29 @@ SHELL := /bin/bash
 QMD := $(wildcard lectures/*.qmd)
 PDF := $(patsubst lectures/%.qmd,pdf/%.pdf,$(QMD))
 
-.PHONY: all clean render
-all: $(PDF)
+DOT := $(wildcard lectures/plots/*.dot)
+PNG := $(DOT:.dot=.png)
 
-# Render one file -> produces one pdf
+.PHONY: all pdf dot clean
+
+# Top-level target
+all: pdf
+
+# Phase 2: PDFs (depends on plots)
+pdf: dot $(PDF)
+
+# Phase 1: Graphviz
+dot: $(PNG)
+
+# ---- Rules -------------------------------------------------
+
 pdf/%.pdf: lectures/%.qmd
 	@mkdir -p pdf
 	quarto render $< --output-dir pdf
 
-# Convenience: render everything (same as all)
-render: all
+lectures/plots/%.png: lectures/plots/%.dot
+	dot -Tpng $< -o $@
 
 clean:
 	rm -rf _quarto .quarto pdf
-
+	rm -f lectures/plots/*.png
