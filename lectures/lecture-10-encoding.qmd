@@ -11,7 +11,12 @@ date: "2026"
 ### String in Memory
 ### Regular Expressions
 
-**Для авторов. Нужно улучшить:** раздел про Unicode без картинок и примеров сейчас. Итоги раздела про регулярные выражения не дописаны. Нет вообще ничего про DFA / NFA / backtracking engines. Как code point переводится на русский?
+**Для авторов. Заметки:**
+
+- Code point → «кодовая точка» (устоявшийся перевод)
+- Добавлены: примеры UTF-8 кодирования, grapheme clusters, Unicode normalization, BOM
+- Добавлены: DFA/NFA/backtracking engines, ReDoS, lookahead/lookbehind, named groups
+- Можно добавить: диаграммы для NFA/DFA, интерактивные примеры regex
 
 # Encoding
 
@@ -249,7 +254,7 @@ Idea
 :::
 :::
 
-- Симоволы от 0x00 до 0x7F - ASCII и обычно универсальны.  0x80-0xFF - задавалась национальной частью таблицы кодировки
+- Символы от 0x00 до 0x7F — ASCII и обычно универсальны. 0x80-0xFF — задаётся национальной частью таблицы кодировки
 - Кодировок существует несколько сотен. Разница в кодировках предложенных даже в одной компании могла быть критической
 - Отображение документов и Интернет страниц оставалось непредсказуемым
 
@@ -271,7 +276,7 @@ Idea
 :::
 :::
 
-- Появление символов 0xOB-0xFD привело к расцвету приложений с псевдоинтерфейсом
+- Появление символов псевдографики (0xB0-0xDF в CP866) привело к расцвету приложений с псевдоинтерфейсом
 - Современные представители: tqdm (Python), htop, top, mc
 - Современные фреймворки: Python (textual, npyscreen), Rust (Ratatui, tui-rs)
 
@@ -525,6 +530,204 @@ Idea
 
 
 
+## UTF-8 Encoding Examples
+
+::: columns
+::: column
+
+**1-byte (ASCII)**
+
+* `A` = U+0041 → `0x41`
+* Binary: `01000001`
+
+**2-byte (Latin, Cyrillic)**
+
+* `й` = U+0439
+* Binary: `110_10000 10_111001`
+* Bytes: `0xD0 0xB9`
+
+**3-byte (CJK, symbols)**
+
+* `€` = U+20AC
+* Binary: `1110_0010 10_000010 10_101100`
+* Bytes: `0xE2 0x82 0xAC`
+
+:::
+
+::: column
+
+**4-byte (emoji, rare symbols)**
+
+* `😀` = U+1F600
+* Binary: `11110_000 10_011111 10_011000 10_000000`
+* Bytes: `0xF0 0x9F 0x98 0x80`
+
+**Encoding formula**
+
+| Range | Bytes | Pattern |
+|-------|-------|---------|
+| U+0000–007F | 1 | `0xxxxxxx` |
+| U+0080–07FF | 2 | `110xxxxx 10xxxxxx` |
+| U+0800–FFFF | 3 | `1110xxxx 10xxxxxx 10xxxxxx` |
+| U+10000–10FFFF | 4 | `11110xxx 10xxxxxx 10xxxxxx 10xxxxxx` |
+
+:::
+:::
+
+---
+
+## Grapheme Clusters — What Users See vs What Computers Store
+
+::: columns
+::: column
+
+**Problem**
+
+* User sees one "character"
+* Computer may store multiple code points
+* Indexing by code point breaks visual symbols
+
+**Examples**
+
+| Visual | Code points | Count |
+|--------|-------------|-------|
+| `é` | U+0065 U+0301 | 2 |
+| `🇫🇷` | U+1F1EB U+1F1F7 | 2 |
+| `👨‍👩‍👧` | U+1F468 U+200D U+1F469 U+200D U+1F467 | 5 |
+| `👩🏽‍🔬` | U+1F469 U+1F3FD U+200D U+1F52C | 4 |
+
+:::
+
+::: column
+
+**Terminology**
+
+* **Code point** — Unicode number (e.g., U+0041)
+* **Grapheme cluster** — user-perceived character
+* **ZWJ** (U+200D) — Zero Width Joiner, combines emoji
+
+**Implications**
+
+* `len("👨‍👩‍👧")` in Python = 5 (code points)
+* Visual length = 1 (grapheme)
+* Safe text processing requires grapheme-aware libraries
+
+**Libraries**
+
+* Python: `grapheme`, `regex` with `\X`
+* JavaScript: `Intl.Segmenter`
+* Rust: `unicode-segmentation`
+
+:::
+:::
+
+---
+
+## Unicode Normalization (NFC, NFD)
+
+::: columns
+::: column
+
+**Problem**
+
+* Same visual character can have multiple representations
+* `é` = U+00E9 (precomposed) OR U+0065 + U+0301 (decomposed)
+* String comparison may fail unexpectedly
+
+**Normalization forms**
+
+| Form | Name | Description |
+|------|------|-------------|
+| **NFC** | Composed | Combines where possible |
+| **NFD** | Decomposed | Separates into base + combining |
+| **NFKC** | Compat. composed | + compatibility mappings |
+| **NFKD** | Compat. decomposed | + compatibility mappings |
+
+:::
+
+::: column
+
+**Example**
+
+```python
+s1 = "café"        # é = U+00E9
+s2 = "cafe\u0301"  # e + combining accent
+
+s1 == s2           # False!
+len(s1), len(s2)   # (4, 5)
+
+import unicodedata
+n1 = unicodedata.normalize("NFC", s1)
+n2 = unicodedata.normalize("NFC", s2)
+n1 == n2           # True
+```
+
+**Best practice**
+
+* Normalize to NFC on input
+* Use NFC for storage and comparison
+* NFKC for search (folds ligatures, etc.)
+
+:::
+:::
+
+---
+
+## Byte Order Mark (BOM)
+
+::: columns
+::: column
+
+**What is BOM?**
+
+* Special Unicode character: U+FEFF
+* Placed at file start
+* Indicates byte order for UTF-16/32
+* Optional "signature" for UTF-8
+
+**BOM bytes**
+
+| Encoding | BOM bytes |
+|----------|-----------|
+| UTF-8 | `EF BB BF` |
+| UTF-16 LE | `FF FE` |
+| UTF-16 BE | `FE FF` |
+| UTF-32 LE | `FF FE 00 00` |
+| UTF-32 BE | `00 00 FE FF` |
+
+:::
+
+::: column
+
+**Problems with BOM**
+
+* UTF-8 BOM breaks many Unix tools
+* `#!/usr/bin/python` fails with BOM
+* JSON spec forbids BOM
+* Concatenating files duplicates BOM
+
+**Handling in Python**
+
+```python
+# Read with BOM handling
+with open("file.txt", encoding="utf-8-sig") as f:
+    text = f.read()
+
+# Write without BOM (recommended)
+with open("out.txt", encoding="utf-8") as f:
+    f.write(text)
+```
+
+**Recommendation**
+
+* Avoid UTF-8 BOM in new files
+* Use `utf-8-sig` when reading unknown files
+
+:::
+:::
+
+---
+
 ## Most Important UTF-8 Symbol Ranges
 
 ::: columns
@@ -664,10 +867,10 @@ Idea
 ## Итоги раздела
 
 * В записи строки стоит различать байт, кодовую единицу, кодовую точку и графему.
-* Существуют кодировки с постоянной (код Бодо, latin-1, ASCII, UTF-32) и переменной длиной на одну кодовую точку (UTF-16, UTF-32).
+* Существуют кодировки с постоянной (код Бодо, latin-1, ASCII, UTF-32) и переменной длиной на одну кодовую точку (UTF-8, UTF-16).
 * Для кодировки ASCII нижняя часть универсальна (до 127) и содержит английский алфавит, знаки препинания и управляющие команды.
 * Верхняя часть определяется региональным стандартом. Это позволяет локализовать интерфейс пользователя. Такой подход сильно ограничиваем возможности интернационализации и смешивания языков.
-* Unicode (UTF-8, UTF-16, UTF-32) позволяют задать почти все существующие национальные символы, знаки, смайлы и другие символы. UTF-8 использует от 1 до 4 символов на кодовую точку. Это вызывает проблемы с технической реализацией строк в языках программирования.
+* Unicode (UTF-8, UTF-16, UTF-32) позволяет задать почти все существующие национальные символы, знаки, эмодзи и другие символы. UTF-8 использует от 1 до 4 байт на кодовую точку. Это вызывает проблемы с технической реализацией строк в языках программирования.
 * Специальные символы и ESC-последовательности позволяют создавать консольные приложения с подсветкой синтаксиса и псевдоокнами. Такой тип приложений всё ещё распространён.
 
 # String in Memory
@@ -1895,8 +2098,222 @@ auth 2025-01-30 ERROR auth failed after NUM attempts
 
 ---
 
+## Regex Engines: DFA vs NFA vs Backtracking
+
+::: columns
+::: column
+
+**DFA (Deterministic Finite Automaton)**
+
+* One state at a time
+* Linear time guarantee: O(n)
+* No backtracking
+* Limited features (no backreferences)
+* Used in: `grep`, `awk`, RE2 (Google)
+
+**NFA (Non-deterministic Finite Automaton)**
+
+* Multiple states simultaneously
+* Can simulate DFA behavior
+* Foundation for most engines
+
+:::
+
+::: column
+
+**Backtracking NFA**
+
+* Tries paths one by one
+* Backtracks on failure
+* Supports full regex features
+* Worst case: exponential O(2^n)
+* Used in: Python, Perl, Java, JavaScript
+
+**Thompson NFA**
+
+* Simulates all paths in parallel
+* Linear time O(n)
+* Used in: Go `regexp`, Rust `regex`
+
+:::
+:::
+
+---
+
+## Catastrophic Backtracking (ReDoS)
+
+::: columns
+::: column
+
+**Problem**
+
+* Some patterns cause exponential matching time
+* Attacker sends malicious input
+* Server hangs → Denial of Service
+
+**Dangerous patterns**
+
+```
+(a+)+$      # nested quantifiers
+(a|aa)+$    # overlapping alternatives
+(.*a){10}   # repeated greedy match
+```
+
+**Example attack**
+
+```python
+import re
+# This hangs!
+re.match(r"(a+)+$", "a" * 30 + "!")
+```
+
+:::
+
+::: column
+
+**Why it happens**
+
+* Pattern: `(a+)+$`
+* Input: `aaaaaaaaaa!`
+* Engine tries all ways to split `a`s
+* 2^n combinations before failing
+
+**Mitigations**
+
+* Use linear-time engines (RE2, Rust regex)
+* Avoid nested quantifiers
+* Add timeouts
+* Use atomic groups `(?>...)`
+* Validate regex complexity
+
+**Safe alternatives**
+
+* Python: `google-re2` package
+* JavaScript: use `safe-regex` linter
+* Rust: `regex` crate (Thompson NFA)
+
+:::
+:::
+
+---
+
+## Lookahead and Lookbehind Assertions
+
+::: columns
+::: column
+
+**Lookahead**
+
+* Match only if followed by pattern
+* Does not consume characters
+
+| Syntax | Name | Example |
+|--------|------|---------|
+| `(?=...)` | Positive | `\d+(?=€)` → digits before € |
+| `(?!...)` | Negative | `foo(?!bar)` → foo not followed by bar |
+
+**Example**
+
+```python
+import re
+text = "100€ 200$ 50€"
+re.findall(r"\d+(?=€)", text)
+# ['100', '50']
+```
+
+:::
+
+::: column
+
+**Lookbehind**
+
+* Match only if preceded by pattern
+* Does not consume characters
+
+| Syntax | Name | Example |
+|--------|------|---------|
+| `(?<=...)` | Positive | `(?<=\$)\d+` → digits after $ |
+| `(?<!...)` | Negative | `(?<!un)known` → known not after un |
+
+**Example**
+
+```python
+text = "$100 €200 $50"
+re.findall(r"(?<=\$)\d+", text)
+# ['100', '50']
+```
+
+**Limitation**
+
+* Lookbehind must have fixed width in Python
+* Variable-width: use `regex` module
+
+:::
+:::
+
+---
+
+## Named Groups and Backreferences
+
+::: columns
+::: column
+
+**Named groups**
+
+* Give meaningful names to captures
+* Improve readability
+
+```python
+import re
+
+pattern = r"(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})"
+text = "Date: 2025-01-30"
+
+m = re.search(pattern, text)
+m.group("year")   # '2025'
+m.group("month")  # '01'
+m.group("day")    # '30'
+m.groupdict()
+# {'year': '2025', 'month': '01', 'day': '30'}
+```
+
+:::
+
+::: column
+
+**Backreferences**
+
+* Match same text as earlier group
+* Useful for finding duplicates
+
+```python
+# Find repeated words
+pattern = r"\b(\w+)\s+\1\b"
+text = "the the quick brown fox"
+re.search(pattern, text).group()
+# 'the the'
+```
+
+**Named backreference**
+
+```python
+# Match opening and closing tags
+pattern = r"<(?P<tag>\w+)>.*?</(?P=tag)>"
+text = "<div>content</div>"
+re.search(pattern, text).group()
+# '<div>content</div>'
+```
+
+:::
+:::
+
+---
+
 ## Итоги раздела
 
-* glob (wildcards) -- механизм для работы со списками файлов. Regular Expression -- механизм для работы с текстовыми данными. Оба механизма поддерживаются в консоли и большинстве современных языков программирования.
-* **Python `re`: стандартный модуль для работы с регулярными выражениями. Функции: `search`, `match`, `findall`, `sub`, `split`
-* **sed** — потоковый редактор, **awk** — язык обработки данных с regexp для условий
+* **Glob** (wildcards) — механизм для работы со списками файлов. **Regular Expression** — механизм для работы с текстовыми данными. Оба механизма поддерживаются в консоли и большинстве современных языков программирования.
+* **Python `re`** — стандартный модуль для работы с регулярными выражениями. Основные функции: `search`, `match`, `findall`, `sub`, `split`, `compile`.
+* **sed** — потоковый редактор для построчных преобразований. **awk** — язык обработки данных с regex для условий и автоматическим разбиением на поля.
+* Существует два основных типа regex-движков: **DFA** (линейное время, ограниченные возможности) и **backtracking NFA** (экспоненциальное время в худшем случае, полная функциональность).
+* **Catastrophic backtracking** (ReDoS) — уязвимость, при которой злонамеренный ввод вызывает зависание программы. Избегайте вложенных квантификаторов и используйте безопасные движки (RE2, Rust regex).
+* **Lookahead/lookbehind** позволяют проверять контекст без потребления символов. **Named groups** улучшают читаемость сложных паттернов.
