@@ -1,0 +1,1637 @@
+---
+title: "Informatics. Foundations of Software Development"
+subtitle: "Lecture 01 — History of Computation [EARLY DRAFT]"
+author: "Konstantin Ushenin"
+date: "2026"
+---
+
+## Plan
+
+### History of Сomputer Technology
+### History of Operating Systems
+### History of Programming Languages
+### History of Internet
+### History of Machine Learning and Artificial Intelligence
+
+
+# History of Сomputer Technology
+
+## Pre-electronic computation (before 1940)
+
+::: columns
+::: column
+
+- Examples
+  - Abacus and counting frames
+  - Mechanical calculators (Pascal, Leibniz)
+  - Punched cards in census and industry
+  - Приливная машина лорда Кельвина, 1872. Одна из первых систем машинного обучения
+  - прицел Нордена, 1923 -- 1948
+
+- Limitations
+  - Механический износ ограничивает количество изменений состояний в одном элементе
+  - Точность считывания результата очень низкая, а ошибка при вычислениях распространяется далее
+  - Результаты зависят от факторов среды
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## First generation computers — Vacuum tubes (1940s–1950s)
+
+::: columns
+::: column
+
+- Technology
+  - Vacuum tubes as switching elements
+  - Magnetic drums or delay lines for memory
+
+- Characteristics
+  - Very large physical size
+  - High power consumption and heat generation
+  - Frequent hardware failures
+
+- Programming
+  - Machine code
+  - Manual rewiring or plugboards
+  - No operating systems
+
+- Typical usage
+  - Military calculations
+  - Ballistics tables
+  - Early scientific computing
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Second generation computers — Transistors (1950s–1960s)
+
+::: columns
+::: column
+
+- Technology
+  - Transistors replace vacuum tubes
+  - Magnetic core memory
+
+- Improvements
+  - Smaller size
+  - Higher reliability
+  - Lower power consumption
+
+- Software advances
+  - Assembly languages
+  - Early high-level languages (Fortran, COBOL)
+  - Batch processing systems
+
+- Applications
+  - Business data processing
+  - Scientific and engineering calculations
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Third generation computers — Integrated circuits (1960s–1970s)
+
+::: columns
+::: column
+
+- Technology
+  - Integrated circuits (multiple transistors per chip)
+
+- System-level changes
+  - Operating systems become standard
+  - Multiprogramming and time-sharing
+  - Standardized hardware families
+
+- New computer classes
+  - Mainframes
+  - Minicomputers
+
+- Impact
+  - Better software portability
+  - Increased availability in universities and labs
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Fourth generation computers — Microprocessors (1970s–1990s)
+
+::: columns
+::: column
+
+- Technology
+  - Single-chip CPUs (microprocessors)
+  - Semiconductor RAM and ROM
+
+- Key shift
+  - From institutional to personal computing
+
+- Characteristics
+  - Desktop-sized machines
+  - Mass production
+  - Rapid cost reduction
+
+- Software ecosystem
+  - Personal operating systems
+  - Graphical user interfaces
+  - Early networking
+
+- Result
+  - Widespread adoption outside academia and industry
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Fifth generation and beyond — Networks and parallelism (1990s–2010s)
+
+::: columns
+::: column
+
+- Dominant ideas
+  - Networking as a core feature
+  - Parallel and distributed computation
+
+- Hardware trends
+  - Multi-core CPUs
+  - GPUs as general-purpose accelerators
+
+- Software trends
+  - Internet-centric applications
+  - Virtual machines and managed runtimes
+  - Client–server and cloud models
+
+- User perspective
+  - Computer as a communication device
+  - Always connected systems
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Contemporary computing — Specialized architectures (2010s–…)
+
+::: columns
+::: column
+
+- Key drivers
+  - Data volume growth
+  - Machine learning workloads
+  - Energy efficiency constraints
+
+- Hardware specialization
+  - GPUs
+  - AI accelerators (TPU, NPU)
+  - Domain-specific architectures
+
+- Computing model
+  - Data centers and cloud infrastructure
+  - Heterogeneous systems
+  - Hardware–software co-design
+
+- Open questions
+  - Limits of scaling
+  - Role of quantum and neuromorphic systems
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Summary: evolution pattern
+
+::: columns
+::: column
+
+- Repeating trends
+  - Miniaturization
+  - Increased abstraction
+  - Separation of hardware and software
+
+- Conceptual shift
+  - From calculators → programmable machines
+  - From standalone systems → global infrastructure
+
+- Key takeaway
+  - Progress driven as much by software models
+    as by hardware advances
+
+:::
+
+::: column
+:::
+:::
+
+# History of Operating Systems
+
+## Before operating systems (1940s–1950s)
+
+::: columns
+::: column
+
+- Situation
+  - No operating system
+  - Program == whole machine usage
+
+- Execution model
+  - One program loaded at a time
+  - Manual setup before execution
+  - Direct hardware control
+
+- User interaction
+  - Physical switches
+  - Plugboards
+  - Paper tapes and punched cards
+
+- Problems
+  - Extremely low hardware utilization
+  - High setup cost per task
+  - No isolation or protection
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Batch operating systems (1950s–1960s)
+
+::: columns
+::: column
+
+- Motivation
+  - Reduce idle time of expensive hardware
+  - Automate job sequencing
+
+- Core idea
+  - Programs executed in batches
+  - Jobs prepared offline
+  - Sequential execution without interaction
+
+- Key features
+  - Resident monitor
+  - Job Control Language (JCL)
+  - Input / output buffering
+
+- Limitations
+  - No interactivity
+  - Long turnaround time
+  - One job active at a time
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Multiprogramming systems (1960s)
+
+::: columns
+::: column
+
+- Key idea
+  - Several programs in memory simultaneously
+  - CPU switches when one job waits for I/O
+
+- Required mechanisms
+  - Memory protection
+  - Interrupts
+  - Context switching
+
+- Benefits
+  - Better CPU utilization
+  - Higher system throughput
+
+- Consequences
+  - OS becomes complex
+  - Resource management becomes central problem
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Time-sharing operating systems (1960s–1970s)
+
+::: columns
+::: column
+
+- Goal
+  - Interactive computing
+  - Multiple users simultaneously
+
+- Model
+  - CPU time divided into quanta
+  - Fast context switching
+  - Illusion of a dedicated machine per user
+
+- New concepts
+  - User accounts
+  - File permissions
+  - Command-line interfaces
+
+- Impact
+  - Computers move into universities
+  - Birth of interactive software development
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## UNIX and the portable OS idea (1970s)
+
+::: columns
+::: column
+
+- Design principles
+  - Written mostly in a high-level language
+  - Small core + utilities
+  - Everything is a file
+
+- Technical innovations
+  - Hierarchical file system
+  - Processes and pipes
+  - Device abstraction
+
+- Conceptual shift
+  - OS as a programmable environment
+  - Strong separation of policy and mechanism
+
+- Long-term influence
+  - Basis for modern operating systems
+  - Cultural impact on software engineering
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Personal computer operating systems (1980s–1990s)
+
+::: columns
+::: column
+
+- Hardware context
+  - Single-user machines
+  - Limited memory and CPU power
+
+- OS characteristics
+  - Minimal multitasking (or none)
+  - Weak isolation
+  - Direct hardware access by applications
+
+- User interaction
+  - Command line → graphical interfaces
+  - Mouse-driven workflows
+
+- Trade-offs
+  - Simplicity over robustness
+  - Usability over security
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Modern multitasking OS (1990s–2000s)
+
+::: columns
+::: column
+
+- Key features
+  - Preemptive multitasking
+  - Virtual memory
+  - User/kernel mode separation
+
+- OS responsibilities
+  - Process scheduling
+  - Memory management
+  - File systems
+  - Device drivers
+
+- Result
+  - Stability under faulty applications
+  - Multi-user security on personal machines
+
+- Concept
+  - OS as a resource manager
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Networked and distributed operating systems (2000s)
+
+::: columns
+::: column
+
+- New environment
+  - Always-on networks
+  - Client–server architecture
+
+- OS evolution
+  - Built-in networking stacks
+  - Remote authentication
+  - Distributed file systems
+
+- Shift in abstraction
+  - Local machine becomes part of a system
+  - Network as a first-class resource
+
+- Consequence
+  - Blurred boundary between OS and middleware
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Virtualization and containers (2000s–2010s)
+
+::: columns
+::: column
+
+- Virtual machines
+  - Hardware abstraction
+  - Multiple OS instances per host
+  - Strong isolation
+
+- Containers
+  - OS-level virtualization
+  - Shared kernel
+  - Lightweight process isolation
+
+- OS role changes
+  - Kernel as a platform
+  - Infrastructure for orchestration
+
+- Practical effect
+  - Cloud computing
+  - Reproducible environments
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Contemporary OS trends (2010s–…)
+
+::: columns
+::: column
+
+- Hardware trends
+  - Multi-core systems
+  - Heterogeneous architectures
+  - Accelerators (GPU, NPU)
+
+- OS challenges
+  - Parallel scheduling
+  - Power management
+  - Security at scale
+
+- Emerging directions
+  - Microkernels revisited
+  - Unikernels
+  - OS support for AI workloads
+
+- Open questions
+  - How much OS logic should move to user space?
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Summary: evolution of operating systems
+
+::: columns
+::: column
+
+- Historical trajectory
+  - No OS → batch → interactive → distributed
+
+- Increasing abstraction
+  - Hardware control → resource management
+  - Local machine → global infrastructure
+
+- Core idea
+  - Operating system mediates
+    between hardware capabilities
+    and human intentions
+
+:::
+
+::: column
+:::
+:::
+
+# History of Programming Languages
+
+---
+
+## Before programming languages (1940s–1950s)
+
+::: columns
+::: column
+
+- Programming model
+  - Direct hardware control
+  - Instructions as numeric codes
+
+- Representation
+  - Binary or octal machine code
+  - Memory addresses exposed to programmer
+
+- Characteristics
+  - Extremely error-prone
+  - Hardware-specific
+  - No abstraction mechanisms
+
+- Consequence
+  - Programming == hardware engineering
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Assembly languages (1950s)
+
+::: columns
+::: column
+
+- Motivation
+  - Improve readability
+  - Reduce programming errors
+
+- Key idea
+  - Mnemonics instead of numeric opcodes
+  - Symbolic labels instead of addresses
+
+- Properties
+  - One-to-one mapping with machine instructions
+  - Still architecture-dependent
+
+- Impact
+  - First step toward abstraction
+  - Separation of program logic from raw encoding
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## First high-level languages (1950s–1960s)
+
+::: columns
+::: column
+
+- Main goal
+  - Express algorithms, not hardware operations
+
+- Key innovations
+  - Variables
+  - Control flow
+  - Subroutines
+
+- Language families
+  - Scientific computing
+  - Business data processing
+
+- Consequence
+  - Portability becomes possible
+  - Compiler emerges as core tool
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Structured programming (1960s–1970s)
+
+::: columns
+::: column
+
+- Problem
+  - Unstructured control flow
+  - Complex and unreadable programs
+
+- Core principles
+  - Sequence
+  - Selection
+  - Iteration
+
+- Language features
+  - Block structure
+  - Lexical scoping
+  - Elimination of arbitrary jumps
+
+- Effect
+  - Programs become analyzable
+  - Reasoning about correctness improves
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Systems programming languages (1970s)
+
+::: columns
+::: column
+
+- Context
+  - Operating systems and compilers
+  - Need for efficiency and control
+
+- Design goals
+  - Low-level access
+  - High-level structure
+
+- Characteristics
+  - Explicit memory management
+  - Close mapping to machine model
+
+- Result
+  - OS and infrastructure written in high-level languages
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Object-oriented programming (1970s–1980s)
+
+::: columns
+::: column
+
+- Motivation
+  - Manage complexity in large systems
+
+- Core ideas
+  - Objects as state + behavior
+  - Encapsulation
+  - Inheritance and polymorphism
+
+- Conceptual shift
+  - Program as interacting entities
+  - Data-centered design
+
+- Long-term effect
+  - Dominant paradigm in software engineering
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Functional programming revival (1980s–1990s)
+
+::: columns
+::: column
+
+- Mathematical foundation
+  - Lambda calculus
+
+- Key concepts
+  - Pure functions
+  - Immutability
+  - Higher-order functions
+
+- Advantages
+  - Easier reasoning
+  - Parallelism-friendly semantics
+
+- Historical note
+  - Long considered academic
+  - Later adopted in mainstream languages
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Scripting and dynamic languages (1990s–2000s)
+
+::: columns
+::: column
+
+- New environment
+  - Personal computers
+  - Internet
+
+- Design priorities
+  - Developer productivity
+  - Rapid prototyping
+
+- Characteristics
+  - Dynamic typing
+  - Automatic memory management
+  - Interactive execution
+
+- Effect
+  - Programming becomes accessible
+  - Glue code between systems
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Managed runtimes and virtual machines (1990s–2000s)
+
+::: columns
+::: column
+
+- Core idea
+  - Language executed on abstract machine
+
+- Benefits
+  - Portability
+  - Security
+  - Runtime optimization
+
+- Runtime responsibilities
+  - Memory management
+  - Just-in-time compilation
+  - Sandboxing
+
+- Trade-off
+  - Performance vs safety
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Multi-paradigm languages (2000s–2010s)
+
+::: columns
+::: column
+
+- Observation
+  - No single paradigm is sufficient
+
+- Language evolution
+  - Functional features in imperative languages
+  - Object orientation everywhere
+
+- Design goal
+  - Expressiveness without fragmentation
+
+- Result
+  - Languages as evolving ecosystems
+  - Backward compatibility pressure
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Languages for parallel and distributed systems (2000s–2010s)
+
+::: columns
+::: column
+
+- Hardware shift
+  - Multi-core CPUs
+  - Clusters and clouds
+
+- Language challenges
+  - Concurrency
+  - Synchronization
+  - Fault tolerance
+
+- Approaches
+  - Message passing
+  - Shared-nothing models
+  - Asynchronous programming
+
+- Key insight
+  - Parallelism must be language-visible
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Domain-specific languages (DSLs)
+
+::: columns
+::: column
+
+- Motivation
+  - Express solutions in domain terms
+
+- Characteristics
+  - Limited scope
+  - High expressiveness
+  - Embedded or standalone
+
+- Examples of domains
+  - Data analysis
+  - Hardware description
+  - Scientific computing
+
+- Trade-off
+  - Power vs generality
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Contemporary trends in programming languages
+
+::: columns
+::: column
+
+- Safety and correctness
+  - Stronger type systems
+  - Memory safety guarantees
+
+- Performance awareness
+  - Explicit control without undefined behavior
+
+- Tooling integration
+  - Language servers
+  - Static analysis
+
+- Social factor
+  - Ecosystem often more important than syntax
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Summary: evolution of programming languages
+
+::: columns
+::: column
+
+- Long-term trajectory
+  - Hardware-oriented → human-oriented
+
+- Repeating pattern
+  - New abstraction solves old problems
+  - Introduces new complexity
+
+- Central insight
+  - Programming languages encode
+    assumptions about computation,
+    machines,
+    and humans
+
+:::
+
+::: column
+:::
+:::
+
+# History of the Internet
+
+---
+
+## Pre-Internet communication networks (1950s–1960s)
+
+::: columns
+::: column
+
+- Context
+  - Computers were rare and expensive
+  - Data transfer was physical or point-to-point
+
+- Communication methods
+  - Magnetic tapes
+  - Punched cards
+  - Dedicated telephone lines
+
+- Key limitation
+  - No general-purpose data network
+  - Tight coupling between sender and receiver
+
+- Motivation
+  - Resource sharing
+  - Remote access to computing power
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## ARPANET and packet switching (1960s–1970s)
+
+::: columns
+::: column
+
+- Core idea
+  - Packet switching instead of circuit switching
+  - Data split into independent packets
+
+- Design goals
+  - Fault tolerance
+  - Efficient resource usage
+  - Decentralization
+
+- Key concepts
+  - Routing
+  - Store-and-forward
+  - Best-effort delivery
+
+- Result
+  - First operational packet-switched network
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Network protocols and early internetworking (1970s)
+
+::: columns
+::: column
+
+- Problem
+  - Multiple incompatible networks
+  - Different hardware and transmission media
+
+- Solution
+  - Protocol layering
+  - Network of networks (internetwork)
+
+- Important ideas
+  - End-to-end principle
+  - Separation of concerns
+  - Host responsibility for reliability
+
+- Consequence
+  - Networks can interoperate without redesign
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## TCP/IP and the Internet architecture (1980s)
+
+::: columns
+::: column
+
+- TCP/IP model
+  - IP: addressing and routing
+  - TCP: reliable byte stream
+  - UDP: unreliable datagrams
+
+- Architectural principles
+  - Stateless core
+  - Intelligence at the edges
+  - Simple network, complex hosts
+
+- Milestone
+  - Adoption of TCP/IP as a standard
+
+- Effect
+  - Rapid growth of interconnected networks
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Domain Name System and scalability (1980s)
+
+::: columns
+::: column
+
+- Problem
+  - Numeric IP addresses are not human-friendly
+  - Central host tables do not scale
+
+- DNS solution
+  - Hierarchical naming
+  - Distributed administration
+  - Caching and delegation
+
+- Conceptual shift
+  - Logical names decoupled from physical location
+
+- Importance
+  - Enables global-scale growth
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Academic Internet to public network (1990s)
+
+::: columns
+::: column
+
+- Transition
+  - From research institutions to public access
+  - Commercial use allowed
+
+- Key changes
+  - Internet Service Providers (ISPs)
+  - Mass connectivity
+  - Flat-rate access
+
+- Software impact
+  - User-oriented applications
+  - Graphical network clients
+
+- Result
+  - Internet becomes a public infrastructure
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## World Wide Web (1990s)
+
+::: columns
+::: column
+
+- Core idea
+  - Hypertext over the Internet
+  - Uniform resource identifiers (URLs)
+
+- Technical stack
+  - HTTP
+  - HTML
+  - Web browsers
+
+- Key property
+  - Application-layer innovation
+  - No changes required in lower layers
+
+- Effect
+  - Explosion of Internet usage
+  - Shift from experts to general users
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Broadband, mobile Internet, and Web 2.0 (2000s)
+
+::: columns
+::: column
+
+- Infrastructure evolution
+  - Broadband access
+  - Wireless networks
+  - Mobile data
+
+- Application changes
+  - Interactive web services
+  - User-generated content
+  - Persistent online identity
+
+- Technical trends
+  - Client–server dominance
+  - Stateful services over stateless protocols
+
+- Social consequence
+  - Internet as daily environment
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Cloud computing and large-scale services (2010s)
+
+::: columns
+::: column
+
+- Shift in computation
+  - From local machines to data centers
+  - Computation moves closer to data
+
+- Internet role
+  - Backbone for cloud services
+  - API-driven communication
+
+- Key properties
+  - Elasticity
+  - Global availability
+  - Service abstraction
+
+- Result
+  - Internet becomes execution platform
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Contemporary Internet (2010s–…)
+
+::: columns
+::: column
+
+- Technical challenges
+  - Scale
+  - Latency
+  - Security
+  - Energy consumption
+
+- Architectural trends
+  - Content delivery networks
+  - Edge computing
+  - Encrypted-by-default traffic
+
+- Structural tension
+  - Centralization vs decentralization
+  - Openness vs control
+
+- Open questions
+  - Who controls the Internet?
+  - How neutral is the network?
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Summary: evolution of the Internet
+
+::: columns
+::: column
+
+- Evolution path
+  - Experimental network → global infrastructure
+
+- Increasing abstraction
+  - Physical links → packets → services
+
+- Key insight
+  - Internet is not a single technology
+  - It is a layered agreement
+    on how systems communicate
+
+:::
+
+::: column
+:::
+:::
+
+# History of Artificial Intelligence and Machine Learning
+
+---
+
+## Pre-history: ideas before computers (1940s–1950s)
+
+::: columns
+::: column
+
+- Intellectual roots
+  - Logic and formal reasoning
+  - Probability theory and statistics
+  - Neurobiology (neurons as information units)
+
+- Key questions
+  - Can reasoning be mechanized?
+  - Can machines learn from experience?
+
+- Conceptual split
+  - Symbolic reasoning (rules, logic)
+  - Statistical inference (data, probability)
+
+- Important idea
+  - Intelligence as a computable process
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Early Artificial Intelligence (1950s–1960s)
+
+::: columns
+::: column
+
+- Dominant paradigm
+  - Symbolic AI
+  - Explicit rules and representations
+
+- Core assumptions
+  - Intelligence = manipulation of symbols
+  - Knowledge can be encoded manually
+
+- Typical systems
+  - Logic solvers
+  - Game-playing programs
+  - Theorem provers
+
+- Limitations
+  - Poor scalability
+  - Brittleness outside narrow domains
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Perceptrons and early learning models (1950s–1960s)
+
+::: columns
+::: column
+
+- Motivation
+  - Learn from examples instead of rules
+  - Inspired by biological neurons
+
+- Model
+  - Linear decision boundary
+  - Weight updates from labeled data
+
+- Achievements
+  - Simple pattern recognition
+  - Hardware implementations
+
+- Fundamental limitation
+  - Cannot model non-linear functions
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## AI winter and reassessment (1970s–1980s)
+
+::: columns
+::: column
+
+- Problem
+  - Expectations exceeded capabilities
+  - Limited compute and data
+
+- Consequences
+  - Reduced funding
+  - Decline of symbolic AI optimism
+
+- Lessons learned
+  - Intelligence is harder than expected
+  - Knowledge engineering does not scale
+
+- Shift in focus
+  - From general intelligence
+    to domain-specific solutions
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Expert systems and knowledge-based AI (1980s)
+
+::: columns
+::: column
+
+- Core idea
+  - Encode expert knowledge as rules
+
+- Architecture
+  - Knowledge base
+  - Inference engine
+
+- Successes
+  - Medical diagnosis
+  - Industrial configuration
+
+- Failure modes
+  - Knowledge acquisition bottleneck
+  - Difficult maintenance
+  - Poor adaptability
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Statistical machine learning (1990s)
+
+::: columns
+::: column
+
+- Paradigm shift
+  - From rules to data
+  - From logic to probability
+
+- Key ideas
+  - Learning as optimization
+  - Generalization from samples
+
+- Typical methods
+  - Linear models
+  - Kernel methods
+  - Probabilistic models
+
+- Enablers
+  - Better mathematical foundations
+  - Increased computational power
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Data-driven learning and benchmarks (2000s)
+
+::: columns
+::: column
+
+- New conditions
+  - Large datasets
+  - Public benchmarks
+  - Reproducible evaluation
+
+- Practical focus
+  - Performance over interpretability
+  - Empirical validation
+
+- Application areas
+  - Information retrieval
+  - Speech recognition
+  - Computer vision
+
+- Important change
+  - Learning becomes engineering discipline
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Deep learning revival (2010s)
+
+::: columns
+::: column
+
+- Key idea
+  - Multi-layer neural networks
+  - Hierarchical feature learning
+
+- Why it worked now
+  - GPUs
+  - Large labeled datasets
+  - Improved optimization methods
+
+- Capabilities
+  - Image recognition
+  - Speech processing
+  - Natural language modeling
+
+- Conceptual shift
+  - Feature engineering → representation learning
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Representation learning and foundation models (late 2010s–2020s)
+
+::: columns
+::: column
+
+- Learning strategy
+  - Pretraining on massive datasets
+  - Task adaptation via fine-tuning
+
+- Properties
+  - Scale-dependent behavior
+  - Transfer learning
+  - Emergent capabilities
+
+- Infrastructure
+  - Distributed training
+  - Specialized accelerators
+
+- New abstraction
+  - Models as general-purpose components
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Contemporary AI systems (2020s–…)
+
+::: columns
+::: column
+
+- Characteristics
+  - Large-scale models
+  - Multi-modal inputs
+  - Interaction via natural language
+
+- Engineering challenges
+  - Efficiency
+  - Reliability
+  - Alignment with human intent
+
+- Deployment context
+  - Cloud services
+  - Embedded systems
+  - Scientific computing
+
+- Open problems
+  - Interpretability
+  - Robustness
+  - Long-term learning
+
+:::
+
+::: column
+:::
+:::
+
+---
+
+## Summary: evolution of AI and ML
+
+::: columns
+::: column
+
+- Historical trajectory
+  - Rules → data → representations → scale
+
+- Key pattern
+  - Shift of complexity
+    from human-designed logic
+    to learned internal structure
+
+- Central insight
+  - Modern AI is less about
+    explicit intelligence
+    and more about
+    efficient function approximation
+
+:::
+
+::: column
+:::
+:::
