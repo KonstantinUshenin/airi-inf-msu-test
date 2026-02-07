@@ -1,0 +1,2324 @@
+---
+title: "Informatics. Foundations of Software Development"
+subtitle: "Lecture 11 — Key-Value and Hierarchical Data [Early Draft]"
+author: "Konstantin Ushenin"
+date: "2026"
+---
+
+## Plan
+
+### Key-Value
+### Hierarchical Data. XML
+### Hierarchical Data. JSON
+
+
+# Key-Value
+
+
+## 1) Пары ключ–значение: базовая модель конфигурации
+
+::: columns
+::: column
+
+Примеры одного и того же паттерна в разных системах:
+
+```text
+HOST=localhost
+PORT=8080
+DEBUG=true
+````
+
+Словарь в коде:
+
+```python
+cfg = {"HOST": "localhost", "PORT": "8080", "DEBUG": "true"}
+```
+
+:::
+
+::: column
+
+**Key–Value модель**
+
+* Конфигурация как набор пар `key -> value`
+* Значения чаще всего **строки**
+* Усложнение форматов обычно добавляет:
+
+  * вложенность
+  * типы
+  * списки
+  * секции
+
+**Типовые сценарии**
+
+* конфиги приложений
+* переменные окружения
+* флаги/параметры запуска
+* секреты (но осторожно)
+
+:::
+:::
+
+---
+
+## 2) Системные переменные окружения (Environment Variables)
+
+::: columns
+::: column
+
+*Просмотр и установка (shell):*
+
+```bash
+echo "$HOME"
+export DEBUG=1
+export PATH="$PATH:/opt/tools/bin"
+```
+
+*Влияние на дочерние процессы:*
+
+```bash
+DEBUG=1 python app.py     # переменная только для этой команды
+export DEBUG=1
+python app.py             # DEBUG попадёт в окружение процесса
+```
+
+:::
+
+::: column
+
+**Environment variables**
+
+* Key–Value, хранятся в окружении процесса
+* Передаются от shell → процессу → дочерним процессам
+* **Всегда строки**, типы — по договорённости
+
+**Плюсы**
+
+* легко переопределять без изменения файлов
+* удобно для деплоя/контейнеров/CI
+
+**Минусы**
+
+* нет структуры и типов
+* секреты могут утекать в логи / дампы / дочерние процессы
+
+:::
+:::
+
+---
+
+## 3) `.env` файл: хранение секретов и загрузка в Python
+
+::: columns
+::: column
+
+Пример `.env` (не коммитить в git):
+
+```dotenv
+# .env
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxx
+OPENAI_PROJECT=my-project
+OPENAI_BASE_URL=https://api.openai.com/v1
+```
+
+Загрузка в Python (через `python-dotenv`):
+
+```python
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # читает .env из текущей директории
+
+api_key = os.getenv("OPENAI_API_KEY")
+project = os.getenv("OPENAI_PROJECT")
+
+print(api_key[:8] + "...")
+print(project)
+```
+
+:::
+
+::: column
+
+**Что такое `.env`**
+
+* Не официальный стандарт, а **соглашение**
+* Формат: `KEY=value` (+ комментарии `#` в большинстве реализаций)
+* Применение:
+
+  * локальная разработка
+  * docker-compose / CI
+  * быстрый перенос конфигов между окружениями
+
+**Правила безопасности**
+
+* `.env` добавлять в `.gitignore`
+* хранить секреты отдельно от исходников
+* минимум прав у токенов
+
+**Важно**
+
+* `.env` не даёт вложенности/типов/списков
+  это лишь удобный способ заполнить environment variables
+
+:::
+:::
+
+---
+
+## 4) Bash: `export` vs `source` (и почему это важно)
+
+::: columns
+::: column
+
+### `export` в скриптах (передача в дочерние процессы)
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+export APP_ENV=prod
+export API_HOST="https://example.com"
+
+python app.py     # app.py увидит APP_ENV и API_HOST
+```
+
+Локально только для команды:
+
+```bash
+APP_ENV=dev python app.py
+```
+
+:::
+
+::: column
+
+### `source` / `.` (выполнение в *текущем* shell)
+
+```bash
+# file: env.sh
+export APP_ENV=dev
+export DEBUG=1
+```
+
+```bash
+source env.sh   # изменяет текущее окружение
+. env.sh        # то же самое: "." = source
+echo "$APP_ENV"
+```
+
+**Зачем это нужно**
+
+* Включение переменных/функций в текущую сессию
+* Так работает активация виртуального окружения Python:
+
+```bash
+source .venv/bin/activate
+# или
+. .venv/bin/activate
+```
+
+**Риск**
+
+* `source` выполняет код → требует доверия к файлу
+
+:::
+:::
+
+---
+
+## 5) `.ini` / `.cfg`: пары + секции
+
+::: columns
+::: column
+
+Пример INI:
+
+```ini
+[server]
+host = localhost
+port = 8080
+
+[auth]
+token = secret
+```
+
+Чтение в Python:
+
+```python
+import configparser
+
+cfg = configparser.ConfigParser()
+cfg.read("app.ini")
+
+host = cfg["server"]["host"]
+port = int(cfg["server"]["port"])
+print(host, port)
+```
+
+:::
+
+::: column
+
+**INI/CFG модель**
+
+* Key–Value с секциями `[section]`
+* Обычно всё читается как **строки**
+* Комментарии чаще всего `;` или `#` (зависит от парсера)
+
+**Плюсы**
+
+* просто читать/редактировать
+* удобно для небольших конфигов
+
+**Минусы**
+
+* типы “поверх” (нужно приводить вручную)
+* нет стандартизированной вложенности
+* разные реализации по-разному трактуют синтаксис
+
+:::
+:::
+
+---
+
+## 6) TOML: строгий конфиг для людей (типы + таблицы)
+
+::: columns
+::: column
+
+Пример `config.toml`:
+
+```toml
+title = "Example"
+
+[server]
+host = "localhost"
+port = 8080
+debug = true
+
+[auth]
+token = "secret"
+```
+
+Чтение в Python (3.11+):
+
+```python
+import tomllib
+
+with open("config.toml", "rb") as f:
+    cfg = tomllib.load(f)
+
+print(cfg["server"]["port"])   # int
+print(cfg["server"]["debug"])  # bool
+```
+
+:::
+
+::: column
+
+**Почему TOML**
+
+* Однозначная спецификация
+* Нормальная типизация:
+
+  * int/float/bool/string
+  * даты/время
+  * массивы
+* Таблицы `[section]` = структурированные объекты
+
+**Плюсы**
+
+* читаемо человеком
+* удобно для конфигов инструментов (пример: `pyproject.toml`)
+
+**Минусы**
+
+* только данные (без вычислений)
+* не предназначен для документов/разметки
+
+:::
+:::
+
+---
+
+## 7) TOML глубже: массивы, вложенные таблицы, “array of tables”
+
+::: columns
+::: column
+
+Массивы и вложенность:
+
+```toml
+[build]
+targets = ["linux", "macos", "windows"]
+
+[db]
+host = "localhost"
+ports = [5432, 5433]
+
+[db.credentials]
+user = "alice"
+pass = "secret"
+```
+
+Array of tables (список объектов):
+
+```toml
+[[users]]
+id = 1
+name = "Alice"
+
+[[users]]
+id = 2
+name = "Bob"
+```
+
+:::
+
+::: column
+
+**Ключевые конструкции TOML**
+
+* `key = [ ... ]` — массив значений
+* `[a.b]` — вложенная таблица (объект внутри объекта)
+* `[[items]]` — массив таблиц (список словарей)
+
+**Чем лучше INI**
+
+* структура не “симулируется” строками
+* меньше соглашений и меньше сюрпризов у парсера
+
+**Практика**
+
+* TOML хорошо подходит, когда конфиг растёт
+* и нужны типы/списки/структура
+
+:::
+:::
+
+---
+
+## 8) Уязвимости и риски: где чаще всего “стреляет”
+
+::: columns
+::: column
+
+Примеры опасных ситуаций:
+
+```bash
+# 1) Подмена файла, который source'ят
+source ./env.sh   # если env.sh подменили → выполнение кода
+
+# 2) Секреты утекли в репозиторий
+git add .env
+git commit -m "fix"
+```
+
+Утечки через дочерние процессы:
+
+```bash
+export SECRET=topsecret
+python app.py | tee log.txt  # SECRET может попасть в вывод/логи/дампы
+```
+
+:::
+
+::: column
+
+**Главные классы рисков**
+
+* **Code execution**: `source`, bash-конфиги, “конфиг как код”
+* **Secret leakage**: случайный коммит `.env`, логирование env, дампы памяти
+* **Injection**: некорректное экранирование, подстановка `$(...)`, пробелы/кавычки
+* **Ambiguity**: разные парсеры INI трактуют синтаксис по-разному
+
+**Рекомендации**
+
+* Не `source`-ить недоверенные файлы
+* `.env` всегда в `.gitignore`
+* Секреты — через secret manager / CI secrets, минимум прав
+* Конфиги как данные (TOML/INI) безопаснее, чем конфиги как код (bash)
+
+:::
+:::
+
+---
+
+## Мини-итог: что выбрать и когда
+
+::: columns
+::: column
+
+```text
+env / .env     → простые пары, деплой, секреты (осторожно)
+bash + source  → удобно, но это "конфиг как код" (риск)
+ini/cfg        → простые конфиги, без строгих типов
+toml           → типы + структура + читаемость для человека
+```
+
+:::
+
+::: column
+
+**Выбор по задачам**
+
+* Нужна интеграция с ОС/CI → env / .env
+* Нужны типы, списки, структура → TOML
+* Нужен минимализм и legacy → INI/CFG
+* Нужна логика/вычисления → скрипт (но помни про безопасность)
+
+**Ключевая мысль**
+
+> Чем “умнее” формат (и ближе к коду),
+> тем выше цена ошибки и риск уязвимостей.
+
+:::
+:::
+
+
+
+## Аргументы командной строки (CLI) и их обработка в Python
+
+::: columns
+::: column
+
+Запуск программы с аргументами:
+
+```bash
+python app.py --host localhost --port 8080 --debug
+````
+
+Минимальный доступ в Python (`sys.argv`):
+
+```python
+import sys
+
+print(sys.argv)
+# ['app.py', '--host', 'localhost', '--port', '8080', '--debug']
+```
+
+Структурированный разбор (`argparse`):
+
+```python
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--host", default="localhost")
+parser.add_argument("--port", type=int, default=8080)
+parser.add_argument("--debug", action="store_true")
+
+args = parser.parse_args()
+
+print(args.host, args.port, args.debug)
+```
+
+:::
+
+::: column
+
+**CLI-аргументы**
+
+* Передаются **явно при запуске**
+* Видимы в командной строке
+* Не сохраняются после завершения процесса
+* Подходят для:
+
+  * режимов работы
+  * флагов
+  * разовых параметров
+
+**Сравнение с env**
+
+| CLI               | Environment              |
+| ----------------- | ------------------------ |
+| Явно при запуске  | Задаются заранее         |
+| Видны в `ps`      | Видны дочерним процессам |
+| Удобны для флагов | Удобны для конфигов      |
+| Хороши для тестов | Хороши для деплоя        |
+
+**Практическое правило**
+
+> CLI — для *как запускать*
+> env — для *в каком окружении работать*
+
+:::
+:::
+
+
+
+# XML
+
+
+## XML: назначение и версии стандарта
+
+::: columns
+::: column
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <value>42</value>
+</root>
+````
+
+:::
+
+::: column
+
+**Назначение XML**
+
+* Текстовый формат для описания **структурированных данных**
+* XML описывает **форму**, а не смысл данных
+* XML — **метаязык** (основа для SVG, SOAP, RSS и др.)
+
+**Версии стандарта**
+
+* **XML 1.0** — стандарт де-факто
+* **XML 1.1** — отличается только набором допустимых символов
+* Большинство парсеров и форматов ожидают XML 1.0
+
+**Практика**
+
+* Почти всегда используйте `version="1.0"`
+* XML 1.1 может не поддерживаться инфраструктурой
+
+:::
+:::
+
+---
+
+## Структура XML-документа
+
+::: columns
+::: column
+
+```xml
+<?xml version="1.0"?>
+<document>
+  <header>
+    <title>Example</title>
+  </header>
+  <body/>
+</document>
+```
+
+:::
+
+::: column
+
+**Обязательные элементы XML**
+
+* XML-декларация (опциональна, но рекомендуется)
+* **Ровно один корневой элемент**
+* Вложенные элементы образуют **дерево**
+
+**Структурные правила**
+
+* XML — всегда **иерархия**, не граф
+* Порядок элементов важен
+* Переводы строк и пробелы могут быть
+  текстовыми узлами (важно для DOM)
+
+**Следствие**
+
+* XML нельзя “починить автоматически”
+* Любое нарушение структуры — фатальная ошибка
+
+:::
+:::
+
+---
+
+## Элементы и атрибуты XML
+
+::: columns
+::: column
+
+```xml
+<user id="42" role="admin">
+  <name>Alice</name>
+  <email>alice@example.com</email>
+</user>
+```
+
+:::
+
+::: column
+
+**Элементы**
+
+* Основная структурная единица XML
+* Состоят из:
+
+  * открывающего тега
+  * содержимого
+  * закрывающего тега
+* Возможны пустые элементы: `<br/>`
+
+**Атрибуты**
+
+* Формат: `name="value"`
+* Значения **всегда строки**
+* Один атрибут не может повторяться
+
+**Рекомендованная семантика**
+
+* Данные → **элементы**
+* Метаданные → **атрибуты**
+
+:::
+:::
+
+---
+
+## Комментарии и текстовое содержимое
+
+::: columns
+::: column
+
+```xml
+<!-- user record -->
+<expr>a &lt; b &amp;&amp; b &gt; c</expr>
+```
+
+:::
+
+::: column
+
+**Комментарии**
+
+* Синтаксис: `<!-- ... -->`
+* Игнорируются парсером
+* Запрещено:
+
+  * вложенные комментарии
+  * последовательность `--`
+
+**Текстовое содержимое (PCDATA)**
+
+* `<`, `&` запрещены напрямую
+* Используется экранирование:
+
+  * `&lt;` `<`
+  * `&gt;` `>`
+  * `&amp;` `&`
+
+**Важно**
+
+* XML **не угадывает** намерения автора
+* Неверный символ → ошибка парсинга
+
+:::
+:::
+
+---
+
+## CDATA: необрабатываемый текст
+
+::: columns
+::: column
+
+```xml
+<script><![CDATA[
+  if (a < b && b > c) {
+      return 0;
+  }
+]]></script>
+```
+
+:::
+
+::: column
+
+**CDATA-секция**
+
+* Текст внутри **не анализируется**
+* Все символы допустимы, кроме `]]>`
+* Полезно для:
+
+  * кода
+  * SQL
+  * шаблонов
+
+**Ограничения**
+
+* Нельзя вкладывать CDATA
+* Содержимое не нормализуется
+* Усложняет обработку XPath и поиск
+
+**Выбор**
+
+* Escaping — безопаснее
+* CDATA — удобнее, но грубее
+
+:::
+:::
+
+
+---
+
+## Пространства имён XML: зачем и что это такое
+
+::: columns
+::: column
+
+```xml
+<book>
+  <title>XML</title>
+</book>
+````
+
+```xml
+<svg>
+  <title>Circle</title>
+</svg>
+```
+
+:::
+
+::: column
+
+**Проблема без namespaces**
+
+* Одинаковые имена элементов
+* Разные смыслы
+* Конфликт словарей тегов
+
+**Решение XML**
+
+* Пространство имён задаёт **контекст имени**
+* Имя элемента = **(namespace URI, local-name)**
+* Namespace идентифицируется URI, а не префиксом
+
+**Следствие**
+
+* `<title>` без namespace — неоднозначен
+* XML не знает «семантики» без namespace
+
+:::
+:::
+
+---
+
+## Объявление пространства имён
+
+::: columns
+::: column
+
+```xml
+<book xmlns="urn:book">
+  <title>XML</title>
+</book>
+```
+
+```xml
+<b:book xmlns:b="urn:book">
+  <b:title>XML</b:title>
+</b:book>
+```
+
+:::
+
+::: column
+
+**Два способа объявления**
+
+* Default namespace:
+
+  ```xml
+  xmlns="urn:book"
+  ```
+* Namespace с префиксом:
+
+  ```xml
+  xmlns:b="urn:book"
+  ```
+
+**Ключевые правила**
+
+* Префикс — **алиас**
+* Важен **URI**
+* Разные префиксы с одним URI — эквивалентны
+
+**Фактически**
+
+* `{urn:book}title`
+* `{urn:book}book`
+
+:::
+:::
+
+---
+
+## Наследование и переопределение namespace
+
+::: columns
+::: column
+
+```xml
+<root xmlns="urn:A">
+  <x/>
+  <inner xmlns="urn:B">
+    <x/>
+  </inner>
+  <x/>
+</root>
+```
+
+:::
+
+::: column
+
+**Область действия namespace**
+
+* Namespace действует:
+
+  * на элемент
+  * на всех его потомков
+
+**Переопределение**
+
+* Вложенный элемент может задать новый namespace
+* После выхода из области — старый namespace восстанавливается
+
+**Namespace элементов**
+
+* `<root>` → `urn:A`
+* первый `<x>` → `urn:A`
+* `<inner>` и его `<x>` → `urn:B`
+* последний `<x>` → `urn:A`
+
+:::
+:::
+
+---
+
+## Атрибуты и пространства имён (важная ловушка)
+
+::: columns
+::: column
+
+```xml
+<item xmlns="urn:A" id="10"/>
+```
+
+```xml
+<item xmlns:a="urn:A" a:id="10"/>
+```
+
+:::
+
+::: column
+
+**Ключевое правило XML**
+
+* Default namespace **НЕ применяется** к атрибутам
+
+**Разбор примеров**
+
+1. `<item xmlns="urn:A" id="10"/>`
+
+   * элемент: `{urn:A}item`
+   * атрибут: `{""}id` (без namespace)
+
+2. `<item a:id="10"/>`
+
+   * атрибут: `{urn:A}id`
+
+**Следствие**
+
+* Namespace атрибута возможен **только через префикс**
+* Частая причина ошибок в XPath и XSD
+
+:::
+:::
+
+---
+
+## XPath: идея и модель навигации
+
+::: columns
+::: column
+
+```xml
+<book>
+  <title>XML</title>
+  <author>Smith</author>
+</book>
+```
+
+:::
+
+::: column
+
+**XPath**
+
+* Язык навигации по XML-дереву
+* Работает с логической моделью XML
+* Используется в:
+
+  * XPath
+  * XSLT
+  * XSD
+  * XML-парсерах
+
+**Модель**
+
+* XML = дерево узлов
+* XPath = путь в дереве
+
+**Типы узлов**
+
+* element
+* attribute
+* text
+* root
+
+:::
+:::
+
+---
+
+## XPath: базовый синтаксис путей
+
+::: columns
+::: column
+
+```xpath
+/book/title
+//title
+```
+
+:::
+
+::: column
+
+**Основные конструкции**
+
+* `/` — абсолютный путь от корня
+* `//` — поиск в любом месте поддерева
+* `name` — элемент с данным именем
+
+**Примеры**
+
+* `/book/title` — строго по структуре
+* `//title` — любой `<title>` в документе
+
+**Важно**
+
+* XPath чувствителен к namespace
+* Совпадение имени ≠ совпадение элемента
+
+:::
+:::
+
+---
+
+## XPath: атрибуты и предикаты
+
+::: columns
+::: column
+
+```xpath
+//user[@role="admin"]
+/book[@id="42"]
+```
+
+:::
+
+::: column
+
+**Атрибуты**
+
+* Обращение через `@`
+* Используются в предикатах
+
+**Предикаты**
+
+* Фильтрация узлов
+* Синтаксис: `[условие]`
+
+**Типичные условия**
+
+* `@attr = "value"`
+* `position()`
+* `last()`
+
+:::
+:::
+
+---
+
+## XPath: текстовые узлы и функции
+
+::: columns
+::: column
+
+```xpath
+/book/title/text()
+contains(., "XML")
+```
+
+:::
+
+::: column
+
+**Текстовые узлы**
+
+* `text()` возвращает текст элемента
+* Элемент и текст — разные узлы
+
+**Функции XPath**
+
+* `contains()`
+* `starts-with()`
+* `normalize-space()`
+
+**Важно**
+
+* `.` — текущий узел
+* XPath работает с узлами, не со строками
+
+:::
+:::
+
+---
+
+## XPath и пространства имён
+
+::: columns
+::: column
+
+```xml
+<book xmlns="urn:book">
+  <title>XML</title>
+</book>
+```
+
+```xpath
+/book/title        <!-- НЕ работает -->
+```
+
+```xpath
+/b:book/b:title    <!-- работает -->
+```
+
+:::
+
+::: column
+
+**Ключевое правило**
+
+* XPath **не видит default namespace**
+
+**Обязательное действие**
+
+* Связать префикс с URI:
+
+  ```
+  b → urn:book
+  ```
+
+**Следствие**
+
+* Любой XPath с namespace требует префиксов
+* Самая частая причина “XPath ничего не находит”
+
+:::
+:::
+
+---
+
+
+
+## Parsing vs Validation в XML
+
+::: columns
+::: column
+
+```xml
+<user>
+  <age>abc</age>
+</user>
+````
+
+:::
+
+::: column
+
+**Parsing (разбор)**
+
+* Проверяет только **синтаксис**
+* XML должен быть **well-formed**
+* Ошибка структуры → фатальная ошибка
+
+**Validation (валидация)**
+
+* Проверяет соответствие **схеме**
+* Типы, порядок, кратность
+* Требует XSD (или DTD)
+
+**Ключевое различие**
+
+* Well-formed ≠ Valid
+* Парсер может принять XML,
+  который схема отвергнет
+
+:::
+:::
+
+---
+
+## XML Schema (XSD): назначение и роль
+
+::: columns
+::: column
+
+```xml
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+</xs:schema>
+```
+
+:::
+
+::: column
+
+**XML Schema (XSD)**
+
+* Формальный контракт XML-документа
+* Описывает:
+
+  * допустимые элементы
+  * их типы
+  * структуру и порядок
+
+**Зачем нужна XSD**
+
+* Раннее обнаружение ошибок
+* Типизация данных
+* Генерация кода (Java, C#, …)
+
+**Важно**
+
+* XSD — отдельный стандарт
+* XML сам по себе **не типизирован**
+
+:::
+:::
+
+---
+
+## XSD: элементы и типы
+
+::: columns
+::: column
+
+```xml
+<xs:element name="age" type="xs:int"/>
+<xs:element name="name" type="xs:string"/>
+```
+
+:::
+
+::: column
+
+**Элементы XSD**
+
+* `xs:element` — XML-элемент
+* `type` — встроенный или пользовательский тип
+
+**Простые типы**
+
+* `xs:string`
+* `xs:int`, `xs:integer`
+* `xs:boolean`
+* `xs:date`, `xs:dateTime`
+
+**Следствие**
+
+* `<age>abc</age>` — ошибка при `xs:int`
+* Типы проверяются при validation
+
+:::
+:::
+
+---
+
+## XSD: complexType и sequence
+
+::: columns
+::: column
+
+```xml
+<xs:element name="user">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="age"  type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:element>
+```
+
+:::
+
+::: column
+
+**complexType**
+
+* Элемент с вложенной структурой
+* Может содержать элементы и атрибуты
+
+**xs:sequence**
+
+* Строгий порядок элементов
+* `<age>` до `<name>` → ошибка
+
+**Альтернативы**
+
+* `xs:choice` — один из вариантов
+* `xs:all` — любой порядок (0/1 раз)
+
+:::
+:::
+
+---
+
+## XSD: атрибуты, кратность и ограничения
+
+::: columns
+::: column
+
+```xml
+<xs:attribute name="id"
+              type="xs:int"
+              use="required"/>
+
+<xs:element name="item"
+            minOccurs="0"
+            maxOccurs="unbounded"/>
+```
+
+:::
+
+::: column
+
+**Атрибуты**
+
+* `xs:attribute`
+* `use="required | optional"`
+
+**Кратность**
+
+* `minOccurs`
+* `maxOccurs`
+* `unbounded` — без ограничения
+
+**Ограничения (restriction)**
+
+* диапазоны чисел
+* перечисления (enum)
+* шаблоны (pattern)
+
+:::
+:::
+
+---
+
+## XSD: перечисления и диапазоны
+
+::: columns
+::: column
+
+```xml
+<xs:simpleType name="Role">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="admin"/>
+    <xs:enumeration value="user"/>
+  </xs:restriction>
+</xs:simpleType>
+```
+
+:::
+
+::: column
+
+**Перечисления**
+
+* Ограниченный набор значений
+* Часто используется для ролей, статусов
+
+**Диапазоны**
+
+* `minInclusive / maxInclusive`
+* `minExclusive / maxExclusive`
+
+**Следствие**
+
+* XML становится строго типизированным
+* Ошибки ловятся до бизнес-логики
+
+:::
+:::
+
+---
+
+## Связь XML и XSD (schemaLocation)
+
+::: columns
+::: column
+
+```xml
+<user
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="user.xsd">
+</user>
+```
+
+:::
+
+::: column
+
+**Подключение схемы**
+
+* `xsi:noNamespaceSchemaLocation`
+* `xsi:schemaLocation` (с namespace)
+
+**Важно**
+
+* XML **может** указывать схему
+* Но **обязанность валидации** — у парсера
+
+**Практика**
+
+* Не все парсеры валидируют автоматически
+* Часто validation включают явно
+
+:::
+:::
+
+---
+
+## XML в памяти: DOM и SAX
+
+::: columns
+::: column
+
+```xml
+<root>
+  <user id="1"/>
+  <user id="2"/>
+</root>
+```
+
+:::
+
+::: column
+
+**Две модели обработки**
+
+* **DOM** — всё дерево в памяти
+* **SAX** — поток событий
+
+**Выбор модели**
+
+* DOM — удобство и навигация
+* SAX — производительность и масштаб
+
+**Ключевая идея**
+
+* XML логически — дерево
+* Но физически можно читать по-разному
+
+:::
+:::
+
+---
+
+## DOM: модель и свойства
+
+::: columns
+::: column
+
+```text
+Document
+└── Element(root)
+    ├── Element(user)
+    └── Element(user)
+```
+
+:::
+
+::: column
+
+**DOM (Document Object Model)**
+
+* Загружает **весь документ**
+* Представляет XML как объектное дерево
+
+**Плюсы**
+
+* Удобная навигация
+* Можно изменять структуру
+
+**Минусы**
+
+* Память O(n)
+* Плохо для больших файлов
+
+:::
+:::
+
+---
+
+## SAX: потоковая модель
+
+::: columns
+::: column
+
+```text
+startElement(root)
+startElement(user)
+endElement(user)
+startElement(user)
+endElement(user)
+endElement(root)
+```
+
+:::
+
+::: column
+
+**SAX (event-based)**
+
+* Чтение XML как потока
+* Генерирует события:
+
+  * startElement
+  * characters
+  * endElement
+
+**Плюсы**
+
+* Минимум памяти
+* Подходит для больших XML
+
+**Минусы**
+
+* Нет случайного доступа
+* Сложнее логика обработки
+
+:::
+:::
+
+---
+
+## DOM vs SAX: сравнение
+
+::: columns
+::: column
+
+```text
+DOM:  дерево целиком
+SAX:  поток событий
+```
+
+:::
+
+::: column
+
+**DOM**
+
+* * Удобство
+* * XPath
+* − Память
+* − Медленно для больших файлов
+
+**SAX**
+
+* * Быстро
+* * Мало памяти
+* − Сложно
+* − Только однонаправленный проход
+
+**Правило**
+
+* Малый XML → DOM
+* Большой XML → SAX / streaming
+
+:::
+:::
+
+
+---
+
+## Python: XML как дерево (ElementTree: parse/fromstring)
+
+::: columns
+::: column
+
+```python
+import xml.etree.ElementTree as ET
+
+xml = """<root>
+  <user id="42" role="admin">
+    <name>Alice</name>
+  </user>
+</root>"""
+
+root = ET.fromstring(xml)
+
+user = root.find("user")
+print(user.attrib["id"])         # 42
+print(user.find("name").text)    # Alice
+````
+
+:::
+
+::: column
+
+**ElementTree (DOM-подобная модель)**
+
+* `ET.fromstring()` — парсинг строки
+* `ET.parse()` — парсинг файла → `tree.getroot()`
+* `find()/findall()` — поиск по тегам (простые XPath)
+
+**Узлы и данные**
+
+* `element.tag` — имя элемента
+* `element.attrib` — словарь атрибутов
+* `element.text` — текстовое содержимое
+
+**Типичные ошибки**
+
+* `find("a/b")` ищет по *пути*, но это **подмножество XPath**
+* Пробелы/переводы строк могут давать `text` с whitespace
+
+:::
+:::
+
+---
+
+## Python: XPath-подмножество и фильтрация (предикаты)
+
+::: columns
+::: column
+
+```python
+import xml.etree.ElementTree as ET
+
+root = ET.fromstring("""
+<root>
+  <user id="1" role="user"/>
+  <user id="2" role="admin"/>
+  <user id="3" role="admin"/>
+</root>
+""")
+
+admins = root.findall(".//user[@role='admin']")
+print([u.attrib["id"] for u in admins])  # ['2', '3']
+```
+
+:::
+
+::: column
+
+**XPath в ElementTree**
+
+* Поддерживается ограниченный синтаксис:
+
+  * `.//tag`
+  * `tag/subtag`
+  * `[@attr='value']`
+
+**Что удобно показывать на лекции**
+
+* Фильтрация по атрибутам
+* Поиск по документу через `.//`
+
+**Ограничения**
+
+* Нет полной поддержки осей XPath (`ancestor::`, `following-sibling::`)
+* Для сложного XPath обычно используют `lxml`
+
+:::
+:::
+
+---
+
+## Python: namespaces в ElementTree (как искать элементы)
+
+::: columns
+::: column
+
+```python
+import xml.etree.ElementTree as ET
+
+root = ET.fromstring("""
+<book xmlns="urn:book">
+  <title>XML</title>
+</book>
+""")
+
+ns = {"b": "urn:book"}
+
+# без namespace не найдёт
+print(root.find("title"))  # None
+
+# правильный поиск: префикс + словарь
+print(root.find("b:title", ns).text)  # XML
+```
+
+:::
+
+::: column
+
+**Ключевой момент**
+
+* Внутри XML элементы в namespace
+* Поиск должен использовать **qualified name**
+
+**Как это делается**
+
+* Словарь `ns = {"prefix": "URI"}`
+* Поиск с префиксом: `"b:title"`
+
+**Что объяснить словами**
+
+* Default namespace в XML ≠ “нет namespace”
+* Префикс в Python — технический алиас, важен URI
+
+:::
+:::
+
+---
+
+## Python: потоковая обработка больших XML (iterparse)
+
+::: columns
+::: column
+
+```python
+import xml.etree.ElementTree as ET
+
+# читаем огромный XML без загрузки всего в память
+for event, el in ET.iterparse("big.xml", events=("end",)):
+    if el.tag == "item":
+        # обработка элемента
+        # ...
+        el.clear()   # освобождаем память под уже обработанным поддеревом
+```
+
+:::
+
+::: column
+
+**Streaming-подход (SAX-like)**
+
+* `iterparse()` — чтение по частям
+* События `start/end` позволяют обработку “на лету”
+* `el.clear()` критичен: иначе память растёт
+
+**Когда применять**
+
+* Логи, дампы, выгрузки (GB)
+* ETL-пайплайны
+
+**Ограничения**
+
+* Нет “случайного доступа” как в DOM
+* Логику приходится строить вокруг событий
+
+:::
+:::
+
+---
+
+## SVG: XML для векторной графики (namespace обязателен)
+
+::: columns
+::: column
+
+```xml
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="120" height="120" viewBox="0 0 120 120">
+  <circle cx="60" cy="60" r="45" fill="red"/>
+</svg>
+```
+
+:::
+
+::: column
+
+**Почему SVG хороший пример “XML в реальности”**
+
+* Полноценный “язык поверх XML”
+* Сильная зависимость от **namespaces**
+* Теги = примитивы, атрибуты = параметры
+
+**Что подчеркнуть**
+
+* `xmlns="http://www.w3.org/2000/svg"` обязателен для корректной идентификации
+* SVG легко генерировать программно (шаблоны, пайплайны)
+
+**Связь с темой**
+
+* Пример: тот же синтаксис XML, но другой смысл
+
+:::
+:::
+
+---
+
+## SVG: группы, трансформации, стили (чуть сложнее)
+
+::: columns
+::: column
+
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60">
+  <g transform="translate(10,10)">
+    <rect x="0" y="0" width="80" height="40" fill="none" stroke="black"/>
+    <text x="5" y="25" font-size="12">Hello</text>
+  </g>
+</svg>
+```
+
+:::
+
+::: column
+
+**Полезные конструкции SVG**
+
+* `<g>` — группировка элементов
+* `transform` — трансформации (translate/scale/rotate)
+* `<text>` — текст (но с нюансами шрифтов/рендеринга)
+
+**Что обсудить на лекции**
+
+* SVG = дерево → удобно применять XPath/DOM
+* Визуальные параметры обычно в атрибутах
+
+**Ловушки**
+
+* Рендеринг текста зависит от окружения
+* Стили можно выносить в CSS, но это отдельная тема
+
+:::
+:::
+
+---
+
+## SOAP: XML как протокол сообщений (Envelope/Header/Body)
+
+::: columns
+::: column
+
+```xml
+<soap:Envelope
+  xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:m="urn:msg">
+
+  <soap:Header>
+    <m:AuthToken>abc123</m:AuthToken>
+  </soap:Header>
+
+  <soap:Body>
+    <m:GetUser>
+      <m:id>42</m:id>
+    </m:GetUser>
+  </soap:Body>
+
+</soap:Envelope>
+```
+
+:::
+
+::: column
+
+**SOAP-структура**
+
+* `Envelope` — контейнер сообщения
+* `Header` — метаданные (аутентификация, трейсинг, маршрутизация)
+* `Body` — полезная нагрузка (RPC/документ)
+
+**Почему здесь важны namespaces**
+
+* SOAP элементы должны быть в SOAP namespace
+* Payload обычно в отдельном namespace (`m:`)
+
+**Связь с XSD**
+
+* Часто схема описывает типы для `Body`
+* WSDL использует XSD для контрактов
+
+:::
+:::
+
+---
+
+## SOAP Fault: стандартная ошибка протокола
+
+::: columns
+::: column
+
+```xml
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <soap:Fault>
+      <faultcode>soap:Client</faultcode>
+      <faultstring>Invalid id</faultstring>
+    </soap:Fault>
+  </soap:Body>
+</soap:Envelope>
+```
+
+:::
+
+::: column
+
+**Fault**
+
+* Стандартизированная форма ошибки
+* Часто полезно для логирования и автоматической обработки
+
+**Типовые причины**
+
+* Ошибка клиента (неверные данные)
+* Ошибка сервера (исключение на стороне сервиса)
+
+**Учебный смысл**
+
+* XML может быть не “данными”, а **протоколом**
+* Формальная структура важна для совместимости
+
+:::
+:::
+
+---
+
+## Итог: что нужно помнить про XML
+
+::: columns
+::: column
+
+```text
+XML ecosystem:
+  XML + Namespaces + XPath
+  + (XSD validation)
+  + (DOM/SAX processing)
+  -> SVG / SOAP / RSS / ...
+```
+
+:::
+
+::: column
+
+**Ключевые идеи**
+
+* XML — **метаязык**: смысл задают форматы поверх него
+* XML — **строгий**: парсер не “чинит” ошибки
+* Namespace = (URI, local-name), префикс — алиас
+* XPath — навигация по дереву, но namespaces обязательны
+* Parsing ≠ Validation (well-formed ≠ valid)
+* DOM удобно, SAX/streaming масштабируется
+
+**Практические выводы**
+
+* Малые документы → DOM/ElementTree
+* Большие выгрузки → streaming (`iterparse`)
+* Протоколы/контракты → XSD рядом почти всегда
+
+:::
+:::
+
+
+# JSON
+
+## Зачем появился JSON и когда
+
+::: columns
+::: column
+
+```javascript
+// JavaScript object literal (2001)
+var user = {
+  id: 42,
+  name: "Alice",
+  admin: true
+};
+````
+
+:::
+
+::: column
+
+**Исторический контекст**
+
+* 2001 — Дуглас Крокфорд
+* JSON вырос из синтаксиса JavaScript
+* Реакция на сложность XML (namespaces, XSD, XPath)
+
+**Цель JSON**
+
+* Лёгкий формат обмена данными
+* Минимум синтаксиса
+* Прямое отображение в структуры языков
+
+**Ключевая идея**
+
+* JSON проектировался **для программ**, не для документов
+* API > контракты > строгая типизация
+
+:::
+:::
+
+---
+
+## JSON vs XML — принципиальные отличия
+
+::: columns
+::: column
+
+| XML                     | JSON                      |
+| ----------------------- | ------------------------- |
+| Дерево элементов        | Объекты и массивы         |
+| Элементы + атрибуты     | Только ключ–значение      |
+| Всё — строки            | Типы данных               |
+| Namespaces              | Нет                       |
+| XSD — жёсткий контракт  | JSON Schema — опциональна |
+| Подходит для документов | Подходит для API          |
+| Многословный            | Компактный                |
+
+:::
+
+::: column
+
+**Ключевые различия**
+
+* XML — **формальный и расширяемый**
+* JSON — **простой и практичный**
+
+**Философия**
+
+* XML → контракт и стабильность
+* JSON → удобство и скорость разработки
+
+**Важно**
+
+* JSON не «лучше»
+* JSON решает **другой класс задач**
+
+:::
+:::
+
+---
+
+## Типы данных JSON
+
+::: columns
+::: column
+
+```json
+{
+  "id": 42,
+  "name": "Alice",
+  "admin": true,
+  "score": 12.5,
+  "tags": ["a", "b"],
+  "meta": null
+}
+```
+
+:::
+
+::: column
+
+**Поддерживаемые типы**
+
+* object
+* array
+* string
+* number
+* boolean
+* null
+
+**Чего НЕТ**
+
+* дат
+* байтов
+* пользовательских типов
+* комментариев
+
+**Следствие**
+
+* Типы простые и универсальные
+* Всё сложное — по договорённости
+
+:::
+:::
+
+---
+
+## Строгость и синтаксис JSON
+
+::: columns
+::: column
+
+```json
+{
+  "a": 1,
+  "b": 2
+}
+```
+
+❌ Ошибки:
+
+```json
+{ a: 1 }        // ключ без кавычек
+{ "a": 1, }     // trailing comma
+```
+
+:::
+
+::: column
+
+**Синтаксические правила**
+
+* Ключи — **только строки**
+* Кавычки — только `"`
+* Нет комментариев
+* Нет висячих запятых
+
+**Строгость JSON**
+
+* Синтаксис проще XML
+* Но парсер **не прощает ошибок**
+
+**Практика**
+
+* JSON легко читать
+* Но нельзя «расширять синтаксис»
+
+:::
+:::
+
+---
+
+## JSON Schema: зачем нужна (1/2)
+
+::: columns
+::: column
+
+```json
+{
+  "age": "abc"
+}
+```
+
+:::
+
+::: column
+
+**Проблема**
+
+* JSON сам по себе не валидируется
+* Типы легко “сломать”
+
+**JSON Schema**
+
+* Описывает структуру JSON
+* Проверяет типы и ограничения
+* Используется в API и конфигурациях
+
+**Контраст с XML**
+
+* JSON Schema появилась **после JSON**
+* Не является обязательной частью формата
+
+:::
+:::
+
+---
+
+## JSON Schema: пример схемы (2/2)
+
+::: columns
+::: column
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "age": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": ["age"]
+}
+```
+
+:::
+
+::: column
+
+**Возможности**
+
+* `type`
+* `properties`
+* `required`
+* `minimum / maximum`
+* `enum`
+* `array / items`
+
+**Ограничения**
+
+* Менее формальна, чем XSD
+* Часто используется выборочно
+
+**Практика**
+
+* API → JSON Schema
+* Документы → XML + XSD
+
+:::
+:::
+
+---
+
+## JSON в Python
+
+::: columns
+::: column
+
+```python
+import json
+
+text = '{"id": 42, "name": "Alice"}'
+
+data = json.loads(text)
+print(data["id"])      # 42
+
+data["admin"] = True
+
+print(json.dumps(data))
+```
+
+:::
+
+::: column
+
+**Модель работы**
+
+* JSON → dict / list
+* Без промежуточного DOM
+* Без XPath
+
+**Функции**
+
+* `json.loads()` — строка → объект
+* `json.load()` — файл → объект
+* `json.dumps()` — объект → строка
+
+**Ключевое отличие от XML**
+
+* JSON естественно ложится в модель языка
+* Минимум инфраструктуры
+
+:::
+:::
+
+
+---
+
+## Соответствие типов: JSON, Python, JavaScript
+
+::: columns
+::: column
+
+| JSON | Python | JavaScript |
+|-----|--------|------------|
+| object | dict | Object |
+| array | list | Array |
+| string | str | string |
+| number | int / float | number |
+| boolean | bool | boolean |
+| null | None | null |
+| — | set | Set |
+
+:::
+
+::: column
+
+**Ключевая идея**
+
+* JSON — минимальная модель данных
+* Типы подбирались под **языки программирования**, но не совпадают полностью
+
+**Критичное отличие**
+
+* В JSON **НЕТ множества (set)**
+* Нет уникальности элементов
+* Нет неупорядоченных коллекций
+
+**Следствие**
+
+* `set` в Python при сериализации → `array`
+* Семантика уникальности теряется
+* Восстановление `set` — по договорённости
+
+:::
+:::
+
+---
+
+## Потеря информации при JSON-сериализации (пример)
+
+::: columns
+::: column
+
+```python
+data = {
+    "tags": {"a", "b", "c"}  # Python set
+}
+
+import json
+print(json.dumps(data))
+````
+
+Результат:
+
+```json
+{
+  "tags": ["a", "b", "c"]
+}
+```
+
+:::
+
+::: column
+
+**Что произошло**
+
+* `set` преобразован в `array`
+* Порядок не гарантирован
+* Уникальность — не зафиксирована
+
+**Почему так**
+
+* JSON не знает про множества
+* JSON — формат передачи, а не типовая система
+
+**Практика**
+
+* Использовать `array`
+* Или явно кодировать тип:
+
+  ```json
+  {"type": "set", "values": [...]}
+  ```
+
+:::
+:::
