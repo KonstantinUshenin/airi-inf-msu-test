@@ -1,0 +1,1481 @@
+---
+title: "Informatics. Foundations of Software Development"
+subtitle: "Lecture 12 — Table data: SQL, Pandas [EARLY DRAFT]"
+author: "Konstantin Ushenin"
+date: "2026"
+---
+
+## Plan
+
+### SQL
+### Pandas
+
+# SQL
+
+## Таблица как отношение (relation)
+
+::: columns
+::: column
+
+Пример таблицы `users`:
+
+| id | name  | age | country |
+|----|-------|-----|---------|
+| 1  | Alice | 25  | US      |
+| 2  | Bob   | 17  | UK      |
+| 3  | Carol | 30  | US      |
+
+:::
+
+::: column
+
+**Relation = множество кортежей**
+
+* Строка = tuple
+* Столбец = attribute
+* Порядок строк не гарантируется
+* Первичный ключ обеспечивает уникальность
+
+**SQL — декларативный язык**
+
+* Описываем результат
+* Оптимизатор решает, как его получить
+
+:::
+:::
+
+---
+
+## SELECT — базовая форма запроса
+
+::: columns
+::: column
+
+```sql
+SELECT name, age
+FROM users;
+```
+
+```sql
+SELECT *
+FROM users;
+```
+
+:::
+
+::: column
+
+**SELECT**
+
+* Определяет, какие столбцы вернуть
+* Не изменяет данные
+* Может включать выражения
+
+**Важно**
+
+SELECT не фильтрует строки — это делает WHERE.
+
+:::
+:::
+
+---
+
+## SELECT -- полная форма запроса
+
+::: columns
+::: column
+
+Пишем:
+
+```sql
+SELECT country, COUNT(*)
+FROM users
+WHERE age > 18
+GROUP BY country
+HAVING COUNT(*) > 1
+ORDER BY COUNT(*) DESC;
+```
+
+:::
+
+::: column
+
+**Логический порядок выполнения**
+
+```
+FROM
+JOIN
+WHERE
+GROUP BY
+HAVING
+SELECT
+ORDER BY
+LIMIT
+```
+
+
+:::
+:::
+
+---
+
+## Filtering (WHERE)
+
+::: columns
+::: column
+
+```sql
+SELECT *
+FROM users
+WHERE age >= 18;
+```
+
+```sql
+SELECT *
+FROM users
+WHERE country = 'US'
+  AND age >= 18;
+```
+
+:::
+
+::: column
+
+**WHERE**
+
+* Фильтрация строк до агрегации
+* Поддержка AND / OR / NOT
+* Работает построчно
+
+Аналогия: `filter()` в функциональном программировании.
+
+:::
+:::
+
+---
+
+## Специальные операторы
+
+::: columns
+::: column
+
+```sql
+SELECT *
+FROM users
+WHERE country IN ('US', 'UK')
+  AND age BETWEEN 18 AND 30;
+```
+
+```sql
+SELECT *
+FROM users
+WHERE name LIKE 'A%';
+```
+
+:::
+
+::: column
+
+**Операторы**
+
+* `IN`
+* `BETWEEN`
+* `LIKE`
+* `IS NULL`
+
+NULL ≠ 0
+NULL ≠ ''
+
+Используется `IS NULL`.
+
+:::
+:::
+
+---
+
+## Выражения и вычисляемые столбцы (Mapping)
+
+::: columns
+::: column
+
+```sql
+SELECT
+  name,
+  age * 2 AS age_x2
+FROM users;
+```
+
+```sql
+SELECT
+  name,
+  CASE
+    WHEN age < 18 THEN 'minor'
+    ELSE 'adult'
+  END AS category
+FROM users;
+```
+
+:::
+
+::: column
+
+**SELECT как map()**
+
+* Можно вычислять новые значения
+* CASE — условные выражения
+* Не меняет количество строк
+
+Проекция = выбор + трансформация.
+
+:::
+:::
+
+---
+
+## Агрегатные функции (Aggregation)
+
+::: columns
+::: column
+
+```sql
+SELECT COUNT(*)
+FROM users;
+```
+
+```sql
+SELECT AVG(age)
+FROM users;
+```
+
+:::
+
+::: column
+
+**Aggregate functions**
+
+* COUNT
+* SUM
+* AVG
+* MIN
+* MAX
+
+Схлопывают множество строк в одно значение.
+
+:::
+:::
+
+---
+
+## GROUP BY — разбиение на группы
+
+::: columns
+::: column
+
+```sql
+SELECT country, COUNT(*)
+FROM users
+GROUP BY country;
+```
+
+:::
+
+::: column
+
+**GROUP BY**
+
+1. Делит строки на группы
+2. Применяет агрегаты
+3. Возвращает одну строку на группу
+
+После GROUP BY можно использовать только:
+* столбцы из GROUP BY
+* агрегатные функции
+
+:::
+:::
+
+---
+
+## WHERE vs HAVING
+
+::: columns
+::: column
+
+```sql
+SELECT country, COUNT(*)
+FROM users
+WHERE age > 18
+GROUP BY country
+HAVING COUNT(*) > 1;
+```
+
+:::
+
+::: column
+
+**WHERE**
+
+* Фильтрация строк
+
+**HAVING**
+
+* Фильтрация агрегированных групп
+
+Очень частая ошибка — пытаться использовать агрегат в WHERE.
+
+:::
+:::
+---
+
+## JOIN: объединение таблиц
+
+\footnotesize
+
+::: columns
+::: column
+
+Теоретическая модель:
+
+```
+A JOIN B
+=
+A × B   (декартово произведение)
++
+фильтрация по условию ON
+```
+
+Пример:
+
+users
+
+| id | name  |
+|----|-------|
+| 1  | Alice |
+| 2  | Bob   |
+
+orders
+
+| id | user_id | amount |
+|----|---------|--------|
+| 10 | 1       | 100    |
+| 11 | 1       | 200    |
+
+:::
+
+::: column
+
+Декартово произведение:
+
+| u.id | name  | o.id | user_id | amount |
+|------|-------|------|---------|--------|
+| 1    | Alice | 10   | 1       | 100    |
+| 1    | Alice | 11   | 1       | 200    |
+| 2    | Bob   | 10   | 1       | 100    |
+| 2    | Bob   | 11   | 1       | 200    |
+
+После `ON u.id = o.user_id`:
+
+| name  | amount |
+|-------|--------|
+| Alice | 100    |
+| Alice | 200    |
+
+JOIN = фильтр над декартовым произведением.
+
+:::
+:::
+
+\normalsize
+
+---
+
+## INNER JOIN — только совпадения
+
+::: columns
+::: column
+
+```sql
+SELECT u.name, o.amount
+FROM users u
+INNER JOIN orders o
+  ON u.id = o.user_id;
+```
+
+:::
+
+::: column
+
+**INNER JOIN**
+
+* Возвращает только совпадающие строки
+* Если совпадений нет — строка исчезает
+* Может дублировать строки
+
+Если у пользователя 5 заказов →
+он появится 5 раз.
+
+JOIN может увеличивать количество строк.
+
+:::
+:::
+
+---
+
+## INNER JOIN + WHERE
+
+::: columns
+::: column
+
+```sql
+SELECT u.name, o.amount
+FROM users u
+JOIN orders o
+  ON u.id = o.user_id
+WHERE o.amount > 100;
+```
+
+:::
+
+::: column
+
+Логический порядок:
+
+1. FROM
+2. JOIN
+3. WHERE
+
+ON — определяет совпадения
+WHERE — фильтрует результат
+
+Важно различать стадии обработки.
+
+:::
+:::
+
+---
+
+## LEFT OUTER JOIN
+
+::: columns
+::: column
+
+```sql
+SELECT u.name, o.amount
+FROM users u
+LEFT JOIN orders o
+  ON u.id = o.user_id;
+```
+
+:::
+
+::: column
+
+**LEFT OUTER JOIN**
+
+* Сохраняет все строки левой таблицы
+* Если совпадения нет → значения правой таблицы = NULL
+
+Пример результата:
+
+| name  | amount |
+|-------|--------|
+| Alice | 100    |
+| Alice | 200    |
+| Bob   | NULL   |
+
+NULL означает "нет данных".
+
+:::
+:::
+
+---
+
+## RIGHT OUTER JOIN
+
+::: columns
+::: column
+
+```sql
+SELECT u.name, o.amount
+FROM users u
+RIGHT JOIN orders o
+  ON u.id = o.user_id;
+```
+
+:::
+
+::: column
+
+**RIGHT JOIN**
+
+* Сохраняет все строки правой таблицы
+* Если нет совпадения слева → NULL
+
+Часто избегают —
+обычно переписывают как LEFT JOIN, поменяв таблицы местами.
+
+:::
+:::
+
+---
+
+## FULL OUTER JOIN
+
+::: columns
+::: column
+
+```sql
+SELECT u.name, o.amount
+FROM users u
+FULL OUTER JOIN orders o
+  ON u.id = o.user_id;
+```
+
+:::
+
+::: column
+
+**FULL OUTER JOIN**
+
+* Сохраняет строки обеих таблиц
+* Несовпадающие строки получают NULL
+
+Используется редко, но важен концептуально.
+
+Объединяет LEFT + RIGHT.
+
+:::
+:::
+
+---
+
+## NULL в SQL
+
+::: columns
+::: column
+
+```sql
+SELECT *
+FROM users
+WHERE country IS NULL;
+```
+
+```sql
+SELECT *
+FROM users
+WHERE country = NULL;  -- ошибка логики
+```
+
+:::
+
+::: column
+
+**NULL**
+
+* Не 0
+* Не пустая строка
+* Не NaN (как в pandas)
+
+NULL = "неизвестно"
+
+Используются операторы:
+
+* IS NULL
+* IS NOT NULL
+
+:::
+:::
+
+---
+
+## NULL в JOIN
+
+::: columns
+::: column
+
+LEFT JOIN создаёт NULL:
+
+| name | amount |
+|------|--------|
+| Bob  | NULL   |
+
+:::
+
+::: column
+
+NULL ломает обычные сравнения:
+
+```sql
+WHERE amount > 0
+```
+
+NULL > 0 → UNKNOWN → строка удаляется.
+
+Поэтому LEFT JOIN легко превращается в INNER JOIN.
+
+:::
+:::
+
+---
+
+## Правильная фильтрация при LEFT JOIN
+
+::: columns
+::: column
+
+Неправильно:
+
+```sql
+LEFT JOIN orders o
+  ON u.id = o.user_id
+WHERE o.amount > 100;
+```
+
+Правильно:
+
+```sql
+LEFT JOIN orders o
+  ON u.id = o.user_id
+ AND o.amount > 100;
+```
+
+:::
+
+::: column
+
+Перенос условия в ON:
+
+* сохраняет NULL-строки
+* фильтрация происходит при соединении
+
+ON — часть логики соединения
+WHERE — финальная фильтрация
+
+:::
+:::
+
+---
+
+## Anti-Join (поиск отсутствующих записей)
+
+::: columns
+::: column
+
+```sql
+SELECT u.*
+FROM users u
+LEFT JOIN orders o
+  ON u.id = o.user_id
+WHERE o.id IS NULL;
+```
+
+:::
+
+::: column
+
+Идея:
+
+* Соединяем
+* Оставляем только строки без совпадений
+
+Альтернатива:
+
+```sql
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM orders o
+  WHERE o.user_id = u.id
+);
+```
+
+:::
+:::
+
+---
+
+## Итог по JOIN
+
+1. INNER JOIN — только совпадающие строки
+2. LEFT JOIN — сохраняет левую таблицу
+3. RIGHT JOIN — сохраняет правую таблицу
+4. FULL OUTER JOIN — сохраняет обе
+5. NULL — ключевой элемент OUTER JOIN
+6. WHERE после LEFT JOIN может изменить тип соединения
+
+JOIN — это контроль над тем, какие строки вы хотите сохранить.
+
+---
+
+## Подзапрос в WHERE (Subqueries)
+
+::: columns
+::: column
+
+```sql
+SELECT *
+FROM users
+WHERE id IN (
+  SELECT user_id
+  FROM orders
+);
+```
+
+:::
+
+::: column
+
+**IN**
+
+* Сравнивает значения
+
+**EXISTS**
+
+```sql
+SELECT *
+FROM users u
+WHERE EXISTS (
+  SELECT 1
+  FROM orders o
+  WHERE o.user_id = u.id
+);
+```
+
+Проверяет существование строк.
+
+:::
+:::
+
+---
+
+## Коррелированный подзапрос
+
+::: columns
+::: column
+
+```sql
+SELECT name
+FROM users u
+WHERE age > (
+  SELECT AVG(age)
+  FROM users
+  WHERE country = u.country
+);
+```
+
+:::
+
+::: column
+
+**Correlated subquery**
+
+* Внутренний запрос использует столбцы внешнего
+* Логически выполняется для каждой строки
+* Оптимизатор может переписать в JOIN
+
+:::
+:::
+
+---
+
+## Common table expression (CTE) — WITH
+
+::: columns
+::: column
+
+```sql
+WITH active_users AS (
+  SELECT *
+  FROM users
+  WHERE active = true
+)
+SELECT *
+FROM active_users;
+```
+
+:::
+
+::: column
+
+**Common Table Expression**
+
+* Именованный промежуточный результат
+* Улучшает читаемость
+* Поддерживает рекурсию
+
+:::
+:::
+
+---
+
+## GROUP BY vs Window
+
+::: columns
+::: column
+
+GROUP BY:
+
+```sql
+SELECT country, AVG(age)
+FROM users
+GROUP BY country;
+```
+
+Window:
+
+```sql
+SELECT
+  name,
+  country,
+  AVG(age) OVER (PARTITION BY country)
+FROM users;
+```
+
+:::
+
+::: column
+
+**Разница**
+
+GROUP BY:
+* уменьшает число строк
+
+Window:
+* сохраняет строки
+* добавляет аналитическую информацию
+
+:::
+:::
+
+---
+
+## PARTITION BY
+
+::: columns
+::: column
+
+```sql
+SELECT
+  name,
+  country,
+  COUNT(*) OVER (PARTITION BY country) AS cnt
+FROM users;
+```
+
+:::
+
+::: column
+
+Каждая строка "знает":
+
+* Сколько пользователей в её стране
+
+Window = аналитика без потери строк.
+
+:::
+:::
+
+---
+
+## Running Total
+
+::: columns
+::: column
+
+```sql
+SELECT
+  user_id,
+  amount,
+  SUM(amount) OVER (
+    PARTITION BY user_id
+    ORDER BY created_at
+  ) AS running_total
+FROM orders;
+```
+
+:::
+
+::: column
+
+**ORDER BY внутри OVER**
+
+* Упорядочивает строки внутри partition
+* Позволяет считать накопительные суммы
+
+Очень важно для аналитики.
+
+:::
+:::
+
+---
+
+## Ranking Functions
+
+::: columns
+::: column
+
+```sql
+SELECT
+  name,
+  salary,
+  RANK() OVER (ORDER BY salary DESC) AS rank
+FROM employees;
+```
+
+Другие функции:
+
+* ROW_NUMBER()
+* DENSE_RANK()
+
+:::
+
+::: column
+
+**Ranking**
+
+ROW_NUMBER — уникальная нумерация
+RANK — пропуски при равенстве
+DENSE_RANK — без пропусков
+
+Используется для топ-N задач.
+
+:::
+:::
+
+---
+
+## Итоги
+
+1. SQL — декларативный язык обработки множеств
+2. WHERE — фильтрация строк
+3. SELECT — проекция и трансформация
+4. GROUP BY — агрегация
+5. JOIN — композиция таблиц
+6. Subqueries и CTE — композиция запросов
+7. Window functions — аналитика без потери строк
+
+SQL можно мыслить как pipeline:
+
+```
+FROM → WHERE → GROUP → HAVING → WINDOW → SELECT → ORDER → LIMIT
+```
+
+# Pandas
+
+## DataFrame как модель таблицы
+
+::: columns
+::: column
+
+```python
+import pandas as pd
+
+df = pd.DataFrame({
+    "name": ["Alice", "Bob", "Carol"],
+    "age": [25, 17, 30],
+    "country": ["US", "UK", "US"]
+})
+```
+
+:::
+
+::: column
+
+DataFrame состоит из:
+
+* index (строки)
+* columns (столбцы)
+* values
+* dtypes
+
+```python
+df.index
+df.columns
+df.dtypes
+```
+
+Pandas = таблица + индекс.
+
+:::
+:::
+
+---
+
+## Выбор столбцов
+
+::: columns
+::: column
+
+```python
+df["age"]            # Series
+df[["age"]]          # DataFrame
+df[["name", "age"]]
+```
+
+:::
+
+::: column
+
+Один столбец → Series
+Два столбца → DataFrame
+
+Частый источник ошибок — путать их.
+
+:::
+:::
+
+---
+
+## loc — по меткам
+
+::: columns
+::: column
+
+```python
+df.loc[0]
+df.loc[0, "age"]
+df.loc[df["age"] > 18]
+```
+
+:::
+
+::: column
+
+`loc` работает с:
+
+* индексом строк
+* именами столбцов
+
+Самый безопасный способ изменения данных.
+
+:::
+:::
+
+---
+
+## iloc — по позициям
+
+::: columns
+::: column
+
+```python
+df.iloc[0]
+df.iloc[0, 1]
+df.iloc[:, 0:2]
+```
+
+:::
+
+::: column
+
+`iloc` использует:
+
+* позиции (0-based)
+* как NumPy
+
+Не зависит от значений индекса.
+
+:::
+:::
+
+---
+
+## Setting values
+
+::: columns
+::: column
+
+Правильно:
+
+```python
+df.loc[df["age"] < 18, "category"] = "minor"
+```
+
+:::
+
+::: column
+
+Избегать:
+
+```python
+df[df["age"] < 18]["category"] = "minor"
+```
+
+Это создаёт копию
+→ SettingWithCopyWarning
+
+:::
+:::
+
+---
+
+## Boolean mask & Query
+
+::: columns
+::: column
+
+```python
+df[df["age"] > 18]
+```
+
+```python
+df[(df["age"] > 18) &
+   (df["country"] == "US")]
+```
+
+
+```python
+df.query("age > 18 and country == 'US'")
+```
+
+:::
+
+::: column
+
+Boolean mask
+
+* Более читаемо :)
+* Аналог SQL WHERE
+* Работает через логические маски.
+
+Query
+
+* Более читаемо :)
+* SQL-подобный стиль
+* Удобно для преподавания
+
+:::
+:::
+
+---
+
+## Создание новых столбцов (Mapping)
+
+::: columns
+::: column
+
+```python
+df["age_x2"] = df["age"] * 2
+```
+
+```python
+import numpy as np
+
+df["category"] = np.where(
+    df["age"] < 18,
+    "minor",
+    "adult"
+)
+```
+
+:::
+
+::: column
+
+Векторизация > apply
+
+Избегать:
+
+```python
+df["age"].apply(lambda x: x*2)
+```
+
+apply медленный.
+
+:::
+:::
+
+---
+
+## Простая агрегация (Aggregation)
+
+::: columns
+::: column
+
+```python
+df["age"].mean()
+```
+
+```python
+df.groupby("country")["age"].mean()
+```
+
+
+```python
+df.groupby("country").agg({
+    "age": "mean",
+    "salary": "sum"
+})
+```
+
+
+:::
+
+::: column
+
+groupby:
+
+1. Делит строки на группы
+2. Применяет агрегат
+3. Возвращает результат
+
+Аналог SQL GROUP BY.
+
+:::
+:::
+
+---
+
+## merge (INNER JOIN)
+
+::: columns
+::: column
+
+```python
+pd.merge(users, orders,
+         on="id")
+```
+
+:::
+
+::: column
+
+По умолчанию:
+
+* INNER JOIN
+* только совпадающие строки
+
+:::
+:::
+
+---
+
+## LEFT / OUTER
+
+```python
+pd.merge(users, orders,
+         on="id",
+         how="left")
+```
+
+```python
+pd.merge(users, orders,
+         on="id",
+         how="outer")
+```
+
+NULL появляются при отсутствии совпадений.
+
+---
+
+## Window Operations(transform)
+
+::: columns
+::: column
+
+```python
+df["country_mean"] = (
+    df.groupby("country")["age"]
+      .transform("mean")
+)
+```
+
+:::
+
+::: column
+
+GROUP BY + вернуть результат к исходным строкам.
+
+Аналог SQL:
+
+```
+AVG(age) OVER (PARTITION BY country)
+```
+
+:::
+:::
+
+---
+
+## Running total
+
+```python
+df["running"] = (
+    df.sort_values("date")
+      .groupby("user")["amount"]
+      .cumsum()
+)
+```
+
+---
+
+## Ranking
+
+```python
+df["rank"] = df["salary"].rank()
+```
+
+---
+
+## Reshaping, melt (wide → long)
+
+```python
+df_long = df.melt(
+    id_vars="id",
+    var_name="month",
+    value_name="value"
+)
+```
+
+UNPIVOT в SQL.
+
+---
+
+## pivot (long → wide)
+
+```python
+df_wide = df_long.pivot(
+    index="id",
+    columns="month",
+    values="value"
+)
+```
+
+Если есть дубликаты → использовать pivot_table.
+
+---
+
+## explode
+
+```python
+df.explode("tags")
+```
+
+Работа со списками (JSON-данные).
+
+---
+
+## dtypes и приведение типов
+
+```python
+df.dtypes
+df["age"] = df["age"].astype("Int64")
+df["country"] = df["country"].astype("category")
+```
+
+Типы влияют на:
+
+* память
+* скорость
+* корректность вычислений
+
+---
+
+## Работа с NA
+
+```python
+df.isna()
+df.dropna()
+df.fillna(0)
+```
+
+Важно:
+
+* NaN
+* None
+* pd.NA
+
+Это разные сущности.
+
+---
+
+## Dates (datetime)
+
+```python
+df["date"] = pd.to_datetime(df["date"])
+df["year"] = df["date"].dt.year
+```
+
+## resample
+
+```python
+df.resample("M").sum()
+```
+
+---
+
+## Вертикальное объединение (concat)
+
+```python
+pd.concat([df1, df2],
+          axis=0,
+          ignore_index=True)
+```
+
+concat ≠ merge.
+
+---
+
+## Method Chaining
+
+```python
+(
+    df
+    .query("age > 18")
+    .assign(age2=lambda x: x["age"] * 2)
+    .groupby("country")
+    .mean()
+)
+```
+
+Pipeline-подход.
+
+---
+
+## Polars (Expression system)
+
+```python
+import polars as pl
+
+df = pl.DataFrame(...)
+
+df.filter(pl.col("age") > 18)
+df.with_columns(
+    (pl.col("age") * 2)
+    .alias("age_x2")
+)
+```
+
+Polars:
+
+* нет row index
+* Arrow backend
+* lazy execution
+
+---
+
+## Lazy execution
+
+```python
+lf = pl.scan_csv("data.csv")
+
+result = (
+    lf.filter(pl.col("age") > 18)
+      .group_by("country")
+      .agg(pl.col("age").mean())
+      .collect()
+)
+```
+
+Оптимизатор строит execution plan.
+
+---
+
+## Итоги
+
+1. Pandas = табличная модель + индекс
+2. loc / iloc — ключ к корректной работе
+3. Векторизация > apply
+4. groupby и merge — основа аналитики
+5. reshape (melt / pivot) — изменение формы данных
+6. Polars — более строгая и быстрая модель
+
