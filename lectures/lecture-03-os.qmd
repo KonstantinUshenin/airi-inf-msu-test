@@ -1,0 +1,7 @@
+---
+title: "Informatics. Foundations of Software Development"
+subtitle: "Lecture 03 — Operating System [EARLY DRAFT]"
+author: "Dmitrii Tarasov"
+date: "2026"
+---
+
