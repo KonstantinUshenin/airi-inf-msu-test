@@ -1,13 +1,24 @@
 # Семинары
 
+## Формат занятий
+
+Семинары предполагают гибридный формат:
+
+1) Сначала преподаватель семинаров знакомит с темой занятия (скорее напоминает, что бы ло на лекции). Показывает пример, как выполнить какую-то часть занятия.
+2) Затем студенты должны сами воспроизвести результаты работы преподавателя по инструкции в формате лабораторной работы. Результаты должны фиксироваться в отчет. И артефакты работы должны сохраниться на диске (сами лабоработные работы будут проходить или в jupyter notebook или на удаленном сервере)
+3) Для тех, кто справился быстро, есть возможность пройти дополнительные очень сложные, но интересные задания на дополнительные баллы.
+
+
+## Темы занятий
+
 | № | Блок | Тема | Содержание |
 |---|------|------|------------|
 | 1 | сентябрь | Jupyter Notebook. Практика по визуализации | colab, matplotlib, numpy |
-| 2 | сентябрь | Unix-terminal. Работа с файлами | (ssh, bash, Ctrl+X, Ctrl+Z, Ctrl-C, \|, >, >>, &1, &2) Env Vars, Job, top, htop, ps, nvidia-smi, uname, os release, cat, history, mkdir, cd, chown, chmod, cp, mv, pwd, ... |
+| 2 | сентябрь | Unix-terminal. Работа с файлами | (ssh, bash, Ctrl+X, Ctrl+Z, Ctrl-C, \|, >, >>, &1, &2) Env Vars, jobs, top, htop, ps, nvidia-smi, uname, os release, cat, history, mkdir, cd, chown, chmod, cp, mv, pwd, ... |
 | 3 | сентябрь | Unix-terminal. Работа с текстами | vim, nano, diff, ed, vimdiff, csv, head, tail, wc, grep, find, sort, uniq. Далее аналоги переписанные на Rust: uutils coreutils, ripgrep, xsv |
 | 4 | сентябрь | Система контроля версий Git | git |
 | 5 | октябрь | Unix-terminal. Настройка окружения и установка пакетов | source, virtualenv, apt/snap, pip/uv/conda, export, ldconfig -p, services, PATH, LD_LIBRARY_PATH, PYTHONPATH |
-| 6 | октябрь | Unix-terminal. Работа с оборудованием | lsblk, lsusb, fdisk, lspci -v, mount, fdisk, /proc/cpuinfo, /proc/meminfo, nvidia-smi, nvtop, argparse, subprocesses, fork? |
+| 6 | октябрь | Unix-terminal. Работа с оборудованием | lsblk, lsusb, fdisk, lspci -v, mount, fdisk, /proc/cpuinfo, /proc/meminfo, nvidia-smi, nvtop, argparse, subprocesses, fork, strace |
 | 7 | октябрь | Unix-terminal. Работа с сетью | nc, scp, ifconfig, ufw, ports, netstat, ss, nslookup, dig, ping, whois, wget, curl |
 | 8 | октябрь | Unix-terminal. ssh | ssh, scp, rsync, ssh-keygen |
 | 9 | ноябрь | Контейнеризация и облачные технологии | Docker, Docker compose, aws cli, boto3 (и аналоги), Знакомство с cloud.ru |
