@@ -13,15 +13,6 @@ date: "2026"
 ### Concurrency, synchronization, and IPC
 ### Modern OS: containers, virtualization, DMA/RDMA
 
-**Для авторов. Заметки:**
-
-- Термины: прерывание (interrupt), режим ядра/пользователя (kernel/user mode), userspace/kernel space. ELF: readelf, PHT/SHT.
-- Диаграммы: `plots/virtual_memory.png`, `plots/elf_layout.png` (сборка из .dot через Makefile).
-- Добавлены: "What is an OS?", scheduling (FCFS/RR/CFS), page tables/TLB, ASLR/NX/stack canaries, Coffman conditions, DMA, dynamic linking, IPC (signals/pipes), fork+exec C-пример.
-- Синхронизация: пример на Python threading + Lock; C-пример fork/exec.
-- Новые слайды: IDT и обработка прерываний, strace+/proc, process lifecycle (zombie/orphan), page table walk (4-level), mmap, buffer overflow, inodes (ext4), static vs dynamic linking, device drivers и I/O models, producer-consumer, dining philosophers, asyncio/event loop, containers (namespaces/cgroups), virtualization (hypervisors/VMs).
-- RDMA/GPUDirect сокращён до половины слайда (совмещён с DMA).
-
 ---
 
 # OS Fundamentals
