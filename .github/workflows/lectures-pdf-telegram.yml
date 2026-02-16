@@ -73,7 +73,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lecture-pdfs
-          path: pdf/*.pdf
+          path: pdf/**/*.pdf
           if-no-files-found: ignore
         if: steps.changed.outputs.count != '0'
 
@@ -81,15 +81,15 @@ jobs:
         run: |
           while IFS= read -r qmd; do
             [ -z "$qmd" ] && continue
-            base="${qmd#lectures/}"
-            base="${base%.qmd}"
+            base="${qmd%.qmd}"
+            name="${base#lectures/}"
             pdf="pdf/${base}.pdf"
             if [ -f "$pdf" ]; then
               echo "Sending $pdf ..."
               curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
                 -F "chat_id=${TELEGRAM_CHAT_ID}" \
                 -F "document=@${pdf}" \
-                -F "caption=Lecture: ${base}"
+                -F "caption=Lecture: ${name}"
             fi
           done < changed_qmd.txt
         if: steps.changed.outputs.count != '0' && env.TELEGRAM_BOT_TOKEN != '' && env.TELEGRAM_CHAT_ID != ''
