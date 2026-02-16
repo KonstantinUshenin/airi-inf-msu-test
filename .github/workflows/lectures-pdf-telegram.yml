@@ -67,6 +67,14 @@ jobs:
           done < changed_qmd.txt
         if: steps.changed.outputs.count != '0'
 
+      - name: Upload PDFs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lecture-pdfs
+          path: pdf/*.pdf
+          if-no-files-found: ignore
+        if: steps.changed.outputs.count != '0'
+
       - name: Send PDFs to Telegram
         run: |
           while IFS= read -r qmd; do
