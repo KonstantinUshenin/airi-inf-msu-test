@@ -43,7 +43,16 @@ jobs:
             texlive-xetex \
             texlive-lang-cyrillic \
             texlive-fonts-recommended \
-            graphviz
+            graphviz \
+            fontconfig
+
+      - name: Install Inter font
+        run: |
+          mkdir -p ~/.local/share/fonts/Inter
+          curl -sL -o inter.zip "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
+          unzip -q inter.zip -d inter_extract
+          find inter_extract -name "*.otf" -exec cp {} ~/.local/share/fonts/Inter/ \;
+          fc-cache -fv
 
       - name: Build plots (dot → png)
         run: make dot
