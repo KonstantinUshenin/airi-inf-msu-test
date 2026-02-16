@@ -6,6 +6,8 @@ name: Build lectures PDF and send to Telegram
 on:
   push:
     branches: [main]
+    paths:
+      - 'lectures/**'
 
 jobs:
   build-and-send:

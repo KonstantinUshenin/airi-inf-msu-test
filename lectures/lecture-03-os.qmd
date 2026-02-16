@@ -1219,3 +1219,4 @@ asyncio.run(main())
 - **IPC** (pipes, signals, sockets, shared memory) and **synchronization** (mutexes, semaphores) enable safe communication; classic problems: producer-consumer, dining philosophers.
 - **Concurrency** (threads, processes, async/event loop) — choose based on workload; **deadlock** requires awareness of Coffman conditions.
 - **Modern OS** extends isolation via **containers** (namespaces + cgroups) and **VMs** (hypervisors); **DMA/RDMA** accelerates I/O and distributed GPU training.
+
