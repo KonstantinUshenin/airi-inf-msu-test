@@ -7,29 +7,57 @@ date: "2026"
 
 ## Plan
 
-### CPU modes and interrupts
-### OS loaders (boot process)
-### Userspace vs kernel space
-### Process separation and process memory layout (ro / rw / system)
-### File systems: FAT32, NTFS, ext3/ext4
-### Virtual memory model in DOS and *nix
-### ELF executable file structure
-### System calls: how they work and why they are slow
-### Shared memory and synchronization primitives
-### Copy-on-write fork
-### Remote memory access (RDMA) and deep learning
-### Threading vs multiprocessing vs concurrency
+### OS fundamentals: CPU modes, boot, kernel/userspace, system calls
+### Processes, scheduling, and virtual memory
+### File systems and executable formats
+### Concurrency, synchronization, and IPC
+### Advanced: DMA, RDMA, and GPU training
 
 **Для авторов. Заметки:**
 
 - Термины: прерывание (interrupt), режим ядра/пользователя (kernel/user mode), userspace/kernel space. ELF: readelf, PHT/SHT.
-- Диаграммы: использованы `plots/virtual_memory.png`, `plots/elf_layout.png` (сборка из .dot через Makefile).
-- Добавлены: загрузчики (BIOS/UEFI, GRUB), CoW fork, RDMA/GPUDirect для DL, threading vs multiprocessing vs concurrency.
-- Синхронизация: пример на Python threading + Lock; при необходимости добавить pthread или C.
+- Диаграммы: `plots/virtual_memory.png`, `plots/elf_layout.png` (сборка из .dot через Makefile).
+- Добавлены: "What is an OS?", scheduling (FCFS/RR/CFS), page tables/TLB, ASLR/NX/stack canaries, Coffman conditions, DMA, dynamic linking, IPC (signals/pipes), fork+exec C-пример.
+- Синхронизация: пример на Python threading + Lock; C-пример fork/exec.
+- RDMA/GPUDirect сокращён до половины слайда (совмещён с DMA).
 
 ---
 
-# Operating System
+# OS Fundamentals
+
+## What is an Operating System?
+
+::: columns
+::: column
+
+- **Definition:** software layer between hardware and applications; manages resources, provides abstractions, enforces isolation.
+
+- **Key roles**
+  - **Resource manager:** CPU time, memory, devices, files — shared among processes.
+  - **Abstraction layer:** hides hardware details; programs use uniform APIs (e.g. `read`/`write`) regardless of disk type.
+  - **Protection:** isolates processes from each other and from the kernel; prevents one program from corrupting another.
+
+- **Kernel** — the core of the OS; runs in privileged mode, manages everything. The rest (shells, utilities, services) runs in userspace.
+
+:::
+::: column
+
+| Abstraction    | Underlying hardware    |
+|----------------|------------------------|
+| Process        | CPU + registers        |
+| Virtual memory | Physical RAM + disk    |
+| File           | Disk blocks            |
+| Socket         | NIC + buffers          |
+
+- **Kernel architectures:**
+  - **Monolithic** (Linux): all services in one kernel binary; fast internal calls, large codebase.
+  - **Microkernel** (Minix, QNX): minimal kernel (IPC, scheduling); drivers and FS in userspace; more isolation, more IPC overhead.
+  - **Hybrid** (Windows NT, macOS/XNU): monolithic core with some microkernel ideas.
+
+:::
+:::
+
+---
 
 ## CPU modes and interrupts
 
@@ -106,7 +134,7 @@ date: "2026"
 
 - **Userspace**
   - Runs in **Ring 3**; only own **virtual address space**, no privileged instructions.
-  - Cannot touch other processes’ memory or hardware; all I/O and system resources via **system calls**.
+  - Cannot touch other processes' memory or hardware; all I/O and system resources via **system calls**.
 
 - **Transition**
   - **Only** way: trap (syscall, interrupt, exception) → CPU switches to kernel mode → kernel handler runs → return to user with `sysexit`/`sysret`.
@@ -126,16 +154,88 @@ date: "2026"
 
 ---
 
-## Process separation
+## System calls: how they work and why they are slow
 
-- **Process** = unit of isolation and scheduling: own address space, own PID, own open files and kernel structures.
-- **Address space** per process: virtual addresses are private; one process cannot read another’s memory without explicit sharing (e.g. shared memory, pipes).
-- **Context switch:** kernel saves CPU state (registers, PC, stack pointer) of current process, restores state of next; happens on timer interrupt, blocking I/O, or voluntary yield.
-- **Process Control Block (PCB):** kernel structure per process: PID, state (running/ready/blocked), saved registers, page table pointer, file descriptors, scheduling info. **Process table** = set of all PCBs.
+::: columns
+::: column
+
+- **Mechanism**
+  1. User places syscall number (e.g. `SYS_write`) and args in registers.
+  2. Instruction **`syscall`** (x86-64) / **`int 0x80`** (x86) — CPU switches to kernel mode, jumps to kernel entry.
+  3. Kernel **handler** checks number, copies args from user (with checks), runs kernel code (e.g. VFS write).
+  4. **Return:** result in register, `sysret` → back to user mode at next instruction.
+
+- **Why it is expensive**
+  - **Mode switch:** privilege level change, **TLB flushes** (KPTI on modern kernels to mitigate Meltdown).
+  - **Argument copying:** kernel must copy and validate pointers from user space.
+  - **Context:** if I/O blocks, process may be descheduled; overhead: hundreds of ns to a few µs per call.
+
+:::
+::: column
+
+- **Mitigations**
+  - **vDSO:** some "syscalls" (e.g. `gettimeofday`) served from read-only user mapping → no trap.
+  - **Batching:** fewer, larger operations (e.g. buffer writes) instead of many small syscalls.
+  - **io_uring** (Linux 5.1+): submit many I/O requests via shared ring buffer; kernel processes them asynchronously — avoids per-operation syscall overhead.
+
+:::
+:::
 
 ---
 
-## Process memory layout: ro / rw / system
+# Processes and Memory
+
+## Process separation and scheduling
+
+::: columns
+::: column
+
+- **Process** = unit of isolation and scheduling: own address space, own PID, own open files and kernel structures.
+- **Address space** per process: virtual addresses are private; one process cannot read another's memory without explicit sharing.
+- **Context switch:** kernel saves CPU state (registers, PC, stack pointer) of current process, restores state of next; happens on timer interrupt, blocking I/O, or voluntary yield.
+- **Process Control Block (PCB):** kernel structure per process: PID, state (running/ready/blocked), saved registers, page table pointer, file descriptors, scheduling info.
+
+:::
+::: column
+
+- **Process states:**
+  - **New** → **Ready** → **Running** → **Blocked** (waiting for I/O) → **Ready** → …
+  - **Running** → **Terminated**
+- **Scheduling** decides which ready process gets the CPU next.
+
+:::
+:::
+
+---
+
+## Process scheduling algorithms
+
+::: columns
+::: column
+
+- **FCFS** (First-Come, First-Served): simple queue; no preemption; **convoy effect** — short jobs wait behind long ones.
+- **Round Robin (RR):** each process gets a fixed **time quantum** (e.g. 10 ms); preempted when quantum expires → back to ready queue. Fair, responsive; but choosing quantum is a trade-off (too small → high overhead; too large → poor interactivity).
+- **Priority scheduling:** each process has a priority; highest priority runs first. Risk: **starvation** of low-priority tasks. Fix: **aging** — increase priority of waiting processes over time.
+
+:::
+::: column
+
+- **Multilevel feedback queue (MLFQ):** multiple queues with different priorities and quanta; processes move between queues based on behavior (CPU-bound → demoted; I/O-bound → promoted).
+- **CFS** (Completely Fair Scheduler, Linux): models "ideal fair CPU"; uses a red-black tree sorted by **virtual runtime** (vruntime); task with smallest vruntime runs next. Granularity adapts to load.
+
+| Algorithm | Preemptive? | Starvation?          |
+|-----------|-------------|----------------------|
+| FCFS      | No          | No                   |
+| RR        | Yes         | No                   |
+| Priority  | Yes         | Yes (fix: aging)     |
+| MLFQ/CFS  | Yes        | No (by design)       |
+
+:::
+:::
+
+---
+
+## Process memory layout
 
 ::: columns
 ::: column
@@ -147,23 +247,23 @@ date: "2026"
 
 - **Read-write (RW-)**
   - **`.data`** — initialized globals; **`.bss`** — zero-initialized globals.
-  - **Heap** — `malloc`/`new`; grows upward.
+  - **Heap** — `malloc`/`new`; grows upward via `brk`/`mmap`.
   - **Stack** — local variables, return addresses; grows downward.
 
 - **System / kernel**
-  - Top part of virtual address space (e.g. high half) reserved for **kernel**; not mapped in user page tables; accessible only in kernel mode.
+  - Top part of virtual address space (e.g. high half) reserved for **kernel**; accessible only in kernel mode.
 
 :::
 ::: column
 
-| Region   | Permissions | Content        |
-|----------|-------------|----------------|
-| .text    | R-X         | Code           |
-| .rodata  | R--         | Constants      |
-| .data/.bss | RW-       | Globals        |
-| heap     | RW-         | Dynamic alloc  |
-| stack    | RW-         | Locals, frames |
-| kernel   | (inaccessible in user) | OS, drivers |
+| Region     | Permissions          | Content        |
+|------------|----------------------|----------------|
+| .text      | R-X                  | Code           |
+| .rodata    | R--                  | Constants      |
+| .data/.bss | RW-                  | Globals        |
+| heap       | RW-                  | Dynamic alloc  |
+| stack      | RW-                  | Locals, frames |
+| kernel     | (inaccessible)       | OS, drivers    |
 
 *(Layout sketch: see `plots/virtual_memory.png`.)*
 
@@ -172,31 +272,34 @@ date: "2026"
 
 ---
 
-## File systems: FAT32, NTFS, ext3/ext4
+## Virtual memory: paging and page tables
 
 ::: columns
 ::: column
 
-- **FAT32** — File Allocation Table: linked list of clusters per file; simple, no permissions, no journal. Max file 4 GiB, volume ~2 TiB. Used on USB sticks, legacy Windows.
-- **NTFS** — journaling, ACLs, large files and volumes, compression, alternate streams. Default on Windows.
-- **ext3 / ext4** — journaling (metadata + optional data); ext4 adds extents (contiguous blocks), larger max file size. Inodes store metadata; directory = mapping name → inode number.
+- **Paging:** virtual address space divided into fixed-size **pages** (typically 4 KiB); physical memory divided into **frames** of the same size.
+- **Page table:** per-process mapping from virtual page number → physical frame number + permission bits (R/W/X, present, user/kernel).
+- **Multi-level page tables** (x86-64 uses 4 levels): avoid allocating entries for unmapped regions; each level indexes a portion of the virtual address.
+- **Translation Lookaside Buffer (TLB)**
+  - Hardware cache of recent page table entries; speeds up translation (TLB hit ≈ 1 cycle vs page-table walk ≈ tens of cycles).
+  - **TLB flush** on context switch (or use ASID/PCID to tag entries per process).
 
 :::
 ::: column
 
-| Feature      | FAT32   | NTFS    | ext4      |
-|-------------|---------|---------|-----------|
-| Journal     | No      | Yes     | Yes       |
-| ACLs        | No      | Yes     | Yes       |
-| Max file    | 4 GiB   | Large   | 16 TiB    |
-| Typical use | USB, legacy | Windows | Linux   |
+- **Page fault:** access to a page not in memory → CPU exception → kernel handles:
+  - **Demand paging:** page never loaded → kernel allocates frame, loads from disk/zero-fills, updates page table, resumes.
+  - **Copy-on-write:** shared page written → kernel copies, remaps.
+  - **Segfault:** invalid access (e.g. NULL pointer, no mapping) → kernel sends SIGSEGV, process killed.
+
+- **Swap:** kernel evicts rarely used pages to disk; brings them back on page fault. Allows running programs whose total memory exceeds physical RAM.
 
 :::
 :::
 
 ---
 
-## Virtual memory model in DOS and *nix
+## Virtual memory: DOS vs *nix
 
 ::: columns
 ::: column
@@ -206,9 +309,9 @@ date: "2026"
   - No hardware virtual memory: all programs see the same physical RAM; **overlays** used to swap code in/out manually.
 
 - **\*nix (Unix, Linux)**
-  - **Per-process virtual address space**: each process has its own range of virtual addresses; MMU translates to physical pages.
-  - **Paging:** memory split into pages (e.g. 4 KiB); page tables map virtual → physical; **demand paging** — load page on first access.
-  - **Swap:** rarely used pages written to disk to free RAM.
+  - **Per-process virtual address space**: each process has its own range of virtual addresses; MMU translates to physical pages via multi-level page tables.
+  - **Demand paging + swap** — transparent to programs; OS manages physical frames.
+  - **`mmap`** — map files or devices directly into address space; unifies file I/O and memory access.
 
 :::
 ::: column
@@ -220,109 +323,181 @@ date: "2026"
 
 ---
 
-## ELF executable file structure
+## Memory security: ASLR, NX, stack canaries
 
 ::: columns
 ::: column
 
-- **ELF** (Executable and Linkable Format): used on Linux, BSD, many embedded systems.
-- **ELF header:** magic, class (32/64), endianness, entry point, offsets to program and section header tables.
-- **Program Header Table (PHT):** segments for the **loader** — which regions to map into memory (e.g. loadable segment for `.text`+`.data`).
-- **Sections:** `.text` (code), `.rodata` (read-only data), `.data` (initialized globals), `.bss` (zero-initialized, not stored in file), `.symtab`/`.strtab` (symbols), `.dynsym`/relocations for dynamic linking.
+- **Why it matters:** buffer overflows and code injection are classic attacks; memory layout knowledge + writable/executable regions = exploit path.
+
+- **NX bit (No-Execute) / DEP**
+  - Stack and heap marked **non-executable**; injected shellcode on the stack cannot run.
+  - Hardware-enforced via page table permission bits (XD bit on x86-64).
+
+- **ASLR** (Address Space Layout Randomization)
+  - Randomize base addresses of stack, heap, shared libraries, and executable on each run.
+  - Attacker cannot predict where code/data lives → harder to craft exploits (e.g. return-to-libc).
+
+:::
+::: column
+
+- **Stack canaries**
+  - Compiler inserts a random value ("canary") between local variables and the return address.
+  - Before function returns, checks if canary is intact; if corrupted → buffer overflow detected → abort.
+
+- **KPTI** (Kernel Page Table Isolation)
+  - Separate page tables for user and kernel mode; kernel addresses not mapped in user page tables.
+  - Mitigates **Meltdown** (speculative execution reading kernel memory from user mode).
+
+- **Together:** NX + ASLR + canaries + KPTI form a defense-in-depth strategy; no single mechanism is sufficient alone.
+
+:::
+:::
+
+---
+
+## Copy-on-write fork
+
+::: columns
+::: column
+
+- **`fork()`** creates a child process as a copy of the parent. Naively, copying all pages would be slow and waste memory.
+- **Copy-on-write (CoW):**
+  - After fork, parent and child **share the same physical pages**; kernel marks them **read-only** in both page tables.
+  - On first **write** by either process: page fault → kernel allocates a new page, copies content, maps it writable for the faulting process.
+  - Only pages actually written are copied; read-only regions (.text, .rodata) stay shared forever.
+
+- **Benefits:** fast fork, lower memory use when child soon does `exec` or touches few pages.
+
+:::
+::: column
+
+```c
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/wait.h>
+
+int main() {
+    pid_t pid = fork();
+    if (pid == 0) {
+        // Child: replace with "ls"
+        execlp("ls", "ls", "-l", NULL);
+    } else {
+        // Parent: wait for child
+        wait(NULL);
+        printf("Child done\n");
+    }
+    return 0;
+}
+```
+
+- **`exec()`** replaces the process image → new address space.
+- **Common pattern:** `fork()` + `exec()` = spawn a new program.
+
+:::
+:::
+
+---
+
+# Files and Executables
+
+## File systems: FAT32, NTFS, ext3/ext4
+
+::: columns
+::: column
+
+- **FAT32** — File Allocation Table: linked list of clusters per file; simple, no permissions, no journal. Max file 4 GiB, volume ~2 TiB. Used on USB sticks, legacy Windows.
+- **NTFS** — journaling, ACLs, large files (up to 16 TiB), compression, alternate data streams. Default on Windows.
+- **ext3 / ext4** — journaling (metadata + optional data); ext4 adds extents (contiguous blocks), larger max file size. **Inodes** store metadata (permissions, timestamps, block pointers); directory = mapping name → inode number.
+
+:::
+::: column
+
+| Feature     | FAT32       | NTFS    | ext4    |
+|-------------|-------------|---------|---------|
+| Journal     | No          | Yes     | Yes     |
+| ACLs        | No          | Yes     | Yes     |
+| Max file    | 4 GiB       | 16 TiB  | 16 TiB  |
+| Typical use | USB, legacy | Windows | Linux   |
+
+- **Journaling:** before changing FS structures, write intent to a **journal** (log); on crash, replay journal → consistent state without full `fsck`.
+
+:::
+:::
+
+---
+
+## ELF executable file structure and dynamic linking
+
+::: columns
+::: column
+
+- **ELF** (Executable and Linkable Format): standard on Linux, BSD, embedded.
+- **Structure:** ELF header → Program Header Table (PHT, for loader) → Section Header Table (SHT, for tools). Key sections: `.text`, `.rodata`, `.data`, `.bss`, `.symtab`, `.dynsym`.
+- **`readelf -h`** — header; **`readelf -l`** — segments; **`readelf -S`** — sections.
+
+```text
+[Nr] Name    Type      Address          Size
+ 14  .text   PROGBITS  0000000000400000  0001a2
+ 15  .rodata PROGBITS  00000000004001a4  00000c
+ 17  .bss    NOBITS    00000000004001c0  000008
+```
 
 :::
 ::: column
 
 ![](plots/elf_layout.png)
 
+- **Dynamic linking:** shared libraries (`.so` / `.dll`) loaded at runtime by **`ld.so`** (dynamic linker).
+  - **PLT/GOT** (Procedure Linkage Table / Global Offset Table): first call to a library function goes through PLT → GOT (lazy binding); after resolution, subsequent calls go directly.
+  - **Advantage:** smaller executables, shared memory for library code across processes, easy updates.
+  - **`ldd ./program`** — list shared library dependencies.
+
 :::
 :::
 
 ---
 
-## ELF: inspecting with readelf
+# Concurrency and Communication
 
-- **`readelf -h ./program`** — ELF header (entry, class, machine).
-- **`readelf -l ./program`** — program headers (segments) and load addresses.
-- **`readelf -S ./program`** — section list (e.g. `.text`, `.data`, `.bss`, `.symtab`).
-
-Example (excerpt):
-
-```text
-  [Nr] Name    Type     Address          Off    Size
-   14 .text    PROGBITS 0000000000400000 001000 0001a2
-   15 .rodata  PROGBITS 00000000004001a4 0011a4 00000c
-   16 .data    PROGBITS 00000000004001b0 0011b0 000010
-   17 .bss     NOBITS   00000000004001c0 0011c0 000008
-```
-
----
-
-## System calls: how they work and why they are slow
+## Inter-process communication (IPC)
 
 ::: columns
 ::: column
 
-- **Mechanism**
-  1. User places syscall number (e.g. `SYS_write`) and args in registers (or stack).
-  2. Instruction **`syscall`** (x86-64) / **`int 0x80`** (x86) — CPU switches to kernel mode, jumps to kernel entry.
-  3. Kernel **handler** checks number, copies args from user (with checks), runs kernel code (e.g. VFS write).
-  4. **Return:** result in register, `sysret` → back to user mode at next instruction.
-
-- **Why it is expensive**
-  - **Mode switch:** change of privilege level, possible **cache/TLB flushes** or misses (kernel and user use different address spaces).
-  - **Argument copying:** kernel must copy and validate pointers and buffers from user space (no direct dereference of user pointers in kernel).
-  - **Context:** if I/O blocks, process may be descheduled; when many syscalls, overhead adds up (hundreds of nanoseconds to a few microseconds per call).
+- **Signals** — asynchronous notifications to a process (e.g. `SIGTERM`, `SIGKILL`, `SIGSEGV`, `SIGINT` from Ctrl+C). Process can install a **handler** or use default action (terminate, ignore, stop).
+- **Pipes:** `|` in shell; unidirectional byte stream between two processes (parent ↔ child). **Named pipes (FIFOs):** persist in FS, any two processes can connect.
+- **Sockets:** bidirectional; work locally (Unix domain) or over network (TCP/UDP). Foundation of client-server communication.
 
 :::
 ::: column
 
-- **Mitigations**
-  - **vDSO:** some “syscalls” (e.g. `gettimeofday`) served from read-only user mapping → no trap.
-  - **Batching:** do fewer, larger operations (e.g. buffer writes) instead of many small syscalls.
-  - **Avoid round-trips:** async I/O, memory-mapped files, so that data flows without a syscall per access.
+- **Shared memory:** fastest IPC — processes map the same physical pages (`mmap(MAP_SHARED)`, POSIX `shm_open`). Requires explicit synchronization.
+- **Message queues** (POSIX `mq_open`): kernel-managed queue of typed messages; decouples sender and receiver.
+
+| Mechanism     | Copy? | Direction | Speed  |
+|---------------|-------|-----------|--------|
+| Pipe          | Yes   | One-way   | Medium |
+| Socket        | Yes   | Both ways | Medium |
+| Shared memory | No    | Both ways | Fast   |
+| Signal        | No    | One-way   | Fast   |
 
 :::
 :::
 
 ---
 
-## Shared memory: mechanisms and synchronization primitives
+## Synchronization: race conditions, mutexes, semaphores
 
 ::: columns
 ::: column
 
-- **Shared memory between processes**
-  - **`mmap(MAP_SHARED)`** — file or anonymous region shared across fork or with explicit attach; changes visible to all mappers.
-  - **SysV / POSIX shared memory** — `shm_open` + `ftruncate` + `mmap`; segment identified by name, survives process exit if not unlinked.
-  - **Copying:** pipes, sockets — no shared memory, but OS-mediated data transfer.
-
-- **Synchronization primitives**
-  - **Mutex** — mutual exclusion; one owner.
-  - **Semaphore** — counting or binary; wait/signal.
-  - **Condition variable** — wait for condition under a lock; often with mutex.
-  - **Barrier** — N threads wait until all reach the barrier.
-  - **Atomics** — lock-free reads/writes (e.g. `atomic_int`) for simple cases.
-
-:::
-::: column
-
-- Use **shared memory** when you need high-throughput, low-latency sharing of large data between processes; then **sync primitives** (or atomics) to avoid races.
-- Primitives can be **process-shared** (PTHREAD_PROCESS_SHARED) for use across processes, or thread-only within one process.
-
-:::
-:::
-
----
-
-## Shared memory: semaphores, mutexes, race conditions
-
-::: columns
-::: column
-
-- **Race condition:** two or more threads read/write shared data with no ordering; outcome depends on scheduling → corrupted state or undefined behaviour. Fix: **synchronization**.
-- **Mutex** (mutual exclusion): one thread holds the lock; others block until `unlock`. Protects **critical sections** so only one thread runs them at a time.
-- **Semaphore:** integer counter + wait/signal. **Binary** (0/1) similar to mutex; **counting** semaphore limits number of threads using N resources or used for signalling (e.g. producer–consumer).
+- **Race condition:** two or more threads read/write shared data with no ordering; outcome depends on scheduling → corrupted state. Fix: **synchronization**.
+- **Mutex** (mutual exclusion): one thread holds the lock; others block until `unlock`. Protects **critical sections**.
+- **Semaphore:** integer counter + wait/signal. **Binary** (0/1) similar to mutex; **counting** semaphore limits number of concurrent users (e.g. producer–consumer).
+- **Condition variable** — wait for a condition under a lock; signal to wake waiters.
+- **Barrier** — N threads wait until all arrive.
+- **Atomics** — lock-free operations (e.g. `atomic_int`); for simple counters or flags.
 
 :::
 ::: column
@@ -343,63 +518,39 @@ t1.start(); t2.start(); t1.join(); t2.join()
 # Without lock: counter often < 200000 (race).
 ```
 
+- Primitives can be **process-shared** (`PTHREAD_PROCESS_SHARED`) for use across processes, or thread-only within one process.
+
 :::
 :::
 
 ---
 
-## Deadlock and avoidance
-
-- **Deadlock:** two (or more) threads each hold a lock and wait for the other’s lock → no progress.
-- **Avoidance:** (1) **Ordering** — always take locks in the same order (e.g. lock A then B everywhere). (2) **Timeout** — try_lock with timeout and back off. (3) **Design** — reduce shared state, use lock-free structures where appropriate.
-- **Detection:** OS or runtime can detect cyclic wait (e.g. thread dependency graph); recovery by aborting one participant or forcing release.
-
----
-
-## Copy-on-write fork
+## Deadlock: Coffman conditions and avoidance
 
 ::: columns
 ::: column
 
-- **`fork()`** creates a child process as a copy of the parent. Naively, copying all pages would be slow and waste memory.
-- **Copy-on-write (CoW):**
-  - After fork, parent and child **share the same physical pages**; kernel marks them **read-only** in both page tables.
-  - On first **write** by either process: CPU triggers page fault → kernel allocates a new page, copies content, maps it writable for the faulting process; other process still uses the old page.
-  - Only pages that are actually written are copied; read-only regions (e.g. .text, .rodata) stay shared forever.
+- **Deadlock:** two (or more) threads each hold a lock and wait for the other's lock → no progress.
 
-- **Benefits:** fast fork, lower memory use when child soon does `exec` or touches few pages.
+- **Four Coffman conditions** (all must hold simultaneously):
+  1. **Mutual exclusion** — resource held exclusively.
+  2. **Hold and wait** — thread holds one resource, waits for another.
+  3. **No preemption** — resources cannot be forcibly taken.
+  4. **Circular wait** — cycle in the wait-for graph.
 
-:::
-::: column
-
-- **`exec()`** replaces the process image (load new program); no CoW with previous image — new address space.
-- **CoW is transparent** to the program; same semantics as “full copy”, better performance and memory.
-- **Security:** after fork, sensitive data in parent: if child runs untrusted code, writes there cause a copy, so parent’s copy stays unchanged (but beware of shared pages until then).
-
-:::
-:::
-
----
-
-## Remote memory access (RDMA) and deep learning
-
-::: columns
-::: column
-
-- **RDMA** (Remote Direct Memory Access): one machine can **read or write another machine’s memory** over the network **without involving the remote CPU**. NIC performs the transfer directly.
-  - Low latency, high bandwidth; used in HPC and data centers (InfiniBand, RoCE, iWARP).
-
-- **In deep learning / GPU training**
-  - **Multi-node training:** gradients and parameters are exchanged between nodes. Without RDMA: CPU on each node copies data to/from GPU, then sends over network (extra copies, CPU bottleneck).
-  - **GPUDirect RDMA:** NIC can read/write **GPU device memory** directly (NVIDIA GPUDirect). So: GPU memory → NIC → network → remote NIC → remote GPU memory, with minimal CPU and fewer copies.
-  - **NVLink / NVSwitch:** on a single host or rack, GPUs can access each other’s memory at very high bandwidth; multi-GPU training uses this for fast all-reduce and parameter sync.
-
-- **Why it matters:** training at scale is often **memory-bandwidth and communication bound**; reducing copies and CPU involvement (RDMA, GPUDirect) improves throughput and scaling.
+- **Break any one condition → no deadlock.**
 
 :::
 ::: column
 
-- **Summary:** “Direct access to another machine’s memory” in practice means **RDMA** over the network and **GPUDirect** to GPU memory; in DL clusters this speeds up gradient and parameter exchange between nodes and GPUs.
+- **Prevention / avoidance strategies:**
+  - **Lock ordering** — always acquire locks in a fixed global order (breaks circular wait).
+  - **Timeout + backoff** — `try_lock` with timeout; release everything and retry (breaks hold-and-wait).
+  - **Lock-free design** — reduce shared state; use atomic operations or message passing.
+
+- **Detection:** build thread dependency graph; if cycle found → abort one participant or force release.
+
+- **Classic example:** Dining Philosophers — 5 philosophers, 5 forks, circular table; naive strategy deadlocks.
 
 :::
 :::
@@ -411,28 +562,63 @@ t1.start(); t2.start(); t1.join(); t2.join()
 ::: columns
 ::: column
 
-- **Concurrency** — concept: several tasks make progress over time (possibly interleaved or parallel). Can be implemented by threads, processes, or async (event loop, coroutines).
+- **Concurrency** — several tasks make progress over time (possibly interleaved or parallel). Implemented by threads, processes, or async.
 
 - **Threading** (multiple threads in **one process**)
-  - **Shared memory** (same address space); fast communication, but **race conditions** → need synchronization (mutex, atomics).
-  - **Python GIL:** one thread runs Python bytecode at a time; threads do not run Python code in parallel (I/O and C extensions can release GIL). Good for I/O-bound, not for CPU-bound parallelism in pure Python.
+  - **Shared memory** (same address space); fast communication, but race conditions → need synchronization.
+  - **Python GIL:** one thread runs Python bytecode at a time; threads do not run Python code in parallel. Good for I/O-bound, not for CPU-bound parallelism in pure Python.
 
 - **Multiprocessing** (multiple **processes**)
-  - **Separate address spaces**; no shared memory by default → use IPC (pipes, queues, shared memory + sync).
+  - **Separate address spaces**; no shared memory by default → use IPC.
   - **No GIL** — processes run in parallel on multiple cores; good for CPU-bound workloads in Python.
   - Heavier than threads (fork/startup, more memory if not CoW-friendly).
 
 :::
 ::: column
 
-|              | Threads        | Multiprocessing | Async (1 thread) |
-|--------------|----------------|-----------------|------------------|
-| Memory       | Shared         | Separate        | Shared           |
-| Parallelism  | Yes (if no GIL)| Yes             | No               |
-| Use case     | I/O, some CPU  | CPU-bound       | I/O-bound        |
-| Sync         | Mutex, etc.    | IPC, shm+sync   | No locks (cooperative) |
+|              | Threads         | Multiprocessing | Async (1 thread)       |
+|--------------|-----------------|-----------------|------------------------|
+| Memory       | Shared          | Separate        | Shared                 |
+| Parallelism  | Yes (if no GIL) | Yes             | No                     |
+| Use case     | I/O, some CPU   | CPU-bound       | I/O-bound              |
+| Sync         | Mutex, etc.     | IPC, shm+sync   | No locks (cooperative) |
 
-- **When to use:** **Threads** for I/O-bound or when you need shared state with sync; **processes** for CPU-bound and to bypass GIL; **async** for many I/O-bound tasks without extra threads.
+- **When to use:** **Threads** for I/O-bound or shared state with sync; **processes** for CPU-bound / bypass GIL; **async** for many I/O-bound tasks without extra threads.
 
 :::
 :::
+
+---
+
+## DMA, RDMA, and GPU training
+
+::: columns
+::: column
+
+- **DMA** (Direct Memory Access): device (disk, NIC) transfers data **directly to/from RAM** without CPU involvement per byte. CPU sets up the transfer, device signals completion via interrupt. Used in all modern I/O.
+
+- **RDMA** (Remote DMA): one machine reads/writes **another machine's memory** over the network without involving the remote CPU. NIC performs the transfer. Low latency, high bandwidth (InfiniBand, RoCE).
+
+:::
+::: column
+
+- **GPUDirect RDMA** (NVIDIA): NIC reads/writes **GPU device memory** directly. GPU → NIC → network → remote NIC → remote GPU, minimal CPU involvement.
+- **NVLink / NVSwitch:** high-bandwidth GPU-to-GPU interconnect within a host or rack.
+- **Why it matters for DL:** multi-node training exchanges gradients between GPUs; RDMA + GPUDirect reduces copies and CPU bottleneck → better throughput and scaling.
+
+:::
+:::
+
+---
+
+## Summary
+
+- **OS** = resource manager + abstraction layer + protection enforcer.
+- **CPU modes + interrupts** provide the hardware foundation for kernel/user separation.
+- **System calls** are the controlled gateway from userspace to kernel; mitigations (vDSO, io_uring) reduce overhead.
+- **Processes** are isolated by virtual memory; **scheduling** (RR, MLFQ, CFS) decides who runs when.
+- **Virtual memory** (paging, page tables, TLB) gives each process its own address space; **CoW** makes fork efficient.
+- **Security mechanisms** (ASLR, NX, canaries, KPTI) defend against memory exploits.
+- **File systems** organize persistent storage; **ELF + dynamic linking** define how programs are loaded.
+- **IPC** (pipes, signals, sockets, shared memory) and **synchronization** (mutexes, semaphores) enable safe communication.
+- **Concurrency** (threads, processes, async) — choose based on workload; **deadlock** requires awareness of Coffman conditions.
