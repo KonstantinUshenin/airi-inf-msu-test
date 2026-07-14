@@ -1,0 +1,130 @@
+// OSI and TCP/IP comparison diagram.
+// Render with:
+//   dot -Tpng osi_tcpip_graphviz_dot_layout.dot -o osi_model.png
+// For a smaller PNG file, use:
+//   dot -Tpng:cairo -Gdpi=96 osi_tcpip_graphviz_dot_layout.dot -o osi_model.png
+
+digraph OSI_TCPIP {
+  graph [
+    charset="UTF-8",
+    bgcolor="#f6f6f6",
+    margin=0,
+    pad=0.08,
+    dpi=96
+  ];
+
+  node [
+    shape=plain,
+    fontname="Arial",
+    fontsize=12
+  ];
+
+  diagram [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="8" CELLPADDING="0">
+      <TR>
+        <TD WIDTH="115" HEIGHT="24" ALIGN="CENTER">
+          <FONT FACE="Arial" POINT-SIZE="11"><B>OSI</B></FONT>
+        </TD>
+        <TD COLSPAN="2" WIDTH="238" HEIGHT="24" ALIGN="CENTER">
+          <FONT FACE="Arial" POINT-SIZE="11"><B>TCP/IP</B></FONT>
+        </TD>
+      </TR>
+
+      <TR>
+        <TD>
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="36">
+            <TR><TD ALIGN="LEFT">7. Прикладной</TD></TR>
+          </TABLE>
+        </TD>
+        <TD ROWSPAN="3">
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="124">
+            <TR><TD ALIGN="LEFT" VALIGN="MIDDLE">4. Прикладной</TD></TR>
+          </TABLE>
+        </TD>
+        <TD ROWSPAN="3">
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="124">
+            <TR><TD ALIGN="LEFT" VALIGN="MIDDLE">HTTP, SMTP, DNS,<BR ALIGN="LEFT"/>FTP, POP3, IMAP</TD></TR>
+          </TABLE>
+        </TD>
+      </TR>
+
+      <TR>
+        <TD>
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="36">
+            <TR><TD ALIGN="LEFT">6. Представления</TD></TR>
+          </TABLE>
+        </TD>
+      </TR>
+
+      <TR>
+        <TD>
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="36">
+            <TR><TD ALIGN="LEFT">5. Сеансовый</TD></TR>
+          </TABLE>
+        </TD>
+      </TR>
+
+      <TR>
+        <TD>
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="36">
+            <TR><TD ALIGN="LEFT">4. Транспортный</TD></TR>
+          </TABLE>
+        </TD>
+        <TD>
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="36">
+            <TR><TD ALIGN="LEFT">3. Транспортный</TD></TR>
+          </TABLE>
+        </TD>
+        <TD>
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="36">
+            <TR><TD ALIGN="LEFT">TCP, UDP</TD></TR>
+          </TABLE>
+        </TD>
+      </TR>
+
+      <TR>
+        <TD>
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="48">
+            <TR><TD ALIGN="LEFT">3. Сетевой</TD></TR>
+          </TABLE>
+        </TD>
+        <TD>
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="48">
+            <TR><TD ALIGN="LEFT">2. Интернет<BR ALIGN="LEFT"/>(Сетевой)</TD></TR>
+          </TABLE>
+        </TD>
+        <TD>
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="48">
+            <TR><TD ALIGN="LEFT">IPv4, IPv6, ARP,<BR ALIGN="LEFT"/>ICMP, IGMP, BGP,<BR ALIGN="LEFT"/>OSPF, RIP, EIGRP</TD></TR>
+          </TABLE>
+        </TD>
+      </TR>
+
+      <TR>
+        <TD>
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="48">
+            <TR><TD ALIGN="LEFT">2. Канальный</TD></TR>
+          </TABLE>
+        </TD>
+        <TD ROWSPAN="2">
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="104">
+            <TR><TD ALIGN="LEFT" VALIGN="MIDDLE">1. Сетевых<BR ALIGN="LEFT"/>интерфейсов</TD></TR>
+          </TABLE>
+        </TD>
+        <TD ROWSPAN="2">
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="104">
+            <TR><TD ALIGN="LEFT" VALIGN="MIDDLE">Ethernet<BR ALIGN="LEFT"/>Wi-Fi<BR ALIGN="LEFT"/>Bluetooth<BR ALIGN="LEFT"/>DSL</TD></TR>
+          </TABLE>
+        </TD>
+      </TR>
+
+      <TR>
+        <TD>
+          <TABLE BORDER="1" COLOR="#5b8fd8" BGCOLOR="#d9e7fa" STYLE="ROUNDED" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" WIDTH="115" HEIGHT="48">
+            <TR><TD ALIGN="LEFT">1. Физический</TD></TR>
+          </TABLE>
+        </TD>
+      </TR>
+    </TABLE>
+  >];
+}
