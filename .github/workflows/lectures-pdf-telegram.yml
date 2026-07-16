@@ -1,0 +1,95 @@
+# Сборка PDF лекций, изменившихся при мерже в main, и отправка в Telegram.
+# Секреты репозитория: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+
+name: Build lectures PDF and send to Telegram
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lectures/**'
+
+jobs:
+  build-and-send:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed lecture .qmd files
+        id: changed
+        run: |
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            git diff --name-only --diff-filter=A HEAD -- lectures/ || true
+          else
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- lectures/ || true
+          fi | grep '\.qmd$' > changed_qmd.txt || true
+          echo "count=$(wc -l < changed_qmd.txt | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          cat changed_qmd.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Install LaTeX (XeLaTeX) and Graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-xetex \
+            texlive-lang-cyrillic \
+            texlive-fonts-recommended \
+            graphviz \
+            fontconfig
+
+      - name: Install Inter font
+        run: |
+          mkdir -p ~/.local/share/fonts/Inter
+          curl -sL -o inter.zip "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
+          unzip -q inter.zip -d inter_extract
+          find inter_extract -name "*.otf" -exec cp {} ~/.local/share/fonts/Inter/ \;
+          fc-cache -fv
+
+      - name: Build plots (dot → png)
+        run: make dot
+
+      - name: Build changed lecture PDFs
+        run: |
+          mkdir -p pdf
+          while IFS= read -r qmd; do
+            [ -z "$qmd" ] && continue
+            echo "Building $qmd ..."
+            quarto render "$qmd" --output-dir pdf
+          done < changed_qmd.txt
+        if: steps.changed.outputs.count != '0'
+
+      - name: Upload PDFs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lecture-pdfs
+          path: pdf/**/*.pdf
+          if-no-files-found: ignore
+        if: steps.changed.outputs.count != '0'
+
+      - name: Send PDFs to Telegram
+        run: |
+          while IFS= read -r qmd; do
+            [ -z "$qmd" ] && continue
+            base="${qmd%.qmd}"
+            name="${base#lectures/}"
+            pdf="pdf/${base}.pdf"
+            if [ -f "$pdf" ]; then
+              echo "Sending $pdf ..."
+              curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
+                -F "chat_id=${TELEGRAM_CHAT_ID}" \
+                -F "document=@${pdf}" \
+                -F "caption=Lecture: ${name}"
+            fi
+          done < changed_qmd.txt
+        if: steps.changed.outputs.count != '0' && env.TELEGRAM_BOT_TOKEN != '' && env.TELEGRAM_CHAT_ID != ''
