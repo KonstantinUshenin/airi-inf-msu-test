@@ -67,7 +67,8 @@ import matplotlib.pyplot as plt
 
 x = np.linspace(0, 2 * np.pi, 200)
 plt.plot(x, np.sin(x))
-plt.xlabel("x"); plt.ylabel("sin(x)")
+plt.xlabel("x")
+plt.ylabel("sin(x)")
 plt.title("y = sin(x)")
 plt.grid(True)
 plt.savefig("sin.png", dpi=150)   # сохранить ДО show
@@ -121,10 +122,18 @@ import matplotlib.pyplot as plt
 x = np.linspace(-5, 5, 400)
 fig, axes = plt.subplots(2, 2, figsize=(10, 8))
 
-axes[0, 0].plot(x, x ** 2);            axes[0, 0].set_title("$y = x^2$")
-axes[0, 1].plot(x, x ** 3 - 3 * x);    axes[0, 1].set_title("$y = x^3 - 3x$")
-axes[1, 0].plot(x, np.sinc(x / np.pi)); axes[1, 0].set_title("$y = \\sin(x)/x$")
-axes[1, 1].plot(x, np.log(1 + x ** 2)); axes[1, 1].set_title("$y = \\ln(1 + x^2)$")
+axes[0, 0].plot(x, x ** 2)
+axes[0, 0].set_title("$y = x^2$")
+
+axes[0, 1].plot(x, x ** 3 - 3 * x)
+axes[0, 1].set_title("$y = x^3 - 3x$")
+
+axes[1, 0].plot(x, np.sinc(x / np.pi))    # sinc(x/π) = sin(x)/x без деления на 0
+axes[1, 0].set_title("$y = \\sin(x)/x$")
+
+axes[1, 1].plot(x, np.log(1 + x ** 2))
+axes[1, 1].set_title("$y = \\ln(1 + x^2)$")
+
 for ax in axes.flat:
     ax.grid(True)
 
@@ -145,7 +154,8 @@ data = np.random.randn(10000)
 plt.hist(data, bins=50, density=True, edgecolor="black", label="выборка")
 x = np.linspace(-4, 4, 300)
 plt.plot(x, (1 / np.sqrt(2 * np.pi)) * np.exp(-x ** 2 / 2), "r-", lw=2, label="N(0,1)")
-plt.legend(); plt.title("density=True уравнивает масштабы")
+plt.legend()
+plt.title("density=True уравнивает масштабы")
 plt.show()
 ```
 
@@ -171,10 +181,15 @@ Z = np.sin(X ** 2 + Y ** 2)
 print("Z.shape:", Z.shape)
 
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
 im = axes[0].imshow(Z, extent=[-3, 3, -3, 3], origin="lower", cmap="viridis")
-axes[0].set_title("imshow"); fig.colorbar(im, ax=axes[0])
+axes[0].set_title("imshow")
+fig.colorbar(im, ax=axes[0])
+
 cf = axes[1].contourf(X, Y, Z, levels=20, cmap="viridis")
-axes[1].set_title("contourf"); fig.colorbar(cf, ax=axes[1])
+axes[1].set_title("contourf")
+fig.colorbar(cf, ax=axes[1])
+
 fig.tight_layout()
 plt.show()
 ```
@@ -197,8 +212,11 @@ k = np.arange(1, N + 1)
 running = 4 * np.cumsum(inside) / k
 plt.plot(k[::1000], running[::1000])
 plt.axhline(np.pi, color="red", ls="--", label="π")
-plt.xscale("log"); plt.xlabel("число точек"); plt.ylabel("оценка π")
-plt.legend(); plt.title("Монте-Карло: сходимость к π")
+plt.xscale("log")
+plt.xlabel("число точек")
+plt.ylabel("оценка π")
+plt.legend()
+plt.title("Монте-Карло: сходимость к π")
 plt.show()
 ```
 
@@ -242,7 +260,8 @@ fig = plt.figure(figsize=(15, 4))
 ax1 = fig.add_subplot(1, 3, 1)
 t = np.linspace(0, 2 * np.pi, 1000)
 ax1.scatter(np.sin(3 * t), np.sin(4 * t), c=t, cmap="hsv", s=2)
-ax1.set_title("Фигура Лиссажу"); ax1.set_aspect("equal")
+ax1.set_title("Фигура Лиссажу")
+ax1.set_aspect("equal")
 
 # Спираль Архимеда — полярные координаты
 ax2 = fig.add_subplot(1, 3, 2, projection="polar")
@@ -271,4 +290,28 @@ Xz = (X - X.mean(axis=0)) / X.std(axis=0)  # broadcasting по столбцам,
 
 print("mean:", np.round(Xz.mean(axis=0), 6))   # ~ [0 0 0 0]
 print("std :", np.round(Xz.std(axis=0), 6))    # ~ [1 1 1 1]
+```
+
+### H6
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation, PillowWriter
+
+x = np.linspace(0, 4 * np.pi, 300)
+fig, ax = plt.subplots(figsize=(8, 4))
+line, = ax.plot(x, np.sin(x))
+ax.set_ylim(-1.5, 1.5)
+ax.set_title("Бегущая волна: y = sin(x - t)")
+ax.grid(True, alpha=0.3)
+
+def update(frame):
+    t = frame * 0.2
+    line.set_ydata(np.sin(x - t))     # обновляем данные линии на каждом кадре
+    return (line,)
+
+anim = FuncAnimation(fig, update, frames=60, interval=50, blit=True)
+anim.save("wave.gif", writer=PillowWriter(fps=20))
+plt.close(fig)
 ```
