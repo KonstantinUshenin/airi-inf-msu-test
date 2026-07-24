@@ -8,7 +8,7 @@
 mkdir -p input work result
 touch input/empty-1 input/empty-2
 echo "$USER" > input/user.txt
-cp input/* work/
+cp input/empty-1 input/empty-2 input/user.txt work/
 rm -- work/empty-1
 ls -l input work result
 ```
@@ -16,20 +16,19 @@ ls -l input work result
 ### B2
 
 ```bash
-touch exists.txt
-ls exists.txt missing.txt > stdout.txt 2> stderr.txt || echo "$?" > exit-code.txt
-ls exists.txt missing.txt > all.txt 2>&1 || echo "$?" >> all.txt
-echo 'done' >> all.txt
+ls exists.txt missing.txt > stdout.txt 2> stderr.txt || true
+ls exists.txt missing.txt > all.txt 2>&1 || true
+echo 'finished' >> all.txt
 ```
 
 ### B3
 
 ```bash
 COURSE_NAME='Linux course'
-echo "$COURSE_NAME"
-bash -c 'echo "${COURSE_NAME:-missing}"'
+echo "current=$COURSE_NAME" > environment.txt
+bash -c 'echo "child-before=${COURSE_NAME:-missing}"' >> environment.txt
 export COURSE_NAME
-bash -c 'echo "$COURSE_NAME"'
+bash -c 'echo "child-after=$COURSE_NAME"' >> environment.txt
 ```
 
 ### B4
@@ -37,11 +36,10 @@ bash -c 'echo "$COURSE_NAME"'
 ```bash
 sleep 30 &
 process_id=$!
-echo "$process_id"
-ps -p "$process_id"
+ps -o pid,ppid,stat,cmd -p "$process_id" > process.txt
 kill -TERM "$process_id"
-wait "$process_id"
-ps -p "$process_id" || echo 'finished'
+wait "$process_id" 2>/dev/null || true
+ps -p "$process_id" >> process.txt 2>&1 || echo 'finished' >> process.txt
 ```
 
 ### B5
@@ -55,9 +53,9 @@ ps -p "$process_id" || echo 'finished'
   echo "PWD=$PWD"
 } > system.txt
 
-command -v top || echo 'top: not found'
-command -v htop || echo 'htop: not found'
-command -v nvidia-smi || echo 'nvidia-smi: not found'
+which top > tools.txt || echo 'top: not found' > tools.txt
+which htop >> tools.txt || echo 'htop: not found' >> tools.txt
+which nvidia-smi >> tools.txt || echo 'nvidia-smi: not found' >> tools.txt
 ```
 
 ### B6
@@ -66,10 +64,12 @@ command -v nvidia-smi || echo 'nvidia-smi: not found'
 student_full_name='Anna Smith'
 student_group_name='ML 01'
 PROJECT_DATA_DIRECTORY="$HOME/course data"
-echo "${student_full_name}"
-echo "${student_group_name}"
-echo "${PROJECT_DATA_DIRECTORY}"
-echo "${student_group_name}_report.txt"
+{
+  echo "$student_full_name"
+  echo "$student_group_name"
+  echo "$PROJECT_DATA_DIRECTORY"
+  echo "${student_group_name}_report.txt"
+} > variables.txt
 ```
 
 ### B7
@@ -78,19 +78,15 @@ echo "${student_group_name}_report.txt"
 cat parts/01.txt parts/02.txt parts/03.txt > document.txt
 cp document.txt document-draft.txt
 echo 'DRAFT' >> document-draft.txt
-wc -l document.txt document-draft.txt
 ```
 
 ### B8
 
 ```bash
-touch remove-me.txt
-mkdir empty-directory
-mkdir non-empty-directory
-touch non-empty-directory/file.txt
 rm -- remove-me.txt
 rmdir empty-directory
 rmdir non-empty-directory 2> rmdir-error.txt
+ls -l non-empty-directory
 ```
 
 ### B9
@@ -98,21 +94,19 @@ rmdir non-empty-directory 2> rmdir-error.txt
 ```bash
 chmod 744 run.sh
 chmod 750 shared
-ls -l run.sh
-ls -ld shared
-stat -c '%a %n' run.sh shared
+stat -c '%A %a %n' run.sh shared > permissions.txt
 ```
 
 ### B10
 
 ```bash
-cat /etc/os-release | tee os-release.txt | head -n 5 | wc -l
+cat source.txt | cat > pipeline.txt
 
-cat /missing-file | wc -l
+cat missing.txt | cat
 echo "$?" > without-pipefail.txt
 
 set -o pipefail
-cat /missing-file | wc -l
+cat missing.txt | cat
 echo "$?" > with-pipefail.txt
 ```
 
@@ -123,13 +117,14 @@ echo "$?" > with-pipefail.txt
 ```bash
 sleep 30 &
 process_id=$!
-ps -o pid,stat,cmd -p "$process_id"
+ps -o pid,stat,cmd -p "$process_id" > states.txt
 kill -STOP "$process_id"
-ps -o pid,stat,cmd -p "$process_id"
+ps -o pid,stat,cmd -p "$process_id" >> states.txt
 kill -CONT "$process_id"
-ps -o pid,stat,cmd -p "$process_id"
+ps -o pid,stat,cmd -p "$process_id" >> states.txt
 kill -TERM "$process_id"
-wait "$process_id"
+wait "$process_id" 2>/dev/null || true
+ps -p "$process_id" >> states.txt 2>&1 || echo 'finished' >> states.txt
 ```
 
 ### A2
@@ -140,11 +135,21 @@ cp -r source/. destination/
 
 source_count=$(ls source | wc -l)
 destination_count=$(ls destination | wc -l)
-test "$source_count" -eq "$destination_count" || exit 1
 
 source_sizes=$(cd source && wc -c -- *)
 destination_sizes=$(cd destination && wc -c -- *)
-test "$source_sizes" = "$destination_sizes"
+
+{
+  echo "source_count=$source_count"
+  echo "destination_count=$destination_count"
+  echo 'source sizes:'
+  echo "$source_sizes"
+  echo 'destination sizes:'
+  echo "$destination_sizes"
+} > verification.txt
+
+test "$source_count" -eq "$destination_count" || exit 1
+test "$source_sizes" = "$destination_sizes" || exit 1
 ```
 
 ### A3
@@ -159,11 +164,12 @@ mkdir -p report
   df -h "$HOME"
 } > report/system.txt 2> report/errors.txt
 
-ps -u "$USER" -o pid,ppid,stat,%cpu,%mem,cmd > report/processes.txt
+ps -u "$USER" -o pid,ppid,stat,%cpu,%mem,cmd \
+  > report/processes.txt 2>> report/errors.txt
 
-command -v top > report/tools.txt || echo 'top: not found' >> report/tools.txt
-command -v htop >> report/tools.txt || echo 'htop: not found' >> report/tools.txt
-command -v nvidia-smi >> report/tools.txt || echo 'nvidia-smi: not found' >> report/tools.txt
+which top > report/tools.txt || echo 'top: not found' >> report/tools.txt
+which htop >> report/tools.txt || echo 'htop: not found' >> report/tools.txt
+which nvidia-smi >> report/tools.txt || echo 'nvidia-smi: not found' >> report/tools.txt
 ```
 
 ### A4
@@ -171,11 +177,19 @@ command -v nvidia-smi >> report/tools.txt || echo 'nvidia-smi: not found' >> rep
 `worker.sh`:
 
 ```bash
+#!/usr/bin/env bash
+
 sleep "$1"
 exit "$2"
 ```
 
+`manager.sh`:
+
 ```bash
+#!/usr/bin/env bash
+
+chmod +x worker.sh
+
 ./worker.sh 2 0 > worker-1.log 2>&1 &
 pid_1=$!
 ./worker.sh 3 1 > worker-2.log 2>&1 &
@@ -202,6 +216,16 @@ test "$project_count" -eq "$backup_count" || exit 1
 
 project_sizes=$(cd project && wc -c -- *)
 backup_sizes=$(cd backups/staging && wc -c -- *)
+
+{
+  echo "project_count=$project_count"
+  echo "backup_count=$backup_count"
+  echo 'project sizes:'
+  echo "$project_sizes"
+  echo 'backup sizes:'
+  echo "$backup_sizes"
+} > backups/verification.txt
+
 test "$project_sizes" = "$backup_sizes" || exit 1
 mv backups/staging backups/backup-ready
 ```
