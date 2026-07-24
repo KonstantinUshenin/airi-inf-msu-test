@@ -1,6 +1,6 @@
 # Примеры решений
 
-## Basic
+## База
 
 ### B1
 
@@ -57,21 +57,23 @@ uv tree > dependency-tree.txt
 ls -l pyproject.toml uv.lock > project-files.txt
 ```
 
-### B6
+## Среднее
+
+### M1
 
 ```bash
 apt list --installed > installed-packages.txt 2> apt-errors.txt
 apt list --upgradable > upgradable-packages.txt 2>> apt-errors.txt
 ```
 
-### B7
+### M2
 
 ```bash
 export PYTHONPATH="$PWD/modules"
 python3 -c 'import course_module; print(course_module.VALUE); print(course_module.__file__)' > import.txt
 ```
 
-### B8
+### M3
 
 ```bash
 mkdir project-restored
@@ -82,14 +84,14 @@ uv run python --version > restored-versions.txt
 uv run python -c 'import requests; print(requests.__version__)' >> restored-versions.txt
 ```
 
-### B9
+### M4
 
 ```bash
 ldconfig -p > libraries-all.txt
 head -n 20 libraries-all.txt > libraries.txt
 ```
 
-### B10
+### M5
 
 ```bash
 systemctl --version > systemd.txt
@@ -98,9 +100,9 @@ journalctl -u systemd-journald -n 20 --no-pager > service-journal.txt 2>&1
 systemctl list-units --type=service --no-pager > system-services.txt 2>&1
 ```
 
-## Advanced
+## Сложное
 
-### A1
+### H1
 
 ```bash
 uv venv --python 3.11 env-311
@@ -111,7 +113,7 @@ echo "$PWD/env-311/bin/python" > python-paths.txt
 echo "$PWD/env-312/bin/python" >> python-paths.txt
 ```
 
-### A2
+### H2
 
 ```bash
 mkdir dependency-update
@@ -128,14 +130,14 @@ uv run python -c 'import requests; print(requests.__version__)' > after.txt
 diff uv.lock.before uv.lock > lock-changes.txt || true
 ```
 
-### A3
+### H3
 
 ```bash
 PATH="$PWD/bin-one:$PWD/bin-two:$PATH" bash -c 'course-info; which course-info' > first.txt
 PATH="$PWD/bin-two:$PWD/bin-one:$PATH" bash -c 'course-info; which course-info' > second.txt
 ```
 
-### A4
+### H4
 
 ```bash
 systemctl cat "$SERVICE_NAME" > service-unit.txt 2> service-errors.txt
@@ -143,7 +145,7 @@ systemctl status "$SERVICE_NAME" --no-pager > service-status.txt 2>> service-err
 journalctl -u "$SERVICE_NAME" -n 100 --no-pager > service-journal.txt 2>> service-errors.txt
 ```
 
-### A5
+### H5
 
 ```bash
 mkdir -p report

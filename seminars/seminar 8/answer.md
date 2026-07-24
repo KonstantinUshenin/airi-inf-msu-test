@@ -1,6 +1,6 @@
 # Примеры решений
 
-## Basic
+## База
 
 ### B1
 
@@ -45,7 +45,9 @@ EOF
 ssh -F course-config -G course > effective-config.txt
 ```
 
-### B6
+## Среднее
+
+### M1
 
 ```bash
 mkdir -p keys
@@ -55,7 +57,7 @@ ssh-keygen -lf keys/course_ed25519.pub > key-fingerprint.txt
 ls -l keys > key-files.txt
 ```
 
-### B7
+### M2
 
 ```bash
 ssh course 'tmux new-session -d -s course-worker "sleep 120"'
@@ -64,14 +66,14 @@ ssh course 'tmux kill-session -t course-worker'
 ssh course 'tmux has-session -t course-worker' > tmux-after.txt 2>&1 || echo 'finished' >> tmux-after.txt
 ```
 
-### B8
+### M3
 
 ```bash
 rsync -av local-data/ course:~/seminar8-sync/ > first-sync.txt
 rsync -av local-data/ course:~/seminar8-sync/ > second-sync.txt
 ```
 
-### B9
+### M4
 
 ```bash
 touch course-known-hosts
@@ -79,16 +81,16 @@ ssh-keyscan HOST >> course-known-hosts 2> keyscan-errors.txt
 ssh-keygen -F HOST -f course-known-hosts > known-host.txt
 ```
 
-### B10
+### M5
 
 ```bash
 ssh -Tvvv course true > connection.out 2> connection-debug.txt
 echo "$?" > connection-exit-code.txt
 ```
 
-## Advanced
+## Сложное
 
-### A1
+### H1
 
 ```bash
 ssh-copy-id -i keys/course_ed25519.pub course
@@ -97,7 +99,7 @@ ssh-keygen -lf keys/course_ed25519.pub > selected-key.txt
 ssh -o IdentitiesOnly=yes -i keys/course_ed25519 course 'whoami' > remote-user.txt 2> key-login-errors.txt
 ```
 
-### A2
+### H2
 
 ```bash
 rsync -avni --delete local-data/ course:~/seminar8-sync/ > sync-plan.txt
@@ -106,7 +108,7 @@ ls -l local-data > local-files.txt
 ssh course 'ls -l ~/seminar8-sync' > remote-files.txt
 ```
 
-### A3
+### H3
 
 ```bash
 ssh -N -o ExitOnForwardFailure=yes -L 8080:127.0.0.1:8000 course > tunnel.out 2> tunnel.err &
@@ -119,7 +121,7 @@ kill -TERM "$tunnel_pid"
 wait "$tunnel_pid"
 ```
 
-### A4
+### H4
 
 ```bash
 ssh course 'tmux new-session -d -s course-lab -n system "uname -a; sleep 300"'
@@ -130,7 +132,7 @@ ssh course 'tmux capture-pane -p -t course-lab:worker' > worker-pane.txt
 ssh course 'tmux kill-session -t course-lab'
 ```
 
-### A5
+### H5
 
 ```bash
 rsync -avn --exclude='.git/' --exclude='.venv/' --exclude='__pycache__/' project/ course:~/project-backup/ > backup-plan.txt

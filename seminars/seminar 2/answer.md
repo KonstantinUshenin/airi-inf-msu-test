@@ -1,6 +1,6 @@
 # Примеры решений
 
-## Basic
+## База
 
 ### B1
 
@@ -16,9 +16,15 @@ ls -l input work result
 ### B2
 
 ```bash
-ls exists.txt missing.txt > stdout.txt 2> stderr.txt || true
-ls exists.txt missing.txt > all.txt 2>&1 || true
-echo 'finished' >> all.txt
+student_full_name='Anna Smith'
+student_group_name='ML 01'
+PROJECT_DATA_DIRECTORY="$HOME/course data"
+{
+  echo "$student_full_name"
+  echo "$student_group_name"
+  echo "$PROJECT_DATA_DIRECTORY"
+  echo "${student_group_name}_report.txt"
+} > variables.txt
 ```
 
 ### B3
@@ -34,6 +40,54 @@ bash -c 'echo "child-after=$COURSE_NAME"' >> environment.txt
 ### B4
 
 ```bash
+cat parts/01.txt parts/02.txt parts/03.txt > document.txt
+cp document.txt document-draft.txt
+echo 'DRAFT' >> document-draft.txt
+```
+
+### B5
+
+```bash
+rm -- remove-me.txt
+rmdir empty-directory
+rmdir non-empty-directory 2> rmdir-error.txt
+ls -l non-empty-directory
+```
+
+## Среднее
+
+### M1
+
+```bash
+ls exists.txt missing.txt > stdout.txt 2> stderr.txt || true
+ls exists.txt missing.txt > all.txt 2>&1 || true
+echo 'finished' >> all.txt
+```
+
+### M2
+
+```bash
+chmod 744 run.sh
+chmod 750 shared
+stat -c '%A %a %n' run.sh shared > permissions.txt
+```
+
+### M3
+
+```bash
+cat source.txt | cat > pipeline.txt
+
+cat missing.txt | cat
+echo "$?" > without-pipefail.txt
+
+set -o pipefail
+cat missing.txt | cat
+echo "$?" > with-pipefail.txt
+```
+
+### M4
+
+```bash
 sleep 30 &
 process_id=$!
 ps -o pid,ppid,stat,cmd -p "$process_id" > process.txt
@@ -42,7 +96,7 @@ wait "$process_id" 2>/dev/null || true
 ps -p "$process_id" >> process.txt 2>&1 || echo 'finished' >> process.txt
 ```
 
-### B5
+### M5
 
 ```bash
 {
@@ -58,61 +112,9 @@ which htop >> tools.txt || echo 'htop: not found' >> tools.txt
 which nvidia-smi >> tools.txt || echo 'nvidia-smi: not found' >> tools.txt
 ```
 
-### B6
+## Сложное
 
-```bash
-student_full_name='Anna Smith'
-student_group_name='ML 01'
-PROJECT_DATA_DIRECTORY="$HOME/course data"
-{
-  echo "$student_full_name"
-  echo "$student_group_name"
-  echo "$PROJECT_DATA_DIRECTORY"
-  echo "${student_group_name}_report.txt"
-} > variables.txt
-```
-
-### B7
-
-```bash
-cat parts/01.txt parts/02.txt parts/03.txt > document.txt
-cp document.txt document-draft.txt
-echo 'DRAFT' >> document-draft.txt
-```
-
-### B8
-
-```bash
-rm -- remove-me.txt
-rmdir empty-directory
-rmdir non-empty-directory 2> rmdir-error.txt
-ls -l non-empty-directory
-```
-
-### B9
-
-```bash
-chmod 744 run.sh
-chmod 750 shared
-stat -c '%A %a %n' run.sh shared > permissions.txt
-```
-
-### B10
-
-```bash
-cat source.txt | cat > pipeline.txt
-
-cat missing.txt | cat
-echo "$?" > without-pipefail.txt
-
-set -o pipefail
-cat missing.txt | cat
-echo "$?" > with-pipefail.txt
-```
-
-## Advanced
-
-### A1
+### H1
 
 ```bash
 sleep 30 &
@@ -127,7 +129,7 @@ wait "$process_id" 2>/dev/null || true
 ps -p "$process_id" >> states.txt 2>&1 || echo 'finished' >> states.txt
 ```
 
-### A2
+### H2
 
 ```bash
 mkdir -p destination
@@ -152,7 +154,7 @@ test "$source_count" -eq "$destination_count" || exit 1
 test "$source_sizes" = "$destination_sizes" || exit 1
 ```
 
-### A3
+### H3
 
 ```bash
 mkdir -p report
@@ -172,7 +174,7 @@ which htop >> report/tools.txt || echo 'htop: not found' >> report/tools.txt
 which nvidia-smi >> report/tools.txt || echo 'nvidia-smi: not found' >> report/tools.txt
 ```
 
-### A4
+### H4
 
 `worker.sh`:
 
@@ -204,7 +206,7 @@ wait "$pid_3" || status=1
 exit "$status"
 ```
 
-### A5
+### H5
 
 ```bash
 mkdir backups/staging || exit 1
