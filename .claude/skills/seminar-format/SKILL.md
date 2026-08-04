@@ -1,6 +1,6 @@
 ---
 name: seminar-format
-description: Rules for authoring course seminars in this repo (the 10-July format). USE AND APPLY AUTOMATICALLY whenever creating or editing any file under `seminars/` — i.e. a seminar's `lecture.ipynb` (micro-lecture), `question.md` (tasks), or `answer.md` (solutions). Enforces: micro-lecture with a mandatory motivation intro and inline `❓ Вопрос`/`<details>` discussion blocks; 5–10 tasks per level across база/среднее/сложное with test examples; a separate answers file; and defense / theor-minimum grading rules. Follow it as an authoring rulebook, then run the self-check checklist before finishing.
+description: Rules for authoring course seminars in this repo (the 10-July format). USE AND APPLY AUTOMATICALLY whenever creating or editing any file under `seminars/` — i.e. a seminar's `lecture.ipynb` (micro-lecture), `question.md` (tasks), or `answer.md` (solutions). Enforces: micro-lecture with a mandatory motivation intro and inline `❓ Вопрос`/`<details>` discussion blocks; a deliberate plan of self-contained SVG diagrams in `images/` for whatever is spatial, step-by-step or easily confused; 5–10 tasks per level across база/среднее/сложное with test examples; a separate answers file; and defense / theor-minimum grading rules. Follow it as an authoring rulebook, then run the self-check checklist before finishing.
 ---
 
 # Оформление семинаров
@@ -22,6 +22,7 @@ description: Rules for authoring course seminars in this repo (the 10-July forma
 | `lecture.ipynb` | Микро-лекция: мотивация + короткая демка + вопросы для коммуникации |
 | `question.md` | Формулировки задач по уровням (база / среднее / сложное) |
 | `answer.md` | Примеры решений, по одному на каждую задачу |
+| `images/*.svg` | Схемы к микро-лекции (если тема их требует, см. п. 1.5) |
 
 Задачи решаются в консоли или Jupyter. Не смешивай формулировки и решения в
 одном файле.
@@ -60,6 +61,39 @@ description: Rules for authoring course seminars in this repo (the 10-July forma
    ухудшает читаемость и диффы. Пиши каждый вызов на отдельной строке. (Правило
    про Python; `;` в тексте Markdown и в shell-однострочниках `python -c "..."`
    не считается.)
+
+5. **Визуализации — планируй их до того, как писать текст.** Прежде чем
+   набирать микро-лекцию, пройдись по её плану и выпиши, какие места просят
+   схему. Картинка обязана нести смысл, которого нет в тексте и в выводе
+   терминала; декоративных иллюстраций не делаем.
+
+   **Что рисовать:**
+   - **пространственное** — что где лежит и как связано (зоны, копии
+     репозитория, слои системы);
+   - **временное** — как состояние меняется по шагам (2–4 кадра подряд);
+   - **то, что путают** — две похожие вещи рядом, различие подсвечено;
+   - **выигрыш алгоритма** — было N шагов, стало log N.
+
+   **Что не рисовать:** синтаксис и списки правил (это текст), содержимое
+   вывода команды (это демо-ячейка), «общую картину мира» без конкретики.
+
+   **Формат.** Только SVG, отдельными файлами в `seminars/seminar N/images/`,
+   имена вида `01-краткое-имя.svg`. Вставка в ноутбук —
+   `![Подпись](images/01-краткое-имя.svg)` в markdown-ячейке рядом с
+   объясняемым местом. Требования к файлу:
+   - самодостаточный: без внешних шрифтов, скриптов и ссылок на сеть;
+   - непрозрачная светлая подложка `<rect>` на весь холст — иначе тёмная тема
+     превратит чёрный текст в невидимый;
+   - `font-family` — системный стек (`system-ui, Arial, sans-serif`), кириллица
+     обязана читаться;
+   - у маркеров-стрелок `orient="auto"`, **не** `auto-start-reverse`: часть
+     рендереров его не понимает и разворачивает наконечники;
+   - подпись-вывод внизу картинки одной строкой: что именно читатель должен
+     отсюда унести.
+
+   **Проверка перед сдачей:** отрендерить каждый файл в растр и посмотреть
+   глазами. Типовые дефекты, которые видны только на рендере: текст выехал за
+   границу холста, подписи наложились друг на друга, стрелка смотрит не туда.
 
 ## 2. Задачи (`question.md`)
 
@@ -119,6 +153,11 @@ description: Rules for authoring course seminars in this repo (the 10-July forma
 - [ ] Есть вопросы для коммуникации в точном формате `#### ❓ **Вопрос**` + `<details>`.
 - [ ] На каждый вопрос ответ следует из показанной демки.
 - [ ] В Python-ячейках нет нескольких операторов через `;` в одной строке.
+- [ ] План визуализаций продуман: для каждого пространственного/пошагового
+      места либо есть схема, либо явно решено, что она не нужна.
+- [ ] Схемы лежат в `images/` как SVG, вставлены рядом с объясняемым местом,
+      каждая отрендерена и просмотрена глазами (текст не выехал, стрелки на
+      месте).
 
 **`question.md`**
 - [ ] Присутствуют все три уровня: База / Среднее / Сложное.
