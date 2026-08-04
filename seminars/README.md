@@ -7,7 +7,7 @@
 | 1 | сентябрь | Jupyter Notebook. Практика по визуализации | conda jupyter, colab, matplotlib, numpy, магии ноутбука %% | Dmitrii | Максим |
 | 2 | сентябрь | Unix-terminal. Работа с файлами | (ssh, bash, Ctrl+X, Ctrl+Z, Ctrl-C, \|, >, >>, &1, &2) Env Vars, Job, top, htop, ps, nvidia-smi, uname, os release, cat, history, mkdir, cd,  chown, chmod, cp, mv, pwd, ... | Николай | Dmitrii |
 | 3 | сентябрь | Unix-terminal. Работа с текстами | vim, nano, diff, ed, vimdiff, csv, head, tail, wc, grep, find, sort, uniq. Далее аналоги переписанные на Rust: uutils coreutils, ripgrep, xsv | Максим | Николай |
-| 4 | сентябрь | Система контроля версий Git | git | Dmitrii | Максим |
+| 4 | сентябрь | Система контроля версий Git | коммит и хэш, три зоны и грязное состояние, restore/clean, история и алиасы, reset + reflog, ветки и конфликт слияния, .gitignore, remote/upstream/PR, PAT и SSH, git lfs, blame, bisect | Dmitrii | Максим |
 | 5 | октябрь | Unix-terminal. Настройка окружения и установка пакетов | source, virtualenv, apt/snap, pip/uv/conda, export,  ldconfig -p, systemd services, PATH, LD_LIBRARY_PATH, PYTHONPATH | Николай | Dmitrii |
 | 6 | октябрь | Unix-terminal. Работа с оборудованием | lsblk, lsusb, fdisk, lspci -v<br>mount, fdisk,<br>/proc/cpuinfo, /proc/meminfo,<br>nvidia-smi, nvtop,<br>argparse, subprocesses, fork? | Максим | Николай |
 | 7 | октябрь | Unix-terminal. Работа с сетью | nc, scp, ifconfig, ufw, ports, netstat, ss, nslookup, dig, ping, whois, wget, curl | Dmitrii | Максим |
