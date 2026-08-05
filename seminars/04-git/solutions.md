@@ -8,8 +8,12 @@
 ### B1. Первый репозиторий
 
 ```bash
-mkdir -p ~/git-seminar && cd ~/git-seminar
-git init -q -b main
+mkdir -p ~/seminar-04/git-tasks && cd ~/seminar-04/git-tasks
+
+git config --global init.defaultBranch main   # один раз на машину
+git init -q
+git branch --show-current                     # main
+
 git config user.name "Ваше Имя"
 git config user.email "you@example.org"
 
@@ -19,13 +23,17 @@ print("accuracy =", accuracy)
 PY
 
 git add train.py
-git commit -m "train: добавить baseline-эксперимент"
+git commit -m "feat(train): добавить baseline-эксперимент"
 
 git log --oneline
 git log -1 --format='полный: %H%nкороткий: %h%nавтор: %an%nдата: %ad%nсообщение: %s'
 ```
 
-### B2. Три зоны
+Без `init.defaultBranch` git назвал бы первую ветку `master` (и напечатал бы про
+это подсказку). Флаг `git init -b main` делает то же самое разово, но на практике
+настройку ставят один раз глобально и больше о ней не думают.
+
+### B2. Три зоны и индекс
 
 ```bash
 sed -i 's/0.93/0.95/' train.py
@@ -39,7 +47,7 @@ git diff                    # пусто: рабочая копия и инде�
 git diff --cached           # индекс против последнего коммита
 git diff HEAD               # рабочая копия против коммита, минуя индекс
 
-git commit -m "train: поднять accuracy до 0.95"
+git commit -m "feat(train): поднять accuracy до 0.95"
 ```
 
 `git diff` без аргументов сравнивает рабочую копию с **индексом**. `git add`
@@ -120,7 +128,7 @@ git commit -m "chore: добавить .gitignore"
 ```bash
 git switch -c feature/plot
 echo 'print("график сохранён")' >> train.py
-git commit -am "train: сохранять график обучения"
+git commit -am "feat(train): сохранять график обучения"
 
 git switch main
 git merge feature/plot        # Fast-forward, конфликта нет
@@ -170,7 +178,7 @@ git branch -m мои-правки feature/augmentation
 git branch --show-current                   # feature/augmentation
 
 echo "# аугментации" >> train.py
-git commit -qam "train: добавить аугментации" \
+git commit -qam "feat(train): добавить аугментации" \
     -m "Первая гипотеза: горизонтальный флип и случайный кроп."
 
 git log --oneline -1        # видно только заголовок
@@ -185,7 +193,7 @@ git commit -qam "правки"
 git log --oneline -1                        # a1b2c3d правки
 git rev-parse HEAD                          # запомнили хэш
 
-git commit -q --amend -m "train: логировать метрику на валидации"
+git commit -q --amend -m "feat(train): логировать метрику на валидации"
 git log --oneline -1                        # новый заголовок
 git rev-parse HEAD                          # хэш ДРУГОЙ
 ```
@@ -204,11 +212,11 @@ git rev-parse HEAD                          # хэш ДРУГОЙ
 ```bash
 git switch -c feature/augmentation
 sed -i 's/accuracy = 0.95/accuracy = 0.97/' train.py
-git commit -am "train: добавить аугментации"
+git commit -am "feat(train): добавить аугментации"
 
 git switch main
 sed -i 's/accuracy = 0.95/accuracy = 0.91/' train.py
-git commit -am "train: сменить оптимизатор"
+git commit -am "feat(train): сменить оптимизатор"
 
 git merge feature/augmentation
 echo "код возврата: $?"       # 1
@@ -233,7 +241,7 @@ git log --oneline --graph --decorate --all
 ```bash
 git switch -c experiment/lr
 sed -i 's/accuracy = 0.97/accuracy = 0.88/' train.py
-git commit -am "exp: попробовать lr=0.01"
+git commit -am "feat(train): попробовать lr=0.01"
 git switch main
 
 git restore --source=experiment/lr -- train.py
@@ -324,16 +332,16 @@ git log -p -S "accuracy" -- train.py          # то же с показом из
 
 ```bash
 head -c 1000000 /dev/urandom > model.pt
-git add -f model.pt && git commit -m "Случайно закоммитили веса"
+git add -f model.pt && git commit -m "chore: добавить веса"     # упс
 
 echo "*.pt" >> .gitignore
-git add .gitignore && git commit -m "Игнорируем веса"
+git add .gitignore && git commit -m "chore: игнорировать веса"
 
 echo "новые веса" >> model.pt
 git status --short            # M model.pt — файл всё ещё отслеживается
 
 git rm --cached model.pt
-git commit -m "Убрали веса из-под контроля версий"
+git commit -m "chore: убрать веса из-под контроля версий"
 
 git status --short            # пусто
 ls model.pt                   # файл на диске остался
@@ -445,12 +453,12 @@ rm scratch.txt
 ```bash
 # подготовка учебного репозитория
 mkdir -p ~/seminar-04/bisect-demo && cd ~/seminar-04/bisect-demo
-git init -q -b main
+git init -q
 git config user.name S && git config user.email s@e.org
 for i in $(seq 1 12); do
     if [ "$i" -lt 8 ]; then acc=0.93; else acc=0.71; fi
     printf 'accuracy = %s\n# правка %s\nprint("accuracy =", accuracy)\n' "$acc" "$i" > train.py
-    git add train.py && git commit -q -m "Правка $i"
+    git add train.py && git commit -q -m "feat(train): правка $i"
 done
 ```
 
@@ -514,10 +522,10 @@ Reflog — локальный журнал перемещений `HEAD`, хра
 
 ```bash
 echo "API_TOKEN=ghp_секретное_значение" > secrets.env
-git add -f secrets.env && git commit -m "Конфигурация"
+git add -f secrets.env && git commit -m "chore: добавить конфигурацию"
 echo "# работа" >> train.py && git commit -am "Правка"
 
-git rm secrets.env && git commit -m "Удалили секреты"
+git rm secrets.env && git commit -m "chore: удалить секреты"
 ls secrets.env                                  # файла нет
 
 git log -p -- secrets.env | grep API_TOKEN      # но токен достаётся из истории
@@ -553,13 +561,13 @@ git log --all -p | grep API_TOKEN               # ничего не находи
 git lfs install
 git lfs track "*.pt"
 cat .gitattributes             # *.pt filter=lfs diff=lfs merge=lfs -text
-git add .gitattributes && git commit -m "Настроили LFS"
+git add .gitattributes && git commit -m "chore(lfs): настроить LFS"
 
 head -c 20000000 /dev/urandom > model.pt
-git add model.pt && git commit -m "Модель, версия 1"
+git add model.pt && git commit -m "feat(model): версия 1"
 
 head -c 20000000 /dev/urandom > model.pt
-git add model.pt && git commit -m "Модель, версия 2"
+git add model.pt && git commit -m "feat(model): версия 2"
 
 git show HEAD:model.pt | head -3
 # version https://git-lfs.github.com/spec/v1
@@ -600,10 +608,10 @@ exit $status
 SH
 chmod +x .git/hooks/pre-commit
 
-echo "b = 1" > ok.py && git add ok.py && git commit -m "норм"     # проходит
+echo "b = 1" > ok.py && git add ok.py && git commit -m "feat: добавить ok.py"   # проходит
 
 head -c 100 /dev/urandom > model.pt
-git add -f model.pt && git commit -m "веса"                       # отклонено
+git add -f model.pt && git commit -m "chore: добавить веса"       # отклонено
 ```
 
 Размер берётся не с диска, а из индекса (`git cat-file -s` по объекту из
@@ -684,11 +692,11 @@ du -sh .git                                     # например 404K
 
 head -c 20000000 /dev/urandom > checkpoint.pt
 git add -f checkpoint.pt                        # -f, если действует маска *.pt
-git commit -q -m "Случайно закоммитили чекпойнт"
+git commit -q -m "chore: добавить чекпойнт"   # упс
 du -sh .git                                     # ~20M
 
 git rm -q checkpoint.pt
-git commit -q -m "Удалили чекпойнт"
+git commit -q -m "chore: удалить чекпойнт"
 du -sh .git                                     # всё ещё ~20M
 git count-objects -vH                           # size-pack/size показывают те же 20 МБ
 
@@ -736,7 +744,7 @@ git count-objects -vH                           # count: 0
 пройдёт только с `--force`. Поэтому договариваются заранее: все выкладывают
 работу, один человек чистит, остальные клонируют репозиторий заново. И поэтому
 дешевле не допускать таких коммитов — `.gitignore` (раздел 6) и LFS
-(раздел 10).
+(раздел 13).
 
 ### H9. Проверка соглашений автоматикой
 
