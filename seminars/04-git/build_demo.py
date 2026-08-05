@@ -1,11 +1,11 @@
-"""Генератор микро-лекции семинара 4 (`lecture.ipynb`).
+"""Генератор микро-лекции семинара 4 (`demo.ipynb`).
 
 Ноутбук собирается из этого скрипта, а не правится руками: так удобнее
 редактировать длинные markdown-блоки и не возиться с JSON-экранированием.
 
-    python3 "seminars/seminar 4/build_lecture.py"
+    python3 seminars/04-git/build_demo.py
 
-ВАЖНО: правьте этот файл, а НЕ lecture.ipynb — при следующем запуске скрипта
+ВАЖНО: правьте этот файл, а НЕ demo.ipynb — при следующем запуске скрипта
 ручные правки ноутбука будут затёрты. Признак того, что ноутбук порождённый:
 в его metadata стоит ключ "generated_by".
 """
@@ -750,12 +750,12 @@ nb = {
     "metadata": {
         "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
         "language_info": {"name": "python"},
-        "generated_by": "build_lecture.py",
+        "generated_by": "build_demo.py",
     },
     "nbformat": 4,
     "nbformat_minor": 5,
 }
 
-out = pathlib.Path(__file__).resolve().parent / "lecture.ipynb"
+out = pathlib.Path(__file__).resolve().parent / "demo.ipynb"
 out.write_text(json.dumps(nb, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 print("cells:", len(cells), "->", out)
