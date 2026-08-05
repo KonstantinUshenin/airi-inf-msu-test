@@ -19,7 +19,7 @@ print("accuracy =", accuracy)
 PY
 
 git add train.py
-git commit -m "Первый эксперимент: baseline"
+git commit -m "train: добавить baseline-эксперимент"
 
 git log --oneline
 git log -1 --format='полный: %H%nкороткий: %h%nавтор: %an%nдата: %ad%nсообщение: %s'
@@ -39,7 +39,7 @@ git diff                    # пусто: рабочая копия и инде�
 git diff --cached           # индекс против последнего коммита
 git diff HEAD               # рабочая копия против коммита, минуя индекс
 
-git commit -m "Подняли accuracy до 0.95"
+git commit -m "train: поднять accuracy до 0.95"
 ```
 
 `git diff` без аргументов сравнивает рабочую копию с **индексом**. `git add`
@@ -108,7 +108,7 @@ git status --short                     # видны только .gitignore и b
 git check-ignore -v secrets.env data/train.csv model.pt run.log
 
 git add .gitignore
-git commit -m "Добавили .gitignore"
+git commit -m "chore: добавить .gitignore"
 ```
 
 Комментарий в `.gitignore` занимает всю строку: приписать `# ...` в конец
@@ -120,7 +120,7 @@ git commit -m "Добавили .gitignore"
 ```bash
 git switch -c feature/plot
 echo 'print("график сохранён")' >> train.py
-git commit -am "Добавили сохранение графика"
+git commit -am "train: сохранять график обучения"
 
 git switch main
 git merge feature/plot        # Fast-forward, конфликта нет
@@ -162,6 +162,41 @@ git branch -d проба
 Если файла `.git/refs/heads/main` не оказалось — git упаковал ссылки в
 `.git/packed-refs` (это делает `git gc`); хэш ветки тогда лежит там.
 
+### B9. Соглашения об именах
+
+```bash
+git switch -c мои-правки                    # git это разрешает, но так не делают
+git branch -m мои-правки feature/augmentation
+git branch --show-current                   # feature/augmentation
+
+echo "# аугментации" >> train.py
+git commit -qam "train: добавить аугментации" \
+    -m "Первая гипотеза: горизонтальный флип и случайный кроп."
+
+git log --oneline -1        # видно только заголовок
+git log -1                  # заголовок, пустая строка, тело
+```
+
+Исправление плохого сообщения:
+
+```bash
+echo "# ещё правка" >> train.py
+git commit -qam "правки"
+git log --oneline -1                        # a1b2c3d правки
+git rev-parse HEAD                          # запомнили хэш
+
+git commit -q --amend -m "train: логировать метрику на валидации"
+git log --oneline -1                        # новый заголовок
+git rev-parse HEAD                          # хэш ДРУГОЙ
+```
+
+`--amend` не редактирует коммит, а создаёт новый (с новым хэшем) и передвигает
+на него ветку; старый остаётся сиротой и находится через `git reflog`. Поэтому
+для выложенного коммита `--amend` запрещён: у коллег в истории лежит прежний
+хэш, после `amend` истории разойдутся, а `push` пройдёт только с `--force`,
+затирая их работу. Пробел в имени ветки, кстати, git не позволит вообще:
+`fatal: 'мои правки' is not a valid branch name`.
+
 ## Среднее
 
 ### M1. Конфликт слияния
@@ -169,11 +204,11 @@ git branch -d проба
 ```bash
 git switch -c feature/augmentation
 sed -i 's/accuracy = 0.95/accuracy = 0.97/' train.py
-git commit -am "Добавили аугментации"
+git commit -am "train: добавить аугментации"
 
 git switch main
 sed -i 's/accuracy = 0.95/accuracy = 0.91/' train.py
-git commit -am "Сменили оптимизатор"
+git commit -am "train: сменить оптимизатор"
 
 git merge feature/augmentation
 echo "код возврата: $?"       # 1
@@ -186,7 +221,7 @@ print("accuracy =", accuracy)
 PY
 
 git add train.py
-git commit -m "Слили feature/augmentation"
+git commit -m "Слить feature/augmentation: оставить аугментации"
 git log --oneline --graph --decorate --all
 ```
 
@@ -198,7 +233,7 @@ git log --oneline --graph --decorate --all
 ```bash
 git switch -c experiment/lr
 sed -i 's/accuracy = 0.97/accuracy = 0.88/' train.py
-git commit -am "lr=0.01"
+git commit -am "exp: попробовать lr=0.01"
 git switch main
 
 git restore --source=experiment/lr -- train.py
@@ -631,7 +666,7 @@ git pull                                  # скачал изменения A �
 cat train.py                              # маркеры <<<<<<< / ======= / >>>>>>>
 # разрешаем, сохраняя смысл обеих правок
 git add train.py
-git commit -m "Слили варианты A и B"
+git commit -m "Слить варианты A и B"
 git push                                  # теперь проходит
 
 git log --graph --oneline --all
@@ -702,3 +737,97 @@ git count-objects -vH                           # count: 0
 работу, один человек чистит, остальные клонируют репозиторий заново. И поэтому
 дешевле не допускать таких коммитов — `.gitignore` (раздел 6) и LFS
 (раздел 10).
+
+### H9. Проверка соглашений автоматикой
+
+```bash
+mkdir -p .githooks
+
+cat > .githooks/commit-msg <<'EOF'
+#!/bin/bash
+# git передаёт хуку путь к файлу с сообщением коммита
+head=$(head -1 "$1")
+pattern='^(feat|fix|docs|refactor|test|chore)(\([a-z0-9_-]+\))?: .+$'
+
+if ! grep -Eq "$pattern" <<< "$head"; then
+    echo "commit-msg: заголовок не по Conventional Commits:" >&2
+    echo "  '$head'" >&2
+    echo "  нужно: тип(область): описание" >&2
+    exit 1
+fi
+if (( ${#head} > 72 )); then
+    echo "commit-msg: заголовок длиннее 72 символов (${#head})" >&2
+    exit 1
+fi
+EOF
+
+cat > .githooks/pre-push <<'EOF'
+#!/bin/bash
+# git подаёт на stdin строки: <local ref> <local sha> <remote ref> <remote sha>
+allowed='^(feature|fix|exp|docs|refactor)/[a-z0-9._-]+$'
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+    branch=${local_ref#refs/heads/}
+    [[ "$branch" == "main" || -z "$branch" ]] && continue
+    if ! grep -Eq "$allowed" <<< "$branch"; then
+        echo "pre-push: имя ветки '$branch' не по соглашению <тип>/<описание>" >&2
+        exit 1
+    fi
+done
+EOF
+
+chmod +x .githooks/commit-msg .githooks/pre-push
+git config core.hooksPath .githooks          # искать хуки здесь, а не в .git/hooks
+git add .githooks
+git commit -m "chore: подключить хуки проверки соглашений"
+```
+
+Проверяем, что хуки работают:
+
+```bash
+echo "# правка" >> train.py
+git commit -am "правки"                      # отбито, код возврата 1
+git commit -am "fix: убрать лишний вывод"    # прошло
+
+git init -q --bare ~/seminar-04/fake-remote.git    # «сервер» для проверки
+git remote add origin ~/seminar-04/fake-remote.git
+git push -q origin main                      # main разрешён
+
+git switch -qc мои-правки
+echo "# ещё" >> train.py
+git commit -qam "fix: поправить опечатку"
+git push origin мои-правки                   # отбито хуком pre-push
+
+git branch -m мои-правки fix/typo-in-metric
+git push origin fix/typo-in-metric           # прошло
+```
+
+Хуки лежат в `.githooks`, а не в `.git/hooks`, потому что каталог `.git` **не
+версионируется** и не копируется при `clone`: хуки из `.git/hooks` есть только у
+вас и исчезнут на другой машине. Каталог внутри репозитория коммитится, и
+`core.hooksPath` подключает его одной командой (обычно её ставят в `make setup`
+или в README проекта).
+
+Гарантии локальные хуки не дают:
+
+```bash
+echo "# обход" >> train.py
+git commit -am "правки" --no-verify          # хук не запускался, коммит создан
+git push --no-verify origin fix/typo-in-metric
+```
+
+`--no-verify` отключает любые локальные хуки, а `core.hooksPath` вообще нужно
+один раз включить руками — новый участник просто не будет ничего проверять.
+Настоящая проверка живёт на **сервере**:
+
+- **защищённая ветка + обязательные проверки** (branch protection / protected
+  branches): в `main` нельзя пушить напрямую, только через pull request, а
+  влить его можно лишь когда зелёный CI-джоб проверил сообщения коммитов
+  (`commitlint`) и имя ветки. Нарушение не попадёт в основную ветку;
+- **серверный хук `pre-receive`** (на своём GitLab или Gitea): выполняется до
+  записи в репозиторий и отклоняет **сам push**, обойти его с клиента нечем.
+  Именно так делают, когда нужно жёстко: «запушить нарушение невозможно».
+
+Разница принципиальная: локальный хук — подсказка себе, серверный — правило для
+всех. Поэтому в проектах ставят и то и другое: локальный, чтобы узнать об ошибке
+за секунду до коммита, серверный — чтобы её нельзя было протащить.
