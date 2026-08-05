@@ -839,3 +839,99 @@ git push --no-verify origin fix/typo-in-metric
 Разница принципиальная: локальный хук — подсказка себе, серверный — правило для
 всех. Поэтому в проектах ставят и то и другое: локальный, чтобы узнать об ошибке
 за секунду до коммита, серверный — чтобы её нельзя было протащить.
+
+### H10. Pull request с ревью и автопроверкой
+
+Участник A — ветка, изменение и пайплайн:
+
+```bash
+git switch -c feature/mean-metric
+
+cat >> train.py <<'PY'
+
+
+def mean(values):
+    return sum(values) / len(values)
+PY
+
+cat > test_train.py <<'PY'
+from train import mean
+
+
+def test_mean():
+    assert mean([1, 2, 3]) == 2
+PY
+
+mkdir -p .github/workflows
+cat > .github/workflows/ci.yml <<'YML'
+name: ci
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest
+      - run: pytest -q
+YML
+
+git add train.py test_train.py .github
+git commit -m "feat(train): добавить mean и тест к ней"
+git push -u origin feature/mean-metric
+```
+
+Для GitLab то же самое одним файлом `.gitlab-ci.yml`:
+
+```yaml
+stages: [check]
+
+test:
+  stage: check
+  image: python:3.12
+  script:
+    - pip install pytest
+    - pytest -q
+```
+
+Дальше pull request открывается в веб-интерфейсе (или `gh pr create`), и на
+странице MR виден статус пайплайна. Проверка, что он действительно краснеет:
+
+```bash
+sed -i 's|sum(values) / len(values)|sum(values)|' train.py   # сломали
+git commit -am "fix(train): сломать mean (проверка CI)"
+git push                                                     # пайплайн красный
+
+git revert --no-edit HEAD                                    # вернули как было
+git push                                                     # пайплайн зелёный
+```
+
+Участник B оставляет замечания **в pull request'е**, привязывая их к строкам:
+например, «`mean([])` упадёт с `ZeroDivisionError` — нужен явный случай пустого
+списка» и «в тесте проверено только целое среднее, стоит добавить дробное».
+
+Участник A правит новыми коммитами в ту же ветку:
+
+```bash
+# ... правки по замечаниям ...
+git commit -am "fix(train): вернуть 0.0 для пустого списка"
+git push                    # pull request и пайплайн обновились сами
+```
+
+После зелёного пайплайна и одобренного ревью MR вливают кнопкой на сервере
+(«Merge»), а ветку удаляют — там же или локально:
+
+```bash
+git switch main
+git pull
+git branch -d feature/mean-metric
+git push origin --delete feature/mean-metric
+```
+
+Что нашла бы машина, а что только человек: пустой список и типы поймал бы
+линтер или тест; а вот «эта функция уже есть в `utils.py`», «имя `mean` слишком
+общее для метрики» и «задача вообще-то была про медиану» — только ревьюер.
+Поэтому автопроверки не заменяют ревью, а освобождают ему время.
