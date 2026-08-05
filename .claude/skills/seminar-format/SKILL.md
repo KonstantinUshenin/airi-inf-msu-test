@@ -1,32 +1,45 @@
 ---
 name: seminar-format
-description: Rules for authoring course seminars in this repo (the 10-July format). USE AND APPLY AUTOMATICALLY whenever creating or editing any file under `seminars/` — i.e. a seminar's `lecture.ipynb` (micro-lecture), `question.md` (tasks), or `answer.md` (solutions). Enforces: micro-lecture with a mandatory motivation intro and inline `❓ Вопрос`/`<details>` discussion blocks; 5–10 tasks per level across база/среднее/сложное with test examples; a separate answers file; and defense / theor-minimum grading rules. Follow it as an authoring rulebook, then run the self-check checklist before finishing.
+description: Rules for authoring course seminars in this repo (the 10-July format). USE AND APPLY AUTOMATICALLY whenever creating or editing any file under `seminars/` — i.e. a seminar's `demo.ipynb` (micro-lecture), `tasks.md` (tasks), or `solutions.md` (solutions). Enforces: the `seminars/NN-slug/` directory naming scheme; micro-lecture with a mandatory motivation intro and inline `❓ Вопрос`/`<details>` discussion blocks; 5–10 tasks per level across база/среднее/сложное with test examples; a separate solutions file; and defense / theor-minimum grading rules. Follow it as an authoring rulebook, then run the self-check checklist before finishing.
 ---
 
 # Оформление семинаров
 
 Правила оформления семинаров курса (договорённость от 10 июля). Применяй
 **автоматически**, как только создаёшь или редактируешь любой файл в
-`seminars/seminar N/`. Сначала пиши по этим правилам, в конце — пройди
+`seminars/NN-slug/`. Сначала пиши по этим правилам, в конце — пройди
 чек-лист самопроверки.
 
 Термины — в корневом `CONTEXT.md`. Пример эталонного оформления задач —
-`seminars/seminar 2/question.md` и `seminars/seminar 2/answer.md`.
+`seminars/02-unix-files/tasks.md` и `seminars/02-unix-files/solutions.md`.
 
-## Структура семинара (3 файла)
+## Структура семинара
 
-Каждый семинар — каталог `seminars/seminar N/` c тремя файлами:
+Каждый семинар — каталог `seminars/NN-slug/`:
+
+- `NN` — двузначный номер семинара с ведущим нулём, совпадает со строкой в
+  таблице плана (`seminars/README.md`). Ведущий ноль нужен, чтобы `10` не
+  сортировался перед `2`.
+- `slug` — короткое английское имя темы через дефис (`unix-files`, `unix-ssh`),
+  чтобы каталог был самоописывающим. Пробелов в имени быть не должно.
+
+Внутри — три обязательных файла и, при необходимости, каталог с данными:
 
 | Файл | Что содержит |
 |------|--------------|
-| `lecture.ipynb` | Микро-лекция: мотивация + короткая демка + вопросы для коммуникации |
-| `question.md` | Формулировки задач по уровням (база / среднее / сложное) |
-| `answer.md` | Примеры решений, по одному на каждую задачу |
+| `demo.ipynb` | Микро-лекция: мотивация + короткая демка + вопросы для коммуникации |
+| `tasks.md` | Формулировки задач по уровням (база / среднее / сложное) |
+| `solutions.md` | Примеры решений, по одному на каждую задачу |
+| `assets/` | Необязательный: данные и файлы, нужные задачам |
+
+Микро-лекция лежит в `demo.ipynb`, а не в `lecture.ipynb`: настоящие лекции
+курса живут в `lectures/` и нумеруются отдельно, поэтому имя `lecture` внутри
+семинара путало бы студентов.
 
 Задачи решаются в консоли или Jupyter. Не смешивай формулировки и решения в
 одном файле.
 
-## 1. Микро-лекция (`lecture.ipynb`)
+## 1. Микро-лекция (`demo.ipynb`)
 
 Короткая (10–15 минут) крутая демка / напоминание темы с лекции. Правила:
 
@@ -54,7 +67,7 @@ description: Rules for authoring course seminars in this repo (the 10-July forma
 Минимум несколько таких вопросов на микро-лекцию; ответ на каждый должен
 следовать из показанной демки.
 
-## 2. Задачи (`question.md`)
+## 2. Задачи (`tasks.md`)
 
 - **Три уровня**: `## База`, `## Среднее`, `## Сложное`.
 - **5–10 задач НА КАЖДЫЙ уровень** — с запасом, чтобы разные преподаватели
@@ -82,13 +95,13 @@ description: Rules for authoring course seminars in this repo (the 10-July forma
 **Пример:** `script.sh input.txt` → выводит `3` (число строк).
 ```
 
-## 3. Ответы (`answer.md`)
+## 3. Ответы (`solutions.md`)
 
 - Один блок решения на каждую задачу, под тем же идентификатором (`### B1`,
   `### M1`, `### H1`).
 - Решение — минимальный рабочий пример (код в ```` ```bash ````/```` ```python ````),
   дающий результат из тестового примера.
-- Порядок и нумерация решений совпадают с `question.md`.
+- Порядок и нумерация решений совпадают с `tasks.md`.
 
 ## 4. Защита и оценивание
 
@@ -104,20 +117,20 @@ description: Rules for authoring course seminars in this repo (the 10-July forma
 
 Пройди по пунктам для затронутых файлов:
 
-**`lecture.ipynb`**
+**`demo.ipynb`**
 - [ ] Первая ячейка — блок мотивации (почему и зачем).
 - [ ] Короткие самодостаточные демо-ячейки.
 - [ ] Есть вопросы для коммуникации в точном формате `#### ❓ **Вопрос**` + `<details>`.
 - [ ] На каждый вопрос ответ следует из показанной демки.
 
-**`question.md`**
+**`tasks.md`**
 - [ ] Присутствуют все три уровня: База / Среднее / Сложное.
 - [ ] 5–10 задач на каждом уровне.
 - [ ] Нумерация по уровню (`B*` / `M*` / `H*`).
 - [ ] У каждой задачи есть `**need:**` и, по возможности, тестовый пример.
 
-**`answer.md`**
-- [ ] Ровно по одному решению на каждую задачу из `question.md`, те же идентификаторы.
+**`solutions.md`**
+- [ ] Ровно по одному решению на каждую задачу из `tasks.md`, те же идентификаторы.
 - [ ] Решение воспроизводит результат из тестового примера.
 
 Если какой-то пункт не выполнить осмысленно — явно скажи об этом в ответе, а не
