@@ -141,6 +141,27 @@ git show --stat $(git log -1 --format=%h)
 
 Алиас с `--global` попадает в `~/.gitconfig` и работает во всех репозиториях.
 
+### B8. Что внутри `.git`
+
+```bash
+cat .git/HEAD                   # ref: refs/heads/main — где мы сейчас
+cat .git/refs/heads/main        # хэш последнего коммита ветки
+git rev-parse HEAD              # тот же хэш, полученный «официально»
+
+git switch -c проба -q
+cat .git/HEAD                   # ref: refs/heads/проба
+ls .git/refs/heads/             # появился ещё один файл — main и проба
+git switch -q main
+git branch -d проба
+```
+
+`HEAD` — текстовый файл с указателем на ветку, ветка — текстовый файл с хэшем
+коммита. Поэтому создание ветки стоит один маленький файл и не копирует ни
+файлы проекта, ни историю.
+
+Если файла `.git/refs/heads/main` не оказалось — git упаковал ссылки в
+`.git/packed-refs` (это делает `git gc`); хэш ветки тогда лежит там.
+
 ## Среднее
 
 ### M1. Конфликт слияния
@@ -339,13 +360,56 @@ git push        # логин — имя пользователя, пароль �
 `git remote -v` и попадает в любой скриншот, лог или пересланную команду. При
 утечке токен нужно немедленно отозвать в настройках аккаунта.
 
+### M10. Реверс-инженерия объектов
+
+```bash
+H=$(git rev-parse HEAD)
+git cat-file -t "$H"                                   # commit
+git cat-file -p "$H"                                   # tree, parent, author, сообщение
+
+T=$(git cat-file -p "$H" | awk '/^tree /{print $2}')
+git cat-file -p "$T"                                   # 100644 blob <хэш>	train.py
+
+B=$(git cat-file -p "$T" | awk '$4 == "train.py" {print $3}')
+git cat-file -p "$B"                                   # содержимое файла
+```
+
+Имя файла хранится в `tree`, а не в `blob`: `blob` — это только содержимое.
+Поэтому два одинаковых файла с разными именами дают один и тот же `blob`.
+
+Объект руками:
+
+```bash
+echo "привет" > scratch.txt
+H=$(git hash-object -w scratch.txt)     # -w: не только посчитать хэш, но и записать
+ls -l ".git/objects/${H:0:2}/"          # каталог из 2 символов, файл из 38
+
+python3 - "$H" <<'PY'
+import pathlib, sys, zlib
+
+h = sys.argv[1]
+raw = pathlib.Path(f".git/objects/{h[:2]}/{h[2:]}").read_bytes()
+header, _, body = zlib.decompress(raw).partition(b"\0")
+print(header.decode(), "|", body.decode().rstrip())     # blob 13 | привет
+PY
+
+git hash-object scratch.txt             # тот же хэш: адресация по содержимому
+echo "привет!" > scratch.txt
+git hash-object scratch.txt             # один символ — и хэш совершенно другой
+rm scratch.txt
+```
+
+Формат объекта: `<тип> <длина>\0<содержимое>`, сжатое zlib. Хэш считается от
+этой строки целиком, поэтому он не зависит ни от имени файла, ни от ветки, ни
+от времени.
+
 ## Сложное
 
 ### H1. Поиск сломавшего коммита
 
 ```bash
 # подготовка учебного репозитория
-mkdir -p /tmp/bisect-demo && cd /tmp/bisect-demo
+mkdir -p ~/seminar-04/bisect-demo && cd ~/seminar-04/bisect-demo
 git init -q -b main
 git config user.name S && git config user.email s@e.org
 for i in $(seq 1 12); do
@@ -577,3 +641,64 @@ git log --graph --oneline --all
 ветку вперёд не может — иначе чужая работа была бы потеряна. Правильная реакция
 — скачать чужие изменения и слить их со своими. Делать в этой ситуации
 `git push --force` нельзя: он затрёт коммиты участника A.
+
+### H8. Распухший репозиторий
+
+```bash
+du -sh .git                                     # например 404K
+
+head -c 20000000 /dev/urandom > checkpoint.pt
+git add -f checkpoint.pt                        # -f, если действует маска *.pt
+git commit -q -m "Случайно закоммитили чекпойнт"
+du -sh .git                                     # ~20M
+
+git rm -q checkpoint.pt
+git commit -q -m "Удалили чекпойнт"
+du -sh .git                                     # всё ещё ~20M
+git count-objects -vH                           # size-pack/size показывают те же 20 МБ
+
+git gc -q                                       # упаковка не помогает:
+du -sh .git                                     # случайные данные не сжимаются
+```
+
+Файл остаётся в базе, потому что на его `blob` по-прежнему ссылается `tree`
+коммита, в котором файл ещё был. `git rm` добавляет новый коммит «файла больше
+нет», но старые коммиты обязаны разворачиваться, значит объект нужен.
+
+Чистка:
+
+```bash
+pip install git-filter-repo
+git filter-repo --path checkpoint.pt --invert-paths --force
+
+du -sh .git                                     # снова около 404K
+git log --all --oneline -- checkpoint.pt        # пусто
+```
+
+`filter-repo` сам просрочивает reflog и вызывает сборку мусора. Если
+`git-filter-repo` поставить не удалось, то же самое делается встроенным
+`filter-branch`, но чистить ссылки и мусор придётся руками — иначе размер
+`.git` не изменится:
+
+```bash
+FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch -f \
+    --index-filter 'git rm --cached --ignore-unmatch checkpoint.pt' \
+    --prune-empty HEAD
+
+# filter-branch оставляет резервные ссылки на СТАРУЮ историю —
+# пока они есть, объект жив и место не освободится
+git for-each-ref --format='%(refname)' refs/original | xargs -n1 git update-ref -d
+git reflog expire --expire=now --all
+git gc --prune=now -q
+
+du -sh .git                                     # вот теперь снова ~404K
+git count-objects -vH                           # count: 0
+```
+
+Чистка истории **переписывает все коммиты**, где встречался файл, то есть меняет
+их хэши. У коллеги, склонировавшего репозиторий раньше, остаётся история со
+старыми хэшами: его `git pull` увидит две несвязанные истории, а ваш `push`
+пройдёт только с `--force`. Поэтому договариваются заранее: все выкладывают
+работу, один человек чистит, остальные клонируют репозиторий заново. И поэтому
+дешевле не допускать таких коммитов — `.gitignore` (раздел 6) и LFS
+(раздел 10).
