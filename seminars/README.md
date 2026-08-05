@@ -27,7 +27,7 @@
 
 | # | Блок | Тема | Содержание | «Забив» | Ревью |
 | --- | --- | --- | --- | --- | --- |
-| 1 | сентябрь | Jupyter Notebook. Практика по визуализации | conda jupyter, colab, matplotlib, numpy, магии ноутбука %% | Dmitrii | Максим |
+| [1](01-jupyter-viz/) | сентябрь | Jupyter Notebook. Практика по визуализации | conda jupyter, colab, matplotlib, numpy, магии ноутбука %% | Dmitrii | Максим |
 | [2](02-unix-files/) | сентябрь | Unix-terminal. Работа с файлами | (ssh, bash, Ctrl+X, Ctrl+Z, Ctrl-C, \|, >, >>, &1, &2) Env Vars, Job, top, htop, ps, nvidia-smi, uname, os release, cat, history, mkdir, cd,  chown, chmod, cp, mv, pwd, ... | Николай | Dmitrii |
 | 3 | сентябрь | Unix-terminal. Работа с текстами | vim, nano, diff, ed, vimdiff, csv, head, tail, wc, grep, find, sort, uniq. Далее аналоги переписанные на Rust: uutils coreutils, ripgrep, xsv | Максим | Николай |
 | 4 | сентябрь | Система контроля версий Git | git | Dmitrii | Максим |
