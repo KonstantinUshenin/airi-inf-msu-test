@@ -48,16 +48,4 @@ echo 'mode=training' > "$assets_dir/H5/project/config/app.conf"
 echo 'first row' > "$assets_dir/H5/project/data/part-1.txt"
 echo 'second row is longer' > "$assets_dir/H5/project/data/part-2.txt"
 
-cat > "$assets_dir/README.md" <<'EOF'
-# Входные данные
-
-- `B4` — части документа.
-- `B5` — файл, пустой и непустой каталоги.
-- `M1` — существующий файл; `missing.txt` намеренно отсутствует.
-- `M2` — скрипт и каталог для настройки прав.
-- `M3` — текст для пайплайна; `missing.txt` намеренно отсутствует.
-- `H2` — источник из десяти файлов и пустое назначение.
-- `H5` — проект и пустой каталог резервных копий.
-EOF
-
 echo "Created $assets_dir"

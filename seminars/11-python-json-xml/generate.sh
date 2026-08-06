@@ -246,18 +246,4 @@ cat > "$assets_dir/HOME1/catalog.json" <<'EOF'
 EOF
 cp -R "$assets_dir/H5/pages/." "$assets_dir/HOME3/pages/"
 
-cat > "$assets_dir/README.md" <<'EOF'
-# Входные данные
-
-Подкаталоги совпадают с идентификаторами задач. Для `M3`, `H1`, `H4` и `HOME2` запустите локальный сервер:
-
-```bash
-uv run uvicorn api_server:app --app-dir assets --port 8000
-```
-
-Для H4 задайте `OPENAI_BASE_URL=http://127.0.0.1:8000/v1`, `OPENAI_API_KEY=local` и `OPENAI_MODEL=seminar-chat`.
-
-Для `M4` используйте базовый URL `https://example.test/catalog/page.html`.
-EOF
-
 echo "Created $assets_dir"

@@ -2,7 +2,9 @@
 
 **Выход:** `.py` или `.ipynb`.
 
-Для сетевых задач после запуска `generate.sh` запустите учебный сервер:
+Перед началом запустите `./generate.sh`. Все локальные входные файлы появятся в `assets/{ID}/`.
+
+Для сетевых задач запустите учебный сервер:
 
 ```bash
 uv run uvicorn api_server:app --app-dir assets --port 8000
@@ -12,47 +14,214 @@ uv run uvicorn api_server:app --app-dir assets --port 8000
 
 ### B1. Чтение JSON
 
-**need:** `students.json` — список объектов с полями `name` и `score`.
+**need:** `assets/B1/students.json`.
+
+Пример входного JSON:
+
+```json
+[
+  {"name": "Анна", "group": "ML-01", "score": 86},
+  {"name": "Илья", "group": "ML-01", "score": 73}
+]
+```
 
 Сохраните в `summary.json` количество студентов, средний балл и список имён.
 
+Пример структуры результата:
+
+```json
+{
+  "count": 4,
+  "average_score": 78.5,
+  "names": ["Анна", "Илья", "Мария", "Олег"]
+}
+```
+
 ### B2. Фильтрация JSON
 
-**need:** `students.json` с полями `name`, `group`, `score`.
+**need:** `assets/B2/students.json`.
+
+Входной JSON имеет ту же структуру, что в B1:
+
+```json
+[
+  {"name": "Анна", "group": "ML-01", "score": 86},
+  {"name": "Мария", "group": "ML-02", "score": 64}
+]
+```
 
 Сохраните в `passed.json` студентов с результатом не меньше 70. Исходный файл не изменяйте.
 
+Пример структуры результата:
+
+```json
+[
+  {"name": "Анна", "group": "ML-01", "score": 86}
+]
+```
+
 ### B3. Вложенный JSON
 
-**need:** `assets/B3/measurements.json` с полями `person` и `measurements`; каждое измерение содержит `date` и объект `values`, в котором `height_cm` и `weight_kg` могут отсутствовать или иметь неверный тип.
+**need:** `assets/B3/measurements.json`.
 
-Создайте `measurements-summary.json` с полями `person`, `measurement_count`, `timeline`, `dates_without_height`, `dates_without_weight`. В `timeline` оставьте дату, рост и вес только тех измерений, где оба значения являются числами. Ошибочная запись не должна останавливать обработку остальных.
+Пример структуры входного JSON:
+
+```json
+{
+  "person": "Анна",
+  "measurements": [
+    {"date": "2025-01-15", "values": {"height_cm": 164, "weight_kg": 56.2}},
+    {"date": "2025-05-18", "values": {"height_cm": 166}},
+    {"date": "2025-11-03", "values": null}
+  ]
+}
+```
+
+`height_cm` и `weight_kg` могут отсутствовать или иметь неверный тип. Создайте `measurements-summary.json` с полями `person`, `measurement_count`, `timeline`, `dates_without_height`, `dates_without_weight`. В `timeline` оставьте только измерения, где рост и вес являются числами. Ошибочная запись не должна останавливать обработку остальных.
+
+Пример структуры результата:
+
+```json
+{
+  "person": "Анна",
+  "measurement_count": 3,
+  "timeline": [
+    {"date": "2025-01-15", "height_cm": 164, "weight_kg": 56.2}
+  ],
+  "dates_without_height": ["2025-11-03"],
+  "dates_without_weight": ["2025-05-18", "2025-11-03"]
+}
+```
 
 ### B4. Проверка структуры
 
-**need:** `records.json` — список, содержащий корректные записи и записи с пропущенными или неверными полями.
+**need:** `assets/B4/records.json`.
+
+Пример входного JSON:
+
+```json
+[
+  {"name": "Анна", "score": 82},
+  {"name": "", "score": 70},
+  {"name": "Илья"},
+  ["not", "an", "object"]
+]
+```
 
 Корректная запись содержит непустую строку `name` и число `score`. Сохраните корректные записи в `valid.json`, для остальных сохраните индекс и причину в `errors.json`.
 
+Пример `valid.json`:
+
+```json
+[
+  {"name": "Анна", "score": 82}
+]
+```
+
+Пример `errors.json`:
+
+```json
+[
+  {"index": 1, "reason": "invalid name"},
+  {"index": 2, "reason": "invalid score"},
+  {"index": 3, "reason": "record is not an object"}
+]
+```
+
 ### B5. Чтение XML
 
-**need:** `books.xml` с корнем `library` и двумя элементами `catalog` с атрибутами `kind="current"` и `kind="archive"`; каждый `book` содержит атрибут `id` и элементы `title`, `author`, `price`.
+**need:** `assets/B5/books.xml`.
 
-Создайте `books.json` с теми же полями и названием каталога. Цены должны быть числами. В `books-summary.json` сохраните количество книг в каждом каталоге и общую стоимость всех книг.
+Пример структуры XML:
+
+```xml
+<library>
+  <catalog kind="current">
+    <book id="b1">
+      <title>Python для начинающих</title>
+      <author>А. Автор</author>
+      <price>1200.50</price>
+    </book>
+  </catalog>
+  <catalog kind="archive">
+    <book id="b3">
+      <title>Unix прошлого века</title>
+      <author>В. Автор</author>
+      <price>1500.00</price>
+    </book>
+  </catalog>
+</library>
+```
+
+Создайте `books.json` с названием каталога, `id`, названием книги, автором и ценой. Цены должны быть числами. В `books-summary.json` сохраните количество книг в каждом каталоге и общую стоимость.
+
+Пример `books.json`:
+
+```json
+[
+  {
+    "catalog": "current",
+    "id": "b1",
+    "title": "Python для начинающих",
+    "author": "А. Автор",
+    "price": 1200.5
+  }
+]
+```
+
+Пример структуры `books-summary.json`:
+
+```json
+{
+  "counts": {"current": 2, "archive": 1},
+  "total_price": 3600.5
+}
+```
 
 ## Среднее — 5 задач
 
 ### M1. XPath
 
-**need:** `books.xml` из B5; `lxml`.
+**need:** `assets/M1/books.xml`; `lxml`. Структура XML показана в B5.
 
 Сохраните названия книг дороже 1000 из текущего каталога, названия всех архивных книг и автора книги с `id="b2"` в `xpath-result.json`.
 
+Пример структуры результата:
+
+```json
+{
+  "current_expensive_titles": ["Python для начинающих"],
+  "archive_titles": ["Unix прошлого века"],
+  "b2_authors": ["Б. Автор"]
+}
+```
+
 ### M2. Создание XML
 
-**need:** `students.json` с полями `name`, `group`, `score`.
+**need:** `assets/M2/students.json`.
+
+Пример входного JSON:
+
+```json
+[
+  {"name": "Анна", "group": "ML-01", "score": 86},
+  {"name": "Илья", "group": "ML-01", "score": 73}
+]
+```
 
 Создайте `students.xml`. Корневой элемент — `students`, каждый студент — отдельный элемент `student` с тремя дочерними элементами.
+
+Пример структуры результата:
+
+```xml
+<students>
+  <student>
+    <name>Анна</name>
+    <group>ML-01</group>
+    <score>86</score>
+  </student>
+</students>
+```
 
 ### M3. REST API
 
@@ -61,51 +230,195 @@ uv run uvicorn api_server:app --app-dir assets --port 8000
 Строка запроса: `http://127.0.0.1:8000/repositories?q=python&page=2&per_page=3`.
 
 - `q=python` — искать репозитории по слову `python`;
-- `page=2` — получить вторую страницу результатов;
-- `per_page=3` — запросить по три репозитория на странице.
+- `page=2` — получить вторую страницу;
+- `per_page=3` — получить по три репозитория на странице.
 
-Выполните этот `GET`-запрос. Сохраните полученный список `items` в `python-repositories.json`, а `total_count`, `incomplete_results`, код состояния и итоговый URL — в `response-meta.json`.
+Пример JSON-ответа API:
+
+```json
+{
+  "total_count": 7,
+  "incomplete_results": false,
+  "page": 2,
+  "per_page": 3,
+  "items": [
+    {"id": 4, "name": "python-tests", "description": "Testing Python programs"},
+    {"id": 5, "name": "python-xml", "description": "Read XML with Python"},
+    {"id": 6, "name": "python-tools", "description": "Useful Python tools"}
+  ]
+}
+```
+
+Выполните этот GET-запрос. Сохраните список `items` в `python-repositories.json`, а `total_count`, `incomplete_results`, код состояния и итоговый URL — в `response-meta.json`.
+
+Пример структуры `python-repositories.json`:
+
+```json
+[
+  {"id": 4, "name": "python-tests", "description": "Testing Python programs"},
+  {"id": 5, "name": "python-xml", "description": "Read XML with Python"}
+]
+```
+
+Пример структуры `response-meta.json`:
+
+```json
+{
+  "total_count": 7,
+  "incomplete_results": false,
+  "status_code": 200,
+  "url": "http://127.0.0.1:8000/repositories?q=python&page=2&per_page=3"
+}
+```
 
 ### M4. HTML и ссылки
 
-**need:** `page.html` с элементом `title` и ссылками, у каждой ссылки есть `href`; базовый URL страницы; Beautiful Soup.
+**need:** `assets/M4/page.html`; базовый URL `https://example.test/catalog/page.html`; Beautiful Soup.
 
 Сохраните заголовок и все ссылки в `page.json`. Для каждой ссылки сохраните текст и абсолютный адрес.
 
+Пример структуры результата:
+
+```json
+{
+  "title": "Каталог оборудования",
+  "links": [
+    {"text": "Клавиатура", "url": "https://example.test/items/keyboard"},
+    {"text": "Мышь", "url": "https://example.test/catalog/mouse.html"}
+  ]
+}
+```
+
 ### M5. Карточки товаров
 
-**need:** `products.html`; корректная карточка `.product` содержит `.name` и числовой текст `.price`, часть карточек может быть ошибочной.
+**need:** `assets/M5/products.html`; Beautiful Soup.
 
-Создайте `products.json`. Названия должны быть строками, цены — числами. Некорректные карточки сохраните в `product-errors.json`.
+Корректная карточка `.product` содержит `.name` и числовой текст `.price`; часть карточек ошибочна. Создайте `products.json`, где названия — строки, цены — числа. Некорректные карточки сохраните в `product-errors.json`.
+
+Пример `products.json`:
+
+```json
+[
+  {"name": "Keyboard", "price": 4900.0},
+  {"name": "Mouse", "price": 2100.5}
+]
+```
+
+Пример `product-errors.json`:
+
+```json
+[
+  {"index": 2, "reason": "invalid price"},
+  {"index": 3, "reason": "missing name or price"}
+]
+```
 
 ## Сложное — 5 задач
 
 ### H1. QUERY и POST
 
-**need:** запущенный `assets/api_server.py`; `requests`; адрес `http://127.0.0.1:8000/echo`, принимающий методы `QUERY` и `POST` с JSON-телом.
+**need:** запущенный `assets/api_server.py`; `requests`; адрес `http://127.0.0.1:8000/echo`.
 
-Отправьте на этот адрес одинаковое JSON-тело `{"category": "books", "max_price": 1500}` сначала методом `QUERY`, затем методом `POST`. Сохраните в `query-post.json` для каждого ответа код состояния, метод и тело, которые увидел сервер, а также значение `hasBody`.
+Адрес принимает методы QUERY и POST с одинаковым JSON-телом:
+
+```json
+{"category": "books", "max_price": 1500}
+```
+
+Отправьте оба запроса. Сохраните в `query-post.json` для каждого ответа код состояния, метод и тело, которые увидел сервер, а также `hasBody`.
+
+Пример структуры результата:
+
+```json
+{
+  "query": {
+    "status_code": 200,
+    "method": "QUERY",
+    "body": {"category": "books", "max_price": 1500},
+    "hasBody": true
+  },
+  "post": {
+    "status_code": 200,
+    "method": "POST",
+    "body": {"category": "books", "max_price": 1500},
+    "hasBody": true
+  }
+}
+```
 
 ### H2. JSON ↔ XML
 
-**need:** `data.json` со списком записей `id`, `name` и числовыми `metrics.loss`, `metrics.accuracy`.
+**need:** `assets/H2/data.json`.
 
-Преобразуйте данные в `data.xml`, затем восстановите `restored.json`. После обратного преобразования значения и числовые типы должны совпасть с исходными.
+Пример входного JSON:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "alpha",
+    "metrics": {"loss": 0.31, "accuracy": 0.91}
+  },
+  {
+    "id": 2,
+    "name": "beta",
+    "metrics": {"loss": 0.27, "accuracy": 0.93}
+  }
+]
+```
+
+Преобразуйте данные в `data.xml`, затем восстановите `restored.json`. После обратного преобразования значения и числовые типы должны совпасть с исходными. Структура `restored.json` должна совпадать со структурой входного примера.
 
 ### H3. HTML-таблица
 
-**need:** `table.html` с колонками `name`, `category`, `price`, `available`; цена записана числом с десятичной точкой.
+**need:** `assets/H3/table.html`; Beautiful Soup. Таблица содержит колонки `name`, `category`, `price`, `available`; цена записана с десятичной точкой.
 
 Сохраните доступные товары в `available.json`. Проверьте число ячеек в каждой строке, приведите цены к числам и отсортируйте результат по цене.
+
+Пример структуры результата:
+
+```json
+[
+  {"name": "Mouse", "category": "input", "price": 2100.5},
+  {"name": "Keyboard", "category": "input", "price": 4900.0}
+]
+```
 
 ### H4. Консольный чат
 
 **need:** запущенный `assets/api_server.py`; `openai`; `OPENAI_BASE_URL=http://127.0.0.1:8000/v1`, `OPENAI_API_KEY=local`, `OPENAI_MODEL=seminar-chat`.
 
-Создайте консольный чат. Программа читает сообщения пользователя до команды `exit`, отправляет серверу всю накопленную историю и печатает каждый ответ. После завершения сохраните сообщения пользователя и ассистента в `chat-history.json`. Секретный ключ в историю попадать не должен.
+Создайте простой консольный чат. Программа читает сообщения пользователя до команды `exit`, отправляет серверу всю накопленную историю и печатает каждый ответ. После завершения сохраните сообщения пользователя и ассистента в `chat-history.json`. Секретный ключ в историю попадать не должен.
+
+Пример структуры `chat-history.json`:
+
+```json
+[
+  {"role": "user", "content": "Привет!"},
+  {
+    "role": "assistant",
+    "content": "Вы написали: Привет!. Сообщений пользователя в истории: 1."
+  }
+]
+```
 
 ### H5. Несколько HTML-страниц
 
-**need:** каталог `pages` со связанными HTML-страницами; ссылки на другие страницы имеют класс `.page` и корректный `href`, товары — класс `.product` со ссылкой.
+**need:** `assets/H5/pages/`; Beautiful Soup. Ссылки на другие страницы имеют класс `.page` и корректный `href`, товары — класс `.product` со ссылкой.
 
-Начиная с `page1.html`, обойдите доступные страницы без повторного чтения. Соберите товары, сделайте ссылки абсолютными, удалите дубли по URL и сохраните `products.json`.
+Начиная с `assets/H5/pages/page1.html`, обойдите доступные страницы без повторного чтения. Соберите товары, сделайте ссылки абсолютными, удалите дубли по URL и сохраните `products.json`.
+
+Пример структуры результата:
+
+```json
+[
+  {
+    "name": "Keyboard duplicate",
+    "url": "file:///path/to/assets/H5/products/keyboard.html"
+  },
+  {
+    "name": "Mouse",
+    "url": "file:///path/to/assets/H5/products/mouse.html"
+  }
+]
+```
