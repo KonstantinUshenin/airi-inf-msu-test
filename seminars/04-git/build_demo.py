@@ -1134,7 +1134,7 @@ md("""## 15. Автоматизация: CI и «всё как код»
 | Что описывают текстом | Чем |
 |---|---|
 | проверки и сборка | `.gitlab-ci.yml`, `.github/workflows/*.yml` |
-| окружение | `Dockerfile`, `requirements.txt`, `environment.yml` |
+| окружение | `Dockerfile`, `requirements.txt`, `pyproject.toml` + `uv.lock` |
 | инфраструктура (серверы, диски, сети) | Terraform, Ansible |
 | конфигурация эксперимента | `config.yaml` рядом с кодом |
 | документация и решения | `README.md`, `docs/`, ADR |

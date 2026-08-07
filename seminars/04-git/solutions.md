@@ -297,21 +297,33 @@ git restore .
 ### M5. Перенос коммита
 
 ```bash
+# в main заводим файл, который потом будем чинить
+echo "def mean(xs): return sum(xs) / len(xs)" > utils.py
+git add utils.py && git commit -m "feat(utils): добавить mean"
+
 git switch -c feature/three
 echo "# правка 1" >> train.py && git commit -am "Правка 1"
-sed -i 's/accuarcy/accuracy/' train.py 2>/dev/null
-echo "# исправлена опечатка" >> train.py && git commit -am "Исправили опечатку"
+
+sed -i 's|/ len(xs)|/ max(len(xs), 1)|' utils.py      # это и перенесём в main
+git commit -am "fix(utils): не делить на ноль на пустом списке"
+
 echo "# правка 3" >> train.py && git commit -am "Правка 3"
 
-FIX=$(git log --format='%h %s' | grep 'опечатк' | cut -d' ' -f1)
+FIX=$(git log --format='%h %s' | grep 'ноль' | cut -d' ' -f1)
 git switch main
 git cherry-pick "$FIX"
 
 git log --oneline -2          # коммит с тем же сообщением, но другим хэшем
+cat utils.py                  # правка на месте, «правок 1 и 3» в main нет
 ```
 
 Хэш меняется, потому что у перенесённого коммита другой родитель, а родитель
 входит в вычисление хэша.
+
+Важная деталь: переносимый коммит должен опираться только на то, что в `main`
+уже есть. Если он правит строки, добавленные соседними коммитами той же ветки,
+`cherry-pick` упрётся в конфликт — патч не на что накладывать. Поэтому в примере
+чинится `utils.py`, заведённый до ветвления, а не строки из «Правки 1».
 
 ### M6. Кто изменил эту строку
 
