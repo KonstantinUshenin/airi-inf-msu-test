@@ -1,0 +1,43 @@
+name: lint-seminars
+
+# Проверяет формат семинаров: длину кодовых ячеек, исключённые инструменты,
+# формат вопросов, уровни задач и соответствие решений задачам.
+#
+# На pull request проверяются ТОЛЬКО семинары, затронутые в этом PR, — чтобы
+# автор не разгребал чужой долг. Исключение: если PR правит сам линтер или
+# правила формата, проверяются все семинары. На push в main — тоже все.
+#
+# Известный долг старых семинаров перечислен в tools/lint_baseline.txt и сборку
+# не роняет: краснеют только новые нарушения.
+#
+# Близнец .gitea/workflows/lint-seminars.yml: GitHub Actions читает этот каталог,
+# Gitea Actions — свой. После переезда на git.ai.msu.ru основным станет вариант
+# в .gitea/workflows, этот останется для зеркала. Правьте оба файла вместе.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # нужна история, чтобы посчитать diff с базовой веткой
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Проверить затронутые семинары
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags origin "${{ github.base_ref }}"
+          python3 tools/lint_seminars.py --changed "origin/${{ github.base_ref }}"
+
+      - name: Проверить все семинары
+        if: github.event_name != 'pull_request'
+        run: python3 tools/lint_seminars.py
