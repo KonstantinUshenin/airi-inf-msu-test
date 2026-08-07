@@ -33,8 +33,8 @@ jobs:
       - name: Проверить семинары, затронутые в pull request
         if: github.event_name == 'pull_request'
         run: |
-          git fetch --no-tags origin "${ github.base_ref }"
-          python3 tools/lint_seminars.py --changed "origin/${ github.base_ref }"
+          git fetch --no-tags origin "${{ github.base_ref }}"
+          python3 tools/lint_seminars.py --changed "origin/${{ github.base_ref }}"
 
       - name: Проверить семинары, затронутые push'ем
         if: github.event_name == 'push'
