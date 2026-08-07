@@ -31,14 +31,16 @@ pull request в свой репозиторий задания, проверяю
 согласованы номер 1 (SSH) и общий принцип «одна домашка на занятие, кроме
 занятий без самостоятельного выхода».
 
-Домашка №1 (подключение к учебному серверу по SSH) стоит после семинара 2, а не
-после семинара 8: доступ к серверу нужен студентам с первых занятий, а семинар 8
-разбирает уже глубокие вещи — ключи, `~/.ssh/config`, туннели.
+Домашка №1 выдаётся уже после первого занятия: студент подключается к учебному
+серверу по SSH и сдаёт оттуда ноутбук с графиком. Так доступ к серверу
+появляется у всех с первой недели — он нужен и на семинарах 2 и 5, и для работы
+с git. Семинар 8 при этом остаётся про глубокие вещи: ключи, `~/.ssh/config`,
+`ssh-agent`, туннели.
 
 | # | Блок | Тема | Содержание | Домашка | «Забив» | Ревью |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | сентябрь | Jupyter Notebook. Практика по визуализации | conda jupyter, colab, matplotlib, numpy, магии ноутбука %% | Ноутбук с графиком по своим данным | Dmitrii | Максим |
-| [2](02-unix-files/) | сентябрь | Unix-terminal. Работа с файлами | (ssh, bash, Ctrl+X, Ctrl+Z, Ctrl-C, \|, >, >>, &1, &2) Env Vars, Job, top, htop, ps, nvidia-smi, uname, os release, cat, history, mkdir, cd,  chown, chmod, cp, mv, pwd, ... | **№1: подключиться к учебному серверу по SSH** | Николай | Dmitrii |
+| 1 | сентябрь | Jupyter Notebook. Практика по визуализации | conda jupyter, colab, matplotlib, numpy, магии ноутбука %% | **№1: подключиться к учебному серверу по SSH** и сдать оттуда ноутбук с графиком по своим данным | Dmitrii | Максим |
+| [2](02-unix-files/) | сентябрь | Unix-terminal. Работа с файлами | (ssh, bash, Ctrl+X, Ctrl+Z, Ctrl-C, \|, >, >>, &1, &2) Env Vars, Job, top, htop, ps, nvidia-smi, uname, os release, cat, history, mkdir, cd,  chown, chmod, cp, mv, pwd, ... | Скрипт-отчёт по каталогу с данными: сколько файлов, размеры, права | Николай | Dmitrii |
 | 3 | сентябрь | Unix-terminal. Работа с текстами | vim, nano, diff, ed, vimdiff, csv, head, tail, wc, grep, find, sort, uniq. Далее аналоги переписанные на Rust: uutils coreutils, ripgrep, xsv | Разбор лога одной командной строкой | Максим | Николай |
 | 4 | сентябрь | Система контроля версий Git | git | Своя ветка + pull request с исправлением | Dmitrii | Максим |
 | [5](05-unix-env/) | октябрь | Unix-terminal. Настройка окружения и установка пакетов | source, virtualenv, apt/snap, pip/uv/conda, export,  ldconfig -p, systemd services, PATH, LD_LIBRARY_PATH, PYTHONPATH | Воспроизвести окружение проекта из `requirements.txt` | Николай | Dmitrii |
