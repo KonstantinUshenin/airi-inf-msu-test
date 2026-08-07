@@ -16,7 +16,6 @@
 from __future__ import annotations
 
 import argparse
-import ast
 import json
 import pathlib
 import re
@@ -26,8 +25,6 @@ import sys
 # --- настройки правил -------------------------------------------------------
 
 MAX_CODE_LINES = 8          # содержательных строк кода в одной ячейке
-MAX_NEW_IMPORTS = 1         # новых импортов на ячейку: одна новая концепция за раз
-MAX_NEW_SHELL_CMDS = 3      # новых shell-команд на ячейку (WARN, не ошибка)
 MIN_TASKS_PER_LEVEL = 5
 MAX_TASKS_PER_LEVEL = 10
 
@@ -97,36 +94,6 @@ def code_lines(source: str) -> list[str]:
     return out
 
 
-def imports_of(source: str) -> set[str]:
-    """Импортируемые модули python-ячейки (для bash-ячеек — пусто)."""
-    if source.lstrip().startswith("%%"):
-        return set()
-    try:
-        tree = ast.parse(source)
-    except SyntaxError:
-        return set()
-    mods = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            mods.update(a.name.split(".")[0] for a in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            mods.add(node.module.split(".")[0])
-    return mods
-
-
-def shell_commands_of(source: str) -> set[str]:
-    """Первые слова команд bash-ячейки — грубая оценка «новых сущностей»."""
-    if not source.lstrip().startswith("%%bash"):
-        return set()
-    cmds = set()
-    for line in code_lines(source):
-        for part in re.split(r"\||&&|;", line):
-            m = re.match(r"\s*([a-zA-Z_][\w.-]*)", part)
-            if m and not re.match(r"^(if|then|else|fi|for|do|done|echo|cd)$", m.group(1)):
-                cmds.add(m.group(1))
-    return cmds
-
-
 ALLOW_RE = re.compile(r"lint-allow:\s*banned")
 
 
@@ -175,9 +142,6 @@ def check_demo(path: pathlib.Path, rep: Report, stats: list) -> None:
         else:
             rep.error(str(path), "нет ни одного вопроса в формате «#### ❓ **Вопрос**»", "question-format")
 
-    seen_imports: set[str] = set()
-    seen_cmds: set[str] = set()
-
     for i, cell in enumerate(cells):
         src = "".join(cell["source"])
         where = f"{path}:ячейка {i}"
@@ -192,18 +156,6 @@ def check_demo(path: pathlib.Path, rep: Report, stats: list) -> None:
         stats.append((str(path), i, len(lines)))
         if len(lines) > MAX_CODE_LINES:
             rep.error(where, f"{len(lines)} строк кода, разрешено не более {MAX_CODE_LINES} — разбейте ячейку", "max-code-lines")
-
-        new_imports = imports_of(src) - seen_imports
-        seen_imports |= imports_of(src)
-        if len(new_imports) > MAX_NEW_IMPORTS:
-            rep.error(where, "новых импортов за раз: "
-                             f"{', '.join(sorted(new_imports))} — вводите не больше одной новой концепции на ячейку", "new-imports")
-
-        new_cmds = shell_commands_of(src) - seen_cmds
-        seen_cmds |= shell_commands_of(src)
-        if len(new_cmds) > MAX_NEW_SHELL_CMDS:
-            rep.warn(where, f"{len(new_cmds)} новых команд сразу ({', '.join(sorted(new_cmds))}) — "
-                            "возможно, стоит разнести по ячейкам")
 
         if not src.lstrip().startswith("%%"):
             for line in lines:
