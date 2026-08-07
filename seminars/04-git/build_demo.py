@@ -136,10 +136,15 @@ mkdir -p ~/seminar-04/git-demo
 cd ~/seminar-04/git-demo || exit 1
 
 git config --global init.defaultBranch main   # один раз на машину: как звать первую ветку
-git init -q                                  # без этой настройки git назвал бы её master
+git init -q                                   # без этой настройки ветка звалась бы master
+git config user.name "Student"                # для себя это обычно ставят с --global
+git config user.email "student@example.org\"""")
 
-git config user.name "Student"               # для себя это обычно ставят с --global
-git config user.email "student@example.org"
+md("""Репозиторий есть, истории пока нет. Заведём файл эксперимента и сделаем
+первый коммит.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
 
 cat > train.py <<'PY'
 accuracy = 0.93
@@ -200,15 +205,15 @@ code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 sed -i 's/0\\.93/0.95/' train.py    # подняли гиперпараметр
 
-echo "--- git status: репозиторий грязный ---"
-git status --short
+git status --short            # M train.py — репозиторий грязный
+git diff                      # что именно изменилось с последнего коммита""")
 
-echo "--- git diff: что изменилось с последнего коммита ---"
-git diff
+md("""Коммитим — и репозиторий снова чистый.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
 
 git commit -qam "feat(train): поднять accuracy до 0.95"
-
-echo "--- после коммита снова чисто ---"
 git status --short
 echo "(пусто = рабочая копия совпадает с последним коммитом)\"""")
 
@@ -231,15 +236,15 @@ code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 rm -rf *.py                   # «упс»
 
-echo "--- что осталось в каталоге ---"
-ls
+ls                            # в каталоге пусто
+git status --short            # D train.py — git заметил пропажу""")
 
-echo "--- git знает, что файла не хватает ---"
-git status --short
+md("""Файл был в последнем коммите — значит, его можно вернуть одной командой.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
 
 git restore .                 # вернуть рабочую копию к последнему коммиту
-
-echo "--- после restore ---"
 ls
 cat train.py""")
 
@@ -263,17 +268,17 @@ md("""### Мусор: файлы, которых git не касается
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 touch checkpoint.pt nohup.out
-mkdir -p __pycache__
-touch __pycache__/x.pyc
+mkdir -p __pycache__ && touch __pycache__/x.pyc
 
-echo "--- ?? = git про эти файлы ничего не знает ---"
-git status --short
+git status --short            # ?? = git про эти файлы ничего не знает
+git clean -nd                 # только показать, что будет удалено""")
 
-echo "--- git clean -nd: только показать ---"
-git clean -nd
+md("""Посмотрели список — теперь удаляем по-настоящему.""")
 
-echo "--- git clean -fd: удалить ---"
-git clean -fdq
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+
+git clean -fdq                # -f обязателен: восстановить это будет нечем
 git status --short
 echo "(пусто = каталог чист)\"""")
 
@@ -369,21 +374,21 @@ cd ~/seminar-04/git-demo || exit 1
 
 echo "# Учебный ML-эксперимент" > README.md
 git add README.md
-git commit -qm "правки"        # так делать не надо
+git commit -qm "правки"       # так делать не надо
 
-echo "--- как это выглядит в истории ---"
-git log --oneline -2
+git log --oneline -2          # и вот это осталось в истории""")
 
-# --amend перезаписывает последний коммит; два -m = заголовок и тело
+md("""Коммит ещё не выложен, поэтому сообщение можно переписать. Два флага `-m`
+дают заголовок и тело, разделённые пустой строкой.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+
 git commit -q --amend -m "docs: добавить README с описанием эксперимента" \\
     -m "Чтобы было видно, что считает train.py и какая метрика ожидается."
 
-echo "--- в кратком виде читается только заголовок ---"
-git log --oneline -2
-
-echo "--- целиком: заголовок, пустая строка, тело ---"
-git log -1
-""")
+git log --oneline -2          # в кратком виде виден только заголовок
+git log -1                    # целиком: заголовок, пустая строка, тело""")
 
 q("Сравните хэш последнего коммита до и после `git commit --amend`. Что на самом деле сделала эта команда — и почему её нельзя применять к уже выложенному коммиту?",
   """Хэш изменился, то есть коммит не «отредактировался»: git собрал **новый**
@@ -456,19 +461,23 @@ md("""### Случай первый: независимые изменения
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-git switch -c feature/plot -q                   # своя ветка под задачу
-echo 'print("график сохранён")' > plot.py       # трогаем только новый файл
+git switch -c feature/plot -q                 # своя ветка под задачу
+echo 'print("график сохранён")' > plot.py     # трогаем только новый файл
 git add plot.py
-git commit -qm "feat(plot): сохранять график обучения"
+git commit -qm "feat(plot): сохранять график обучения\"""")
 
-git switch -q main                              # тем временем main тоже не стоит
+md("""Пока Аня работала в своей ветке, `main` тоже не стоял на месте — там
+поправили README. Ветки разошлись, но правки в разных файлах.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+
+git switch -q main
 echo "Метрика: accuracy на валидации." >> README.md
 git commit -qam "docs: описать метрику в README"
 
-echo "--- ветки разошлись, но правки в разных файлах ---"
-git merge feature/plot -m "Слить feature/plot"  # git сливает сам
-git branch -d feature/plot                      # ветка больше не нужна
-
+git merge feature/plot -m "Слить feature/plot"   # git сливает сам
+git branch -d feature/plot
 git lg | head -6""")
 
 md("""### Случай второй: одни и те же строки
@@ -487,13 +496,16 @@ git commit -qam "feat(train): добавить аугментации"
 
 git switch -q main                          # гипотеза 2: другой оптимизатор
 sed -i 's/accuracy = 0.95/accuracy = 0.91/' train.py
-git commit -qam "feat(train): сменить оптимизатор"
+git commit -qam "feat(train): сменить оптимизатор\"""")
+
+md("""Обе ветки поменяли одну и ту же строку. Сливаем.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
 
 git merge feature/augmentation
 echo "код возврата: $?"
-
-echo "--- что git положил в файл ---"
-cat train.py""")
+cat train.py                  # вот что git положил в файл""")
 
 q("Эти `<<<<<<<`, `=======`, `>>>>>>>` в файле — вы их уже где-то видели?",
   """Это тот же самый `diff`, с которым вы работали на прошлом семинаре, только
@@ -505,17 +517,21 @@ q("Эти `<<<<<<<`, `=======`, `>>>>>>>` в файле — вы их уже г�
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-# разрешаем вручную: оставляем вариант с аугментациями
+# разрешаем вручную: оставляем вариант с аугментациями, маркеры убираем
 cat > train.py <<'PY'
 accuracy = 0.97
 print("accuracy =", accuracy)
-PY
+PY""")
+
+md("""Файл приведён в порядок — осталось сказать git'у, что конфликт разрешён, и
+завершить слияние.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
 
 git add train.py
 git commit -q -m "Слить feature/augmentation: оставить аугментации"
-
-echo "--- теперь в графе виден ромб слияния ---"
-git lg""")
+git lg                        # в графе виден ромб слияния""")
 
 q("Почему первая ветка влилась молча, а вторая устроила конфликт — git же в обоих случаях сливал две ветки?",
   """Git сливает **по строкам**, а не по файлам целиком, и смотрит на общего
@@ -587,15 +603,16 @@ data/
 
 # исключение из маски: этот чекпойнт всё-таки нужен в репозитории
 !baseline.pt
-EOF
+EOF""")
 
+md("""Создадим файлы, попадающие под эти правила, и посмотрим, что видит git.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
 mkdir -p data
 touch secrets.env data/train.csv model.pt baseline.pt run.log notes.md
 
-echo "--- git видит только то, что не попало под правила ---"
-git status --short
-
-echo "--- какое именно правило сработало: файл:строка:правило ---"
+git status --short            # видно только то, что не попало под правила
 git check-ignore -v secrets.env data/train.csv model.pt run.log baseline.pt""")
 
 q("Почему в выводе `git check-ignore` для `baseline.pt` тоже показано правило, хотя файл не игнорируется?",
@@ -618,21 +635,28 @@ git commit -q -m "chore: добавить .gitignore"
 
 echo "epoch 1" > train.log
 git add -f train.log          # -f, потому что маска *.log уже действует
-git commit -q -m "chore: добавить train.log"   # упс: лог тут не нужен
+git commit -q -m "chore: добавить train.log"   # упс: лог тут не нужен""")
+
+md("""Лог попал в коммит. Теперь правило `*.log` на него не действует —
+git считает, что файл добавили осознанно.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
 
 echo "epoch 2" >> train.log
-echo "--- файл отслеживается, .gitignore на него не влияет ---"
-git status --short
+git status --short            # M train.log — файл отслеживается""")
+
+md("""Чтобы правило заработало, файл надо убрать из-под контроля версий.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
 
 git rm --cached -q train.log
 git commit -q -m "chore: убрать лог из-под контроля версий"
 
-echo "--- теперь правило *.log работает ---"
 git status --short
-echo "(пусто = лог игнорируется)"
-
-ls train.log
-echo "(файл на диске остался: rm --cached не трогает рабочую копию)\"""")
+echo "(пусто = лог игнорируется, а файл на диске остался)"
+ls train.log""")
 
 q("Почему git не начал игнорировать `train.log` сразу после того, как файл попал под маску `*.log`?",
   """Потому что `.gitignore` отвечает на вопрос «нужно ли **начинать**
