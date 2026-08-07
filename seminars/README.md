@@ -25,21 +25,31 @@
 Номер в колонке `#` совпадает с префиксом каталога; ссылка стоит там, где
 семинар уже готов.
 
-| # | Блок | Тема | Содержание | «Забив» | Ревью |
-| --- | --- | --- | --- | --- | --- |
-| 1 | сентябрь | Jupyter Notebook. Практика по визуализации | conda jupyter, colab, matplotlib, numpy, магии ноутбука %% | Dmitrii | Максим |
-| [2](02-unix-files/) | сентябрь | Unix-terminal. Работа с файлами | (ssh, bash, Ctrl+X, Ctrl+Z, Ctrl-C, \|, >, >>, &1, &2) Env Vars, Job, top, htop, ps, nvidia-smi, uname, os release, cat, history, mkdir, cd,  chown, chmod, cp, mv, pwd, ... | Николай | Dmitrii |
-| 3 | сентябрь | Unix-terminal. Работа с текстами | vim, nano, diff, ed, vimdiff, csv, head, tail, wc, grep, find, sort, uniq. Далее аналоги переписанные на Rust: uutils coreutils, ripgrep, xsv | Максим | Николай |
-| 4 | сентябрь | Система контроля версий Git | git | Dmitrii | Максим |
-| [5](05-unix-env/) | октябрь | Unix-terminal. Настройка окружения и установка пакетов | source, virtualenv, apt/snap, pip/uv/conda, export,  ldconfig -p, systemd services, PATH, LD_LIBRARY_PATH, PYTHONPATH | Николай | Dmitrii |
-| 6 | октябрь | Unix-terminal. Работа с оборудованием | lsblk, lsusb, fdisk, lspci -v<br>mount, fdisk,<br>/proc/cpuinfo, /proc/meminfo,<br>nvidia-smi, nvtop,<br>argparse, subprocesses, fork? | Максим | Николай |
-| 7 | октябрь | Unix-terminal. Работа с сетью | nc, scp, ifconfig, ufw, ports, netstat, ss, nslookup, dig, ping, whois, wget, curl | Dmitrii | Максим |
-| [8](08-unix-ssh/) | октябрь | Unix-terminal. ssh | ssh, scp, rsync, ssh-keygen, tunneling | Николай | Dmitrii |
-| 9 | ноябрь | Контейнеризация и облачные технологии | Docker, Docker compose,<br>aws cli, boto3 (и аналоги), s3cmd, terraform (в клауде он пока очень сырой, невозможно пользоваться)<br>Знакомство с cloud.ru | Максим | Николай |
-| 10 | ноябрь | Python. Работа с текстами | Кодировки. Операции над строками. Практикум по glob, Практикум по regexp | Dmitrii | Максим |
-| 11 | ноябрь | Python. Работа с json и XML | Чтение jsom, xml. XPath.<br>REST API requests.<br>Скрапинг интеренет страниц -- Beautiful soup | Николай | Dmitrii |
-| 12 | ноябрь | SQL | Select *, SQLite, SQLAlchemy | Максим | Николай |
-| 13 | декабрь | Pandas/Polars | pandas | Dmitrii | Максим |
-| 14 | декабрь | Python. Работа с бинарными данными | Чтение npy, hdfs, pickle, tar. Практикум по numpy | Николай | Dmitrii |
-| 15 | декабрь | Python. Работа с изображениями | load image, normalize image, crop, gamma-correction | Максим | Николай |
-| 16 | декабрь | Python. Работа с аудио и видео | librosa, построение спектрограмм, torch audio, torchvision | Dmitrii | Максим |
+Колонка **«Домашка»** — что студент сдаёт после занятия. Домашки сдаются как
+pull request в свой репозиторий задания, проверяются автоматикой и защищаются
+семинаристу; прочерк — домашки по теме нет. Формулировки пока черновые:
+согласованы номер 1 (SSH) и общий принцип «одна домашка на занятие, кроме
+занятий без самостоятельного выхода».
+
+Домашка №1 (подключение к учебному серверу по SSH) стоит после семинара 2, а не
+после семинара 8: доступ к серверу нужен студентам с первых занятий, а семинар 8
+разбирает уже глубокие вещи — ключи, `~/.ssh/config`, туннели.
+
+| # | Блок | Тема | Содержание | Домашка | «Забив» | Ревью |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | сентябрь | Jupyter Notebook. Практика по визуализации | conda jupyter, colab, matplotlib, numpy, магии ноутбука %% | Ноутбук с графиком по своим данным | Dmitrii | Максим |
+| [2](02-unix-files/) | сентябрь | Unix-terminal. Работа с файлами | (ssh, bash, Ctrl+X, Ctrl+Z, Ctrl-C, \|, >, >>, &1, &2) Env Vars, Job, top, htop, ps, nvidia-smi, uname, os release, cat, history, mkdir, cd,  chown, chmod, cp, mv, pwd, ... | **№1: подключиться к учебному серверу по SSH** | Николай | Dmitrii |
+| 3 | сентябрь | Unix-terminal. Работа с текстами | vim, nano, diff, ed, vimdiff, csv, head, tail, wc, grep, find, sort, uniq. Далее аналоги переписанные на Rust: uutils coreutils, ripgrep, xsv | Разбор лога одной командной строкой | Максим | Николай |
+| 4 | сентябрь | Система контроля версий Git | git | Своя ветка + pull request с исправлением | Dmitrii | Максим |
+| [5](05-unix-env/) | октябрь | Unix-terminal. Настройка окружения и установка пакетов | source, virtualenv, apt/snap, pip/uv/conda, export,  ldconfig -p, systemd services, PATH, LD_LIBRARY_PATH, PYTHONPATH | Воспроизвести окружение проекта из `requirements.txt` | Николай | Dmitrii |
+| 6 | октябрь | Unix-terminal. Работа с оборудованием | lsblk, lsusb, fdisk, lspci -v<br>mount, fdisk,<br>/proc/cpuinfo, /proc/meminfo,<br>nvidia-smi, nvtop,<br>argparse, subprocesses, fork? | — | Максим | Николай |
+| 7 | октябрь | Unix-terminal. Работа с сетью | nc, scp, ifconfig, ufw, ports, netstat, ss, nslookup, dig, ping, whois, wget, curl | Диагностика недоступного сервиса | Dmitrii | Максим |
+| [8](08-unix-ssh/) | октябрь | Unix-terminal. ssh | ssh, scp, rsync, ssh-keygen, tunneling | SSH-ключ, `~/.ssh/config`, туннель до сервиса на сервере | Николай | Dmitrii |
+| 9 | ноябрь | Контейнеризация и облачные технологии | Виртуализация (VM против контейнера, гипервизоры, образы).<br>Docker, Docker compose.<br>Ansible как система управления конфигурацией: инвентарь, плейбук, идемпотентность.<br>aws cli, boto3 (и аналоги), s3cmd, terraform (в клауде он пока очень сырой, невозможно пользоваться)<br>Знакомство с cloud.ru | Свой контейнер + запуск на сервере | Максим | Николай |
+| 10 | ноябрь | Python. Работа с текстами | Кодировки. Операции над строками. Практикум по glob, Практикум по regexp | Парсер текстового лога на regexp | Dmitrii | Максим |
+| 11 | ноябрь | Python. Работа с json и XML | Чтение jsom, xml. XPath.<br>REST API requests.<br>Скрапинг интеренет страниц -- Beautiful soup | Забрать данные через REST API и разобрать json | Николай | Dmitrii |
+| 12 | ноябрь | SQL | Select *, SQLite, SQLAlchemy | Запросы к SQLite по учебной базе | Максим | Николай |
+| 13 | декабрь | Pandas/Polars | pandas | Мини-исследование датасета в pandas | Dmitrii | Максим |
+| 14 | декабрь | Python. Работа с бинарными данными | Чтение npy, hdfs, pickle, tar. Практикум по numpy | Чтение и запись npy/pickle | Николай | Dmitrii |
+| 15 | декабрь | Python. Работа с изображениями | load image, normalize image, crop, gamma-correction | Пакетная обработка изображений | Максим | Николай |
+| 16 | декабрь | Python. Работа с аудио и видео | librosa, построение спектрограмм, torch audio, torchvision | Спектрограмма аудиозаписи | Dmitrii | Максим |
