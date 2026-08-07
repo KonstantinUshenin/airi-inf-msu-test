@@ -1,0 +1,110 @@
+name: review-seminars
+
+# Смысловое ревью изменений в семинарах: то, что линтер проверить не может —
+# дублирование тем между семинарами, порядок понятий, выводится ли ответ на
+# вопрос из демки, честные ли уровни задач.
+#
+# Ревьюер — opencode с моделью DeepSeek V4 Pro. Ключ берётся из секрета
+# репозитория DEEPSEEK_API_KEY; если секрета нет, джоба тихо пропускается.
+# Агент работает в режиме «только чтение»: правки и запуск команд запрещены
+# конфигом .github/opencode.json, комментарий в PR публикует уже сам workflow.
+#
+# Критерии ревью лежат в .github/seminar-review-prompt.md — правьте их там,
+# workflow трогать не нужно.
+
+on:
+  pull_request:
+    paths:
+      - "seminars/**"
+      - "lectures/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Проверить, что ключ DeepSeek настроен
+        id: guard
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          if [ -z "$DEEPSEEK_API_KEY" ]; then
+            echo "секрет DEEPSEEK_API_KEY не задан — ревью пропускаем"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Собрать изменения pull request
+        if: steps.guard.outputs.ready == 'true'
+        env:
+          BASE: ${{ github.base_ref }}
+        run: |
+          git fetch --no-tags origin "$BASE"
+          git diff --name-only "origin/$BASE...HEAD" > changed_files.txt
+          # ipynb в диффе нечитаем: для ноутбуков отдаём только список, агент прочитает их сам
+          git diff "origin/$BASE...HEAD" -- ':!*.ipynb' > changes.diff
+          echo "--- изменённые файлы ---"
+          cat changed_files.txt
+
+      - name: Установить opencode
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          npm install -g opencode-ai
+          opencode --version
+
+      - name: Прогнать ревью
+        if: steps.guard.outputs.ready == 'true'
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          OPENCODE_CONFIG: ${{ github.workspace }}/.github/opencode.json
+        run: |
+          {
+            cat .github/seminar-review-prompt.md
+            echo
+            echo "## Изменённые файлы в этом pull request"
+            echo
+            cat changed_files.txt
+            echo
+            echo "Ноутбуки (.ipynb) в диффе не приводятся — открой их сам и разбирай по ячейкам."
+            echo
+            echo "## Дифф по остальным файлам"
+            echo
+            echo '```diff'
+            head -c 60000 changes.diff
+            echo '```'
+          } > review_prompt.txt
+
+          opencode run \
+            --model deepseek/deepseek-v4-pro \
+            "$(cat review_prompt.txt)" > review_output.txt
+
+          echo "--- ответ модели ---"
+          cat review_output.txt
+
+      - name: Опубликовать ревью комментарием
+        if: steps.guard.outputs.ready == 'true' && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          {
+            echo "<!-- opencode-seminar-review -->"
+            echo "🤖 **Смысловое ревью семинаров** (DeepSeek V4 Pro через opencode). Формальные правила проверяет \`lint-seminars\`."
+            echo
+            cat review_output.txt
+            echo
+            echo "_Это подсказка рецензенту, а не приговор: агент читает материалы без контекста занятия и может ошибаться._"
+          } > comment.md
+
+          # обновляем свой предыдущий комментарий, чтобы не плодить их на каждый push
+          gh pr comment "$PR" --body-file comment.md --edit-last \
+            || gh pr comment "$PR" --body-file comment.md
