@@ -3,16 +3,14 @@ name: lint-seminars
 # Проверяет формат семинаров: длину кодовых ячеек, формат вопросов, наличие
 # мотивации, уровни задач и соответствие решений задачам.
 #
-# На pull request проверяются ТОЛЬКО семинары, затронутые в этом PR, — чтобы
-# автор не разгребал чужой долг. Исключение: если PR правит сам линтер или
-# правила формата, проверяются все семинары. На push в main — тоже все.
-#
-# Исключений у линтера нет: любая ошибка красит сборку.
+# Проверяются ТОЛЬКО семинары, затронутые изменением: в pull request — те, что
+# правит PR, на push — те, что принёс коммит или мёрдж. Чужой долг разгребать не
+# приходится, но свой семинар обязан проходить линтер начисто: исключений и
+# списков «известных нарушений» у линтера нет.
 #
 # Лежит в .gitea/workflows — там его подхватит Gitea Actions после переезда на
-# git.ai.msu.ru. Чтобы проверка работала и на зеркале в GitHub, скопируйте этот
-# же файл в .github/workflows/ (синтаксис совместим). Отдельным коммитом, потому
-# что для записи в .github/workflows нужен токен со scope `workflow`.
+# git.ai.msu.ru. Близнец лежит в .github/workflows для зеркала на GitHub;
+# синтаксис общий, правьте оба файла вместе.
 
 on:
   push:
@@ -26,18 +24,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0          # нужна история, чтобы посчитать diff с базовой веткой
+          fetch-depth: 0          # нужна история, чтобы посчитать diff
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Проверить затронутые семинары
+      - name: Проверить семинары, затронутые в pull request
         if: github.event_name == 'pull_request'
         run: |
           git fetch --no-tags origin "${{ github.base_ref }}"
           python3 tools/lint_seminars.py --changed "origin/${{ github.base_ref }}"
 
+      - name: Проверить семинары, затронутые push'ем
+        if: github.event_name == 'push'
+        run: python3 tools/lint_seminars.py --changed HEAD^
+
       - name: Проверить все семинары
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'workflow_dispatch'
         run: python3 tools/lint_seminars.py
