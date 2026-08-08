@@ -4,13 +4,23 @@
 
 ### B1
 
-```bash
-conda create -y -n ml-course python=3.11
-conda activate ml-course
-conda install -y numpy matplotlib
-conda env list
-python -c "import numpy, matplotlib; print('ok')"
+```python
+# ячейка 1
+answer = 42
+
+# ячейка 2
+print(answer)
 ```
+
+Если выполнить сначала вторую ячейку, будет `NameError: name 'answer' is not
+defined`: переменная живёт не в тексте ноутбука, а в памяти **ядра**, и
+появляется там только в момент выполнения ячейки. После `Kernel → Restart Kernel
+and Run All Cells` память ядра очищается и ячейки выполняются сверху вниз —
+печатается `42`.
+
+Отсюда правило: перед тем как показывать ноутбук кому-то (или сдавать его),
+всегда делайте Restart & Run All. Иначе легко сдать ноутбук, который у вас
+«работает», а у проверяющего падает.
 
 ### B2
 
@@ -161,11 +171,22 @@ plt.show()
 
 ### M6
 
-```bash
-conda env export > environment.yml
-grep numpy environment.yml
-conda env create -f environment.yml -n ml-copy
+```python
+!python --version
+!pip show numpy matplotlib | grep -E "Name|Version"
+!pip install -q plotly            # доустановка недостающего пакета
+
+from google.colab import drive
+drive.mount("/content/drive")     # запросит доступ к диску
+
+plt.savefig("/content/drive/MyDrive/sin_cos.png", dpi=150)
 ```
+
+Файл, записанный в `/content` (рабочий каталог), лежит на диске **временной
+виртуальной машины**: она выдаётся на сессию и уничтожается при отключении
+вместе со всем содержимым, включая доустановленные пакеты. `/content/drive` —
+это примонтированный Google Drive, то есть внешнее хранилище, поэтому там файл
+переживает конец сессии.
 
 ## Сложное
 
