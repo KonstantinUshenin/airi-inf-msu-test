@@ -179,6 +179,11 @@ plt.show()
 from google.colab import drive
 drive.mount("/content/drive")     # запросит доступ к диску
 
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(0, 2 * np.pi, 200)
+plt.plot(x, np.sin(x))
 plt.savefig("/content/drive/MyDrive/sin_cos.png", dpi=150)
 ```
 
@@ -196,7 +201,7 @@ plt.savefig("/content/drive/MyDrive/sin_cos.png", dpi=150)
 import numpy as np
 import matplotlib.pyplot as plt
 
-g = np.arange(-3, 3, 0.05)
+g = np.linspace(-3, 3, 121)          # включая правую границу: arange её отбрасывает
 X, Y = np.meshgrid(g, g)
 Z = np.sin(X ** 2 + Y ** 2)
 print("Z.shape:", Z.shape)
