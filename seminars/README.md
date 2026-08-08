@@ -25,6 +25,10 @@
 Номер в колонке `#` совпадает с префиксом каталога; ссылка стоит там, где
 семинар уже готов.
 
+Про окружения: **conda в курсе не используем** — она не вяжется с целью
+семинара 1 (там про сам ноутбук и вычисления), а сборка окружений разбирается в
+семинаре 5 через `python -m venv` и `uv`.
+
 Колонка **«Домашка»** — что студент сдаёт после занятия. Домашки сдаются как
 pull request в свой репозиторий задания, проверяются автоматикой и защищаются
 семинаристу; прочерк — домашки по теме нет. Формулировки пока черновые:
@@ -39,11 +43,11 @@ pull request в свой репозиторий задания, проверяю
 
 | # | Блок | Тема | Содержание | Домашка | «Забив» | Ревью |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | сентябрь | Jupyter Notebook. Практика по визуализации | conda jupyter, colab, matplotlib, numpy, магии ноутбука %% | **№1: подключиться к учебному серверу по SSH** и сдать оттуда ноутбук с графиком по своим данным | Dmitrii | Максим |
+| [1](01-jupyter-viz/) | сентябрь | Jupyter Notebook. Практика по визуализации | jupyter, магии ноутбука `%`/`%%`, numpy (векторизация, broadcasting), matplotlib, plotly, colab | **№1: подключиться к учебному серверу по SSH** и сдать оттуда ноутбук с графиком по своим данным | Dmitrii | Максим |
 | [2](02-unix-files/) | сентябрь | Unix-terminal. Работа с файлами | (ssh, bash, Ctrl+X, Ctrl+Z, Ctrl-C, \|, >, >>, &1, &2) Env Vars, Job, top, htop, ps, nvidia-smi, uname, os release, cat, history, mkdir, cd,  chown, chmod, cp, mv, pwd, ... | Скрипт-отчёт по каталогу с данными: сколько файлов, размеры, права | Николай | Dmitrii |
 | 3 | сентябрь | Unix-terminal. Работа с текстами | vim, nano, diff, ed, vimdiff, csv, head, tail, wc, grep, find, sort, uniq. Далее аналоги переписанные на Rust: uutils coreutils, ripgrep, xsv | Разбор лога одной командной строкой | Максим | Николай |
 | 4 | сентябрь | Система контроля версий Git | git | Своя ветка + pull request с исправлением | Dmitrii | Максим |
-| [5](05-unix-env/) | октябрь | Unix-terminal. Настройка окружения и установка пакетов | source, virtualenv, apt/snap, pip/uv/conda, export,  ldconfig -p, systemd services, PATH, LD_LIBRARY_PATH, PYTHONPATH | Воспроизвести окружение проекта из `requirements.txt` | Николай | Dmitrii |
+| [5](05-unix-env/) | октябрь | Unix-terminal. Настройка окружения и установка пакетов | source, venv/virtualenv, apt/snap, pip/uv, export,  ldconfig -p, systemd services, PATH, LD_LIBRARY_PATH, PYTHONPATH | Воспроизвести окружение проекта из `requirements.txt` | Николай | Dmitrii |
 | 6 | октябрь | Unix-terminal. Работа с оборудованием | lsblk, lsusb, fdisk, lspci -v<br>mount, fdisk,<br>/proc/cpuinfo, /proc/meminfo,<br>nvidia-smi, nvtop,<br>argparse, subprocesses, fork? | — | Максим | Николай |
 | 7 | октябрь | Unix-terminal. Работа с сетью | nc, scp, ifconfig, ufw, ports, netstat, ss, nslookup, dig, ping, whois, wget, curl | Диагностика недоступного сервиса | Dmitrii | Максим |
 | [8](08-unix-ssh/) | октябрь | Unix-terminal. ssh | ssh, scp, rsync, ssh-keygen, tunneling | SSH-ключ, `~/.ssh/config`, туннель до сервиса на сервере | Николай | Dmitrii |
