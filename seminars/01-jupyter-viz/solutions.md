@@ -158,8 +158,8 @@ plt.show()
 import numpy as np
 import matplotlib.pyplot as plt
 
-np.random.seed(0)
-data = np.random.randn(10000)
+rng = np.random.default_rng(0)          # тот же генератор, что в микро-лекции
+data = rng.normal(size=10_000)
 
 plt.hist(data, bins=50, density=True, edgecolor="black", label="выборка")
 x = np.linspace(-4, 4, 300)
@@ -179,6 +179,11 @@ plt.show()
 from google.colab import drive
 drive.mount("/content/drive")     # запросит доступ к диску
 
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(0, 2 * np.pi, 200)
+plt.plot(x, np.sin(x))
 plt.savefig("/content/drive/MyDrive/sin_cos.png", dpi=150)
 ```
 
@@ -196,7 +201,7 @@ plt.savefig("/content/drive/MyDrive/sin_cos.png", dpi=150)
 import numpy as np
 import matplotlib.pyplot as plt
 
-g = np.arange(-3, 3, 0.05)
+g = np.linspace(-3, 3, 121)          # включая правую границу: arange её отбрасывает
 X, Y = np.meshgrid(g, g)
 Z = np.sin(X ** 2 + Y ** 2)
 print("Z.shape:", Z.shape)
@@ -221,9 +226,9 @@ plt.show()
 import numpy as np
 import matplotlib.pyplot as plt
 
-np.random.seed(0)
+rng = np.random.default_rng(0)
 N = 10**6
-pts = np.random.rand(N, 2)
+pts = rng.random((N, 2))
 inside = (pts[:, 0] ** 2 + pts[:, 1] ** 2) <= 1.0
 pi_est = 4 * inside.mean()
 print("pi ~", pi_est, "| error:", abs(pi_est - np.pi))   # error < 0.01
@@ -305,8 +310,8 @@ plt.show()
 ```python
 import numpy as np
 
-np.random.seed(0)
-X = np.random.randn(1000, 4) * 5 + 2       # произвольные среднее и разброс
+rng = np.random.default_rng(0)
+X = rng.normal(size=(1000, 4)) * 5 + 2  # произвольные среднее и разброс
 Xz = (X - X.mean(axis=0)) / X.std(axis=0)  # broadcasting по столбцам, без циклов
 
 print("mean:", np.round(Xz.mean(axis=0), 6))   # ~ [0 0 0 0]
