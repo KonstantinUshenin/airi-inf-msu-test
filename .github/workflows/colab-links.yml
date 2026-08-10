@@ -1,0 +1,126 @@
+name: colab-links
+
+# Комментирует pull request ссылками, открывающими его ноутбуки в Google Colab.
+#
+# Ссылка ведёт не на ветку, а на КОНКРЕТНЫЙ коммит:
+#   https://colab.research.google.com/github/<repo>/blob/<sha>/seminars/07-unix-net/demo.ipynb
+# так открывший её видит ровно ту версию, которую обсуждают в PR, а не «то, что
+# в ветке сейчас». На каждый новый push комментарий переписывается на месте:
+# один комментарий на весь PR, а не лента из десяти.
+#
+# Триггер — pull_request_target, а не pull_request, потому что часть PR приходит
+# из форков: там у GITHUB_TOKEN в pull_request доступ только на чтение и
+# комментарий опубликовать нельзя. Код из PR при этом НЕ выкачивается и не
+# запускается: workflow берётся из main, а список ноутбуков и sha приходят из
+# API. Ничего исполняемого из ветки автора сюда не попадает.
+#
+# Близнеца в .gitea/workflows у этого workflow нет и не будет: Colab умеет
+# открывать ноутбуки только с github.com, с git.ai.msu.ru ссылка работать не
+# станет.
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "Номер pull request — пересобрать комментарий вручную"
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  # быстрая серия push'ей не должна дописывать комментарий сама себе
+  group: colab-links-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const MARKER = '<!-- colab-links -->';
+
+            const prNumber = Number(
+              context.payload.pull_request?.number ?? context.payload.inputs.pr
+            );
+            const { data: pr } = await github.rest.pulls.get({
+              ...context.repo,
+              pull_number: prNumber,
+            });
+
+            // ноутбуки берём из головы PR, а не из рабочего дерева: workflow
+            // запускается в контексте main и файлов ветки у него нет
+            const sha = pr.head.sha;
+            const headRepo = pr.head.repo.full_name;
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              ...context.repo,
+              pull_number: prNumber,
+              per_page: 100,
+            });
+            const notebooks = files
+              .filter(f => f.status !== 'removed' && f.filename.endsWith('.ipynb'))
+              .map(f => f.filename)
+              .sort();
+
+            const msk = new Intl.DateTimeFormat('ru-RU', {
+              timeZone: 'Europe/Moscow',
+              day: '2-digit', month: '2-digit', year: 'numeric',
+              hour: '2-digit', minute: '2-digit',
+            }).format(new Date());
+
+            const lines = [MARKER, '## 📓 Открыть в Colab', ''];
+            if (notebooks.length === 0) {
+              lines.push('В этом pull request нет изменённых ноутбуков.');
+            } else {
+              for (const path of notebooks) {
+                const url =
+                  'https://colab.research.google.com/github/' +
+                  `${headRepo}/blob/${sha}/` +
+                  path.split('/').map(encodeURIComponent).join('/');
+                lines.push(`- [\`${path}\`](${url})`);
+              }
+              lines.push('');
+              lines.push(
+                'Ссылки указывают на коммит `' + sha.slice(0, 7) + '`, а не на ветку: ' +
+                'после нового push комментарий обновится, а уже открытая вкладка ' +
+                'останется на старой версии.'
+              );
+            }
+            lines.push('');
+            lines.push(`_Обновлено: ${msk} МСК · коммит \`${sha.slice(0, 7)}\`_`);
+            const body = lines.join('\n');
+
+            // ищем свой комментарий по маркеру, а не «последний свой»: в этом же
+            // PR комментирует ещё и review-seminars, его перезаписывать нельзя
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              ...context.repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+            const mine = comments.find(c => c.body?.startsWith(MARKER));
+
+            if (mine) {
+              await github.rest.issues.updateComment({
+                ...context.repo,
+                comment_id: mine.id,
+                body,
+              });
+              core.info(`комментарий ${mine.id} обновлён`);
+            } else if (notebooks.length > 0) {
+              // пустой комментарий в PR без ноутбуков не создаём — только чиним
+              // уже существующий, если ноутбуки из PR убрали
+              const { data: created } = await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: prNumber,
+                body,
+              });
+              core.info(`комментарий ${created.id} создан`);
+            } else {
+              core.info('ноутбуков в PR нет — комментировать нечего');
+            }
