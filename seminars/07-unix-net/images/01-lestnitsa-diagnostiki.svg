@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arrUp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="500" fill="#ffffff"/>
+  <text x="480" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Лестница диагностики: «сервис не отвечает»</text>
+
+  <!-- стрелка порядка проверки -->
+  <line x1="42" y1="440" x2="42" y2="70" stroke="#1d4ed8" stroke-width="2.5" marker-end="url(#arrUp)"/>
+  <text x="26" y="290" text-anchor="middle" font-size="12" fill="#1d4ed8" transform="rotate(-90 26 290)">порядок проверки</text>
+
+  <!-- заголовки колонок -->
+  <text x="196" y="62" text-anchor="middle" font-size="12" font-weight="600" fill="#64748b">СЛОЙ</text>
+  <text x="420" y="62" text-anchor="middle" font-size="12" font-weight="600" fill="#64748b">ЧЕМ СМОТРИМ</text>
+  <text x="700" y="62" text-anchor="middle" font-size="12" font-weight="600" fill="#64748b">НА КАКОЙ ВОПРОС ОТВЕЧАЕТ</text>
+
+  <!-- 5. приложение -->
+  <g>
+    <rect x="62" y="72" width="866" height="66" rx="9" fill="#eef2ff" stroke="#4f46e5" stroke-width="2"/>
+    <circle cx="88" cy="105" r="14" fill="#4f46e5"/>
+    <text x="88" y="110" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">5</text>
+    <text x="196" y="100" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Приложение</text>
+    <text x="196" y="120" text-anchor="middle" font-size="12" fill="#64748b">HTTP, протокол сервиса</text>
+    <text x="420" y="110" text-anchor="middle" font-size="14" fill="#1e293b" font-family="ui-monospace, 'DejaVu Sans Mono', monospace">curl -v · curl -I</text>
+    <text x="700" y="110" text-anchor="middle" font-size="13" fill="#334155">Сервис понимает мой запрос?</text>
+  </g>
+
+  <!-- 4. порт -->
+  <g>
+    <rect x="62" y="146" width="866" height="66" rx="9" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <circle cx="88" cy="179" r="14" fill="#16a34a"/>
+    <text x="88" y="184" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">4</text>
+    <text x="196" y="174" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Порт</text>
+    <text x="196" y="194" text-anchor="middle" font-size="12" fill="#64748b">TCP-соединение</text>
+    <text x="420" y="184" text-anchor="middle" font-size="14" fill="#1e293b" font-family="ui-monospace, 'DejaVu Sans Mono', monospace">ss -tlnp · nc -zv</text>
+    <text x="700" y="184" text-anchor="middle" font-size="13" fill="#334155">Кто-нибудь слушает этот порт?</text>
+  </g>
+
+  <!-- 3. хост -->
+  <g>
+    <rect x="62" y="220" width="866" height="66" rx="9" fill="#fefce8" stroke="#ca8a04" stroke-width="2"/>
+    <circle cx="88" cy="253" r="14" fill="#ca8a04"/>
+    <text x="88" y="258" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">3</text>
+    <text x="196" y="248" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Хост</text>
+    <text x="196" y="268" text-anchor="middle" font-size="12" fill="#64748b">достижимость по IP</text>
+    <text x="420" y="258" text-anchor="middle" font-size="14" fill="#1e293b" font-family="ui-monospace, 'DejaVu Sans Mono', monospace">ping · traceroute</text>
+    <text x="700" y="258" text-anchor="middle" font-size="13" fill="#334155">Пакеты доходят до машины?</text>
+  </g>
+
+  <!-- 2. имя -->
+  <g>
+    <rect x="62" y="294" width="866" height="66" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <circle cx="88" cy="327" r="14" fill="#ea580c"/>
+    <text x="88" y="332" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">2</text>
+    <text x="196" y="322" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Имя</text>
+    <text x="196" y="342" text-anchor="middle" font-size="12" fill="#64748b">DNS</text>
+    <text x="420" y="332" text-anchor="middle" font-size="14" fill="#1e293b" font-family="ui-monospace, 'DejaVu Sans Mono', monospace">dig · getent hosts</text>
+    <text x="700" y="332" text-anchor="middle" font-size="13" fill="#334155">В какой адрес превращается имя?</text>
+  </g>
+
+  <!-- 1. свой узел -->
+  <g>
+    <rect x="62" y="368" width="866" height="66" rx="9" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+    <circle cx="88" cy="401" r="14" fill="#475569"/>
+    <text x="88" y="406" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">1</text>
+    <text x="196" y="396" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Свой узел</text>
+    <text x="196" y="416" text-anchor="middle" font-size="12" fill="#64748b">интерфейс, адрес, маршрут</text>
+    <text x="420" y="406" text-anchor="middle" font-size="14" fill="#1e293b" font-family="ui-monospace, 'DejaVu Sans Mono', monospace">ip a · ip route get</text>
+    <text x="700" y="406" text-anchor="middle" font-size="13" fill="#334155">У меня вообще есть сеть?</text>
+  </g>
+
+  <text x="480" y="470" text-anchor="middle" font-size="13.5" fill="#0f172a">Проверяем снизу вверх: верхний слой не может работать, пока сломан нижний.</text>
+  <text x="480" y="490" text-anchor="middle" font-size="12.5" fill="#64748b">Первый слой, который не отвечает как ожидалось, и есть место поломки — дальше подниматься незачем.</text>
+</svg>

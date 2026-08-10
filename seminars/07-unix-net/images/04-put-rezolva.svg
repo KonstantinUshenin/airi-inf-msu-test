@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="400" viewBox="0 0 960 400" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="rA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <marker id="rB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c3aed"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="400" fill="#ffffff"/>
+  <text x="480" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Путь от имени к адресу — и почему `dig` может врать про программу</text>
+
+  <!-- верхний путь: обычные программы -->
+  <rect x="24" y="86" width="172" height="72" rx="9" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="110" y="112" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a">curl · ping</text>
+  <text x="110" y="132" text-anchor="middle" font-size="12" fill="#64748b">браузер, python</text>
+  <text x="110" y="150" text-anchor="middle" font-size="11.5" fill="#334155">через getaddrinfo</text>
+
+  <line x1="196" y1="122" x2="242" y2="122" stroke="#334155" stroke-width="2.2" marker-end="url(#rA)"/>
+
+  <rect x="246" y="86" width="172" height="72" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text x="332" y="112" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a" font-family="ui-monospace, 'DejaVu Sans Mono', monospace">/etc/hosts</text>
+  <text x="332" y="133" text-anchor="middle" font-size="12" fill="#64748b">статическая таблица</text>
+  <text x="332" y="151" text-anchor="middle" font-size="11.5" fill="#9a3412">есть запись → стоп</text>
+
+  <text x="443" y="74" text-anchor="middle" font-size="11.5" fill="#64748b">записи нет</text>
+  <line x1="418" y1="122" x2="464" y2="122" stroke="#334155" stroke-width="2.2" marker-end="url(#rA)"/>
+
+  <rect x="468" y="86" width="190" height="72" rx="9" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="563" y="112" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a">резолвер</text>
+  <text x="563" y="133" text-anchor="middle" font-size="12" fill="#64748b" font-family="ui-monospace, 'DejaVu Sans Mono', monospace">/etc/resolv.conf</text>
+  <text x="563" y="151" text-anchor="middle" font-size="11.5" fill="#1e40af">systemd-resolved, роутер</text>
+
+  <line x1="658" y1="122" x2="704" y2="122" stroke="#334155" stroke-width="2.2" marker-end="url(#rA)"/>
+
+  <rect x="708" y="86" width="228" height="72" rx="9" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="822" y="112" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a">DNS в интернете</text>
+  <text x="822" y="133" text-anchor="middle" font-size="12" fill="#64748b">корневые → .com →</text>
+  <text x="822" y="151" text-anchor="middle" font-size="12" fill="#64748b">авторитативный сервер</text>
+
+  <text x="316" y="204" text-anchor="middle" font-size="12.5" fill="#15803d">обратно приходит A-запись — тот самый IP-адрес</text>
+
+  <!-- нижний путь: dig -->
+  <rect x="24" y="248" width="172" height="72" rx="9" fill="#faf5ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="110" y="274" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a">dig · nslookup</text>
+  <text x="110" y="294" text-anchor="middle" font-size="12" fill="#64748b">свой резолвер внутри</text>
+  <text x="110" y="312" text-anchor="middle" font-size="11.5" fill="#6b21a8">getaddrinfo не зовут</text>
+
+  <polyline points="196,284 563,284 563,164" fill="none" stroke="#7c3aed" stroke-width="2.4" stroke-dasharray="7 4" marker-end="url(#rB)"/>
+  <text x="380" y="272" text-anchor="middle" font-size="12.5" font-weight="600" fill="#6b21a8">мимо /etc/hosts — сразу в DNS</text>
+
+  <text x="480" y="360" text-anchor="middle" font-size="13.5" fill="#0f172a">`dig` спрашивает DNS напрямую, а `curl` и `ping` сначала заглядывают в `/etc/hosts`.</text>
+  <text x="480" y="382" text-anchor="middle" font-size="12.5" fill="#64748b">Поэтому «dig отвечает правильно, а программа идёт не туда» — это нормальный симптом, а не мистика.</text>
+</svg>
