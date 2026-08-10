@@ -58,4 +58,4 @@ pull request в свой репозиторий задания, проверяю
 | 13 | декабрь | Pandas/Polars | pandas | Мини-исследование датасета в pandas | Dmitrii | Максим |
 | 14 | декабрь | Python. Работа с бинарными данными | Чтение npy, hdfs, pickle, tar. Практикум по numpy | Чтение и запись npy/pickle | Николай | Dmitrii |
 | 15 | декабрь | Python. Работа с изображениями | load image, normalize image, crop, gamma-correction | Пакетная обработка изображений | Максим | Николай |
-| 16 | декабрь | Python. Работа с аудио и видео | librosa, построение спектрограмм, torch audio, torchvision | Спектрограмма аудиозаписи | Dmitrii | Максим |
+| [16](16-audio-video/) | декабрь | Python. Работа с аудио и видео | librosa, построение спектрограмм, torch audio, torchvision | Спектрограмма аудиозаписи | Dmitrii | Максим |
