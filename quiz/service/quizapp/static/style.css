@@ -109,3 +109,36 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 form.row { display: flex; gap: 8px; margin: 12px 0; }
 form.row input { flex: 1; }
+
+/* Панель управления пятиминуткой: кнопки в ряд, на телефоне — в столбик. */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.controls form { display: flex; gap: 6px; align-items: center; margin: 0; }
+
+select {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+label { display: block; font-size: 14px; color: var(--muted); margin-bottom: 4px; }
+label.opt { display: flex; color: inherit; font-size: inherit; }
+
+/* Коды свободных билетов — плитками, каждый ведёт на вид студента. */
+.tickets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.tickets a {
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 5px 9px;
+  text-decoration: none;
+  font-size: 14px;
+}

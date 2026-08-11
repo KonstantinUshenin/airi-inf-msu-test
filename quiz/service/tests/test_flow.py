@@ -72,7 +72,7 @@ def test_login_creates_attempt_and_burns_the_ticket(client, teacher):
     assert len(questions_on_page(resp.text)) == 5
 
     tickets = teacher.get(f"/teacher/quizzes/{quiz['id']}").text
-    assert "погашено 1" in tickets
+    assert "Билетов выпущено 2, из них не использовано 1" in tickets
 
 
 def test_page_never_leaks_the_correct_answer(client, teacher):
@@ -341,3 +341,27 @@ def test_out_of_range_choice_is_refused(client, teacher):
     for bad in (-1, 99, "первый", None):
         resp = client.post(f"/api/attempt/{attempt}/answer", json={"question_id": qid, "choice": bad})
         assert resp.status_code == 400, bad
+
+
+def test_service_starts_and_reports_a_broken_bank(settings, banks_dir, monkeypatch):
+    """Битый банк раньше не давал стартовать всему сервису."""
+    from fastapi.testclient import TestClient
+
+    from conftest import make_bank_text
+    from quizapp.config import Settings
+    from quizapp.web import create_app
+
+    broken = make_bank_text(lecture="11-hierarchy").replace("- [x] вариант A-0", "- [ ] вариант A-0", 1)
+    (banks_dir / "11-hierarchy.md").write_text(broken, encoding="utf-8")
+
+    with TestClient(create_app(Settings())) as client:
+        body = client.get("/healthz").json()
+        assert body["ok"] is True
+        assert body["banks"] == ["10-encoding"]          # целый банк работает
+        assert "11-hierarchy.md" in body["broken_banks"]  # поломка не замолчана
+
+        client.cookies.set("quiz_teacher", "secret-teacher-token")
+        page = client.get("/teacher").text
+        assert "Не разобрано банков: 1" in page
+        # По битой лекции пятиминутку завести нельзя — её просто нет в списке.
+        assert 'value="11-hierarchy"' not in page

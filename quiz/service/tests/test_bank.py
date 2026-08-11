@@ -93,3 +93,40 @@ def test_multiline_prompt_is_joined(big_bank):
     bank, problems = parse_bank(text)
     assert problems == []
     assert bank.by_id["q-mc-a"].prompt == "Первая строка формулировки\nвторая строка формулировки?"
+
+
+def test_scan_skips_a_broken_bank_and_keeps_the_rest(tmp_path):
+    """Опечатка в банке одной лекции не должна отменять пятиминутку по другой."""
+    from quizapp.bank import scan_banks
+
+    from conftest import make_bank_text
+
+    (tmp_path / "01-history.md").write_text(make_bank_text(lecture="01-history"), encoding="utf-8")
+    broken = make_bank_text(lecture="10-encoding").replace("- [x] вариант A-0", "- [ ] вариант A-0", 1)
+    (tmp_path / "10-encoding.md").write_text(broken, encoding="utf-8")
+
+    banks, errors = scan_banks(tmp_path)
+    assert sorted(banks) == ["01-history"]
+    assert "10-encoding.md" in errors
+    assert "верных вариантов: 0" in errors["10-encoding.md"]
+
+
+def test_scan_reports_two_banks_claiming_one_lecture(tmp_path):
+    from quizapp.bank import scan_banks
+
+    from conftest import make_bank_text
+
+    (tmp_path / "a.md").write_text(make_bank_text(lecture="01-history"), encoding="utf-8")
+    (tmp_path / "b.md").write_text(make_bank_text(lecture="01-history"), encoding="utf-8")
+
+    banks, errors = scan_banks(tmp_path)
+    assert sorted(banks) == ["01-history"]
+    assert "уже описана" in errors["b.md"]
+
+
+def test_readme_is_not_treated_as_a_bank(tmp_path):
+    from quizapp.bank import scan_banks
+
+    (tmp_path / "README.md").write_text("# просто пояснение\n", encoding="utf-8")
+    banks, errors = scan_banks(tmp_path)
+    assert banks == {} and errors == {}

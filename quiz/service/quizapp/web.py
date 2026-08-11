@@ -12,9 +12,11 @@ from __future__ import annotations
 
 import csv
 import io
+import logging
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
+from urllib.parse import urlencode
 
 from fastapi import Depends, FastAPI, Form, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
@@ -22,7 +24,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from .auth import SESSION_COOKIE, STATE_COOKIE, AuthError, Identity, OidcClient, Sessions, test_identity
-from .bank import Bank, load_banks
+from .bank import Bank, scan_banks
 from .config import Settings
 from .judge import Judge
 from .selection import pick_question_ids, shown_options
@@ -30,11 +32,19 @@ from .store import Attempt, Store, normalize_token, pretty_token
 
 HERE = Path(__file__).parent
 TEACHER_COOKIE = "quiz_teacher"
+log = logging.getLogger("quizapp.web")
 
 
 def create_app(settings: Settings | None = None, *, store: Store | None = None) -> FastAPI:
     s = settings or Settings()
-    banks: dict[str, Bank] = load_banks(s.banks_dir) if s.banks_dir.exists() else {}
+    # Непригодный банк не мешает остальным: он просто не попадает в список,
+    # а его поломка едет в лог, в /healthz и на страницу преподавателя.
+    banks: dict[str, Bank] = {}
+    bank_errors: dict[str, str] = {}
+    if s.banks_dir.exists():
+        banks, bank_errors = scan_banks(s.banks_dir)
+    for name, problem in bank_errors.items():
+        log.error("банк %s не разобран и пропущен: %s", name, problem)
     db = store or Store(s.db_path)
     sessions = Sessions(s.secret_key)
     oidc = OidcClient(s) if s.auth_mode == "oidc" else None
@@ -50,6 +60,7 @@ def create_app(settings: Settings | None = None, *, store: Store | None = None) 
     app.state.settings = s
     app.state.store = db
     app.state.banks = banks
+    app.state.bank_errors = bank_errors
     app.state.judge = judge
 
     templates = Jinja2Templates(directory=str(HERE / "templates"))
@@ -294,11 +305,63 @@ def create_app(settings: Settings | None = None, *, store: Store | None = None) 
     # --- преподавательский контур ----------------------------------------
 
     @app.get("/teacher", response_class=HTMLResponse)
-    async def teacher_home(request: Request):
+    async def teacher_home(request: Request, error: str = "", note: str = ""):
         supplied = request.cookies.get(TEACHER_COOKIE) or ""
         if not s.teacher_token or not _same(supplied, s.teacher_token):
             return page("teacher_login.html", request)
-        return page("teacher_index.html", request, quizzes=db.list_quizzes(), banks=sorted(banks))
+        return page(
+            "teacher_index.html",
+            request,
+            quizzes=db.list_quizzes(),
+            banks={slug: banks[slug] for slug in sorted(banks)},
+            bank_errors=bank_errors,
+            error=error,
+            note=note,
+        )
+
+    # --- кнопки на страницах преподавателя --------------------------------
+    #
+    # Обычные HTML-формы, а не JSON: страница должна работать с телефона
+    # и без JavaScript, а после действия — возвращать на ту же страницу
+    # (post/redirect/get), чтобы обновление браузера не повторяло действие.
+    # JSON-ручки рядом никуда не делись: их зовут CLI и скрипты.
+
+    @app.post("/teacher/quizzes", dependencies=[Depends(require_teacher)])
+    async def teacher_create(
+        lecture: str = Form(...),
+        mode: str = Form("practice"),
+        timeout_sec: int = Form(0),
+    ):
+        if lecture not in banks:
+            return _back("/teacher", error=f"нет банка для лекции {lecture}")
+        quiz = db.create_quiz(
+            lecture,
+            banks[lecture].title,
+            mode=mode if mode in ("practice", "graded") else "practice",
+            timeout_sec=timeout_sec or s.default_timeout_sec,
+        )
+        return RedirectResponse(f"/teacher/quizzes/{quiz.id}", status_code=303)
+
+    @app.post("/teacher/quizzes/{quiz_id}/state", dependencies=[Depends(require_teacher)])
+    async def teacher_state(quiz_id: int, state: str = Form(...)):
+        db.update_quiz(quiz_id, state=state)
+        return _back(f"/teacher/quizzes/{quiz_id}",
+                     note="Пятиминутка открыта" if state == "open" else "Пятиминутка закрыта")
+
+    @app.post("/teacher/quizzes/{quiz_id}/mode", dependencies=[Depends(require_teacher)])
+    async def teacher_mode(quiz_id: int, mode: str = Form(...), timeout_sec: int = Form(0)):
+        db.update_quiz(quiz_id, mode=mode, timeout_sec=timeout_sec or s.default_timeout_sec,
+                       touch_timeout=True)
+        return _back(f"/teacher/quizzes/{quiz_id}",
+                     note="Боевой режим: таймер и оценки" if mode == "graded"
+                          else "Пробный режим: без таймера и без оценок")
+
+    @app.post("/teacher/quizzes/{quiz_id}/tickets", dependencies=[Depends(require_teacher)])
+    async def teacher_tickets(quiz_id: int, count: int = Form(36)):
+        if not 1 <= count <= 500:
+            return _back(f"/teacher/quizzes/{quiz_id}", error="билетов бывает от 1 до 500")
+        tokens = db.issue_tickets(quiz_id, count)
+        return _back(f"/teacher/quizzes/{quiz_id}", note=f"Выпущено билетов: {len(tokens)}")
 
     @app.post("/teacher/login")
     async def teacher_login(request: Request, token: str = Form(...)):
@@ -367,23 +430,36 @@ def create_app(settings: Settings | None = None, *, store: Store | None = None) 
         )
 
     @app.get("/teacher/quizzes/{quiz_id}", response_class=HTMLResponse, dependencies=[Depends(require_teacher)])
-    async def teacher_quiz(quiz_id: int, request: Request, q: str = ""):
+    async def teacher_quiz(quiz_id: int, request: Request, q: str = "", error: str = "", note: str = ""):
         quiz = db.get_quiz(quiz_id)
         bank = banks.get(quiz.lecture)
         summary = db.question_summary(quiz_id)
         for row in summary:
             question = bank.by_id.get(row["question_id"]) if bank else None
             row["prompt"] = question.prompt if question else "(вопроса нет в банке)"
+        tickets = [
+            {
+                "token": r["token"],
+                "pretty": pretty_token(r["token"]),
+                "url": f"{s.base_url}/t/{r['token']}",
+                "redeemed": r["redeemed_at"] is not None,
+            }
+            for r in db.tickets_for(quiz_id)
+        ]
         return page(
             "teacher_quiz.html",
             request,
             quiz=quiz,
+            bank=bank,
             attempts=db.attempts_table(quiz_id, q),
             summary=summary,
             durations=db.durations(quiz_id),
             failures=db.judge_failures(quiz_id),
             query=q,
-            tickets=db.tickets_for(quiz_id),
+            tickets=tickets,
+            fresh=[t for t in tickets if not t["redeemed"]],
+            error=error,
+            note=note,
         )
 
     @app.get("/teacher/attempts/{attempt_id}", response_class=HTMLResponse, dependencies=[Depends(require_teacher)])
@@ -473,7 +549,17 @@ def create_app(settings: Settings | None = None, *, store: Store | None = None) 
 
     @app.get("/healthz")
     async def healthz():
-        return JSONResponse({"ok": True, "banks": sorted(banks), "auth": s.auth_mode})
+        # Непригодные банки видны здесь, а не только в логе: сервис жив, но
+        # часть лекций недоступна, и это должно быть заметно снаружи.
+        return JSONResponse(
+            {
+                "ok": True,
+                "banks": sorted(banks),
+                "broken_banks": bank_errors,
+                "auth": s.auth_mode,
+                "judge": "on" if (s.judge_enabled and s.judge_configured) else "off",
+            }
+        )
 
     return app
 
@@ -511,6 +597,12 @@ def _start_or_resume(request, db: Store, s: Settings, banks, ticket, quiz, ident
         timeout_sec=quiz.timeout_sec if quiz.graded else None,
     )
     return RedirectResponse(f"/quiz/{attempt.id}", status_code=303)
+
+
+def _back(path: str, *, note: str = "", error: str = "") -> RedirectResponse:
+    """Вернуться на страницу после действия, показав, что произошло."""
+    params = urlencode({k: v for k, v in (("note", note), ("error", error)) if v})
+    return RedirectResponse(f"{path}?{params}" if params else path, status_code=303)
 
 
 async def _json_object(request: Request) -> dict:

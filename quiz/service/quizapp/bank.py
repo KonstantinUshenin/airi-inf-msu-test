@@ -255,14 +255,48 @@ def load_bank(path: Path) -> Bank:
 
 
 def load_banks(directory: Path) -> dict[str, Bank]:
-    """Все банки каталога, ключ — слаг лекции из заголовка файла."""
+    """Все банки каталога, ключ — слаг лекции. Кидает на первом непригодном.
+
+    Строгий вариант — для командной строки и линтера, где ошибка должна
+    останавливать работу.
+    """
+    banks, errors = scan_banks(directory)
+    if errors:
+        path, message = next(iter(errors.items()))
+        raise BankError(f"{path}: {message}")
+    return banks
+
+
+def scan_banks(directory: Path) -> tuple[dict[str, Bank], dict[str, str]]:
+    """Разобрать каталог, вернув отдельно годные банки и отдельно поломки.
+
+    Сервис читает банки этой функцией, а не строгой: опечатка в банке седьмой
+    лекции не должна мешать провести пятиминутку по первой. Поломка не
+    замалчивается — она возвращается наружу, попадает в лог, в /healthz и на
+    страницу преподавателя, а создать пятиминутку по такой лекции нельзя,
+    потому что её просто нет в списке годных.
+    """
     banks: dict[str, Bank] = {}
+    errors: dict[str, str] = {}
+
     for path in sorted(directory.glob("*.md")):
         if path.name.upper().startswith("README"):
             continue
-        bank = load_bank(path)
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError as exc:
+            errors[path.name] = f"файл не читается: {exc}"
+            continue
+
+        bank, problems = parse_bank(text, path=path)
+        if problems:
+            errors[path.name] = "; ".join(problems[:5]) + (
+                f" (и ещё {len(problems) - 5})" if len(problems) > 5 else ""
+            )
+            continue
         if bank.lecture in banks:
-            other = banks[bank.lecture].path
-            raise BankError(f"{path}: лекция {bank.lecture} уже описана в {other}")
+            errors[path.name] = f"лекция {bank.lecture} уже описана в {banks[bank.lecture].path}"
+            continue
         banks[bank.lecture] = bank
-    return banks
+
+    return banks, errors

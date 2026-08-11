@@ -3,18 +3,64 @@
 {% block body %}
 <script>document.querySelector('main').classList.add('wide');</script>
 
+<p class="muted"><a href="/teacher">← ко всем пятиминуткам</a></p>
 <h1>{{ quiz.title or quiz.lecture }}</h1>
 <p class="muted">
-  {{ 'открыта' if quiz.is_open else 'закрыта' }} ·
-  {{ 'с оценками' if quiz.graded else 'пробный прогон' }} ·
-  билетов выпущено {{ tickets|length }}, погашено {{ tickets|selectattr('redeemed_at')|list|length }} ·
-  <a href="/api/teacher/quizzes/{{ quiz.id }}/tickets.pdf">лист билетов (PDF)</a> ·
-  <a href="/teacher/quizzes/{{ quiz.id }}/export.csv">CSV</a>
+  {% if quiz.is_open %}<span class="pill ok">открыта</span>{% else %}<span class="pill muted">закрыта</span>{% endif %}
+  · {{ 'боевой режим, таймер ' ~ quiz.timeout_sec ~ ' с' if quiz.graded else 'пробный прогон: без таймера и без оценок' }}
+  · банк {{ quiz.lecture }}{% if bank %} ({{ bank.mc|length }} с вариантами, {{ bank.open|length }} открытых){% endif %}
 </p>
 
+{% if note %}<p class="ok">{{ note }}</p>{% endif %}
+{% if error %}<p class="bad">{{ error }}</p>{% endif %}
+
+<div class="card">
+  <h2 style="margin-top:0">Управление</h2>
+  <div class="controls">
+    <form method="post" action="/teacher/quizzes/{{ quiz.id }}/state">
+      <input type="hidden" name="state" value="{{ 'closed' if quiz.is_open else 'open' }}">
+      <button type="submit" class="{{ 'ghost' if quiz.is_open else '' }}">
+        {{ 'Закрыть приём' if quiz.is_open else 'Открыть приём' }}
+      </button>
+    </form>
+
+    <form method="post" action="/teacher/quizzes/{{ quiz.id }}/tickets">
+      <input type="number" name="count" value="36" min="1" max="500" style="width:6em">
+      <button type="submit" class="ghost">Выпустить билеты</button>
+    </form>
+
+    <form method="post" action="/teacher/quizzes/{{ quiz.id }}/mode">
+      <input type="hidden" name="mode" value="{{ 'practice' if quiz.graded else 'graded' }}">
+      <input type="hidden" name="timeout_sec" value="{{ quiz.timeout_sec or settings.default_timeout_sec }}">
+      <button type="submit" class="ghost">
+        {{ 'Вернуть пробный режим' if quiz.graded else 'Включить таймер и оценки' }}
+      </button>
+    </form>
+
+    <a class="btn ghost" href="/api/teacher/quizzes/{{ quiz.id }}/tickets.pdf">Лист билетов (PDF)</a>
+    <a class="btn ghost" href="/teacher/quizzes/{{ quiz.id }}/export.csv">Выгрузка CSV</a>
+  </div>
+  <p class="muted">
+    Билетов выпущено {{ tickets|length }}, из них не использовано {{ fresh|length }}.
+    {% if not quiz.is_open %}Пока пятиминутка закрыта, войти по билету нельзя.{% endif %}
+  </p>
+</div>
+
 {% if failures %}
-<p class="warn">Автопроверка не справилась с {{ failures|length }} ответом(ами) — они видны в разборе попыток
-как «проверка не сработала». Ответы на месте, их можно прочитать глазами.</p>
+<p class="warn">Автопроверка не справилась с {{ failures|length }} ответом(ами) — в разборе попыток
+они помечены «проверка не сработала». Сами ответы на месте, их можно прочитать глазами.</p>
+{% endif %}
+
+{% if fresh %}
+<details class="card">
+  <summary>Свободные билеты ({{ fresh|length }}) — можно открыть ссылкой, не печатая</summary>
+  <p class="muted">Удобно, чтобы посмотреть на пятиминутку глазами студента. Один билет —
+  одна попытка; чтобы увидеть другой набор вопросов, откройте второй билет в приватном окне
+  и представьтесь другим именем.</p>
+  <div class="tickets">
+    {% for t in fresh %}<a href="/t/{{ t.token }}">{{ t.pretty }}</a>{% endfor %}
+  </div>
+</details>
 {% endif %}
 
 <form class="row" method="get">
@@ -41,7 +87,7 @@
     <td><a href="/teacher/attempts/{{ a.id }}">разбор →</a></td>
   </tr>
   {% else %}
-  <tr><td colspan="7" class="muted">Ничего не найдено.</td></tr>
+  <tr><td colspan="7" class="muted">{{ 'Ничего не найдено.' if query else 'Пока никто не заходил.' }}</td></tr>
   {% endfor %}
 </table>
 </div>
