@@ -48,3 +48,18 @@ def test_unit_and_readme_agree_on_the_entrypoint():
     """Роль живёт в другом репозитории — сверяем команду хотя бы с README."""
     readme = (ROOT / "quiz" / "README.md").read_text(encoding="utf-8")
     assert "python -m quizapp serve" in readme or "python3 -m quizapp serve" in readme
+
+
+def test_healthz_reports_the_deployed_revision():
+    """Иначе «доехал ли деплой» проверяется только гаданием: правки вроде
+    порядка вариантов в ответах сервиса никак не видны."""
+    import subprocess
+
+    from quizapp.config import checkout_revision
+
+    rev = checkout_revision()
+    assert rev, "сервис запущен из git-чекаута, версия должна читаться"
+    head = subprocess.run(
+        ["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT
+    ).stdout.strip()
+    assert head.startswith(rev)

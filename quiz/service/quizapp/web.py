@@ -25,7 +25,7 @@ from fastapi.templating import Jinja2Templates
 
 from .auth import SESSION_COOKIE, STATE_COOKIE, AuthError, Identity, OidcClient, Sessions, test_identity
 from .bank import Bank, scan_banks
-from .config import Settings
+from .config import Settings, checkout_revision
 from .judge import Judge
 from .selection import pick_question_ids, shown_options
 from .store import Attempt, Store, normalize_token, pretty_token
@@ -554,6 +554,7 @@ def create_app(settings: Settings | None = None, *, store: Store | None = None) 
         return JSONResponse(
             {
                 "ok": True,
+                "version": checkout_revision(),
                 "banks": sorted(banks),
                 "broken_banks": bank_errors,
                 "auth": s.auth_mode,

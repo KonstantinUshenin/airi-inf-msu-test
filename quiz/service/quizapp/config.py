@@ -76,3 +76,55 @@ class Settings:
     @property
     def judge_configured(self) -> bool:
         return bool(self.llm_api_key)
+
+
+def checkout_revision() -> str | None:
+    """Короткий хеш коммита, из которого запущен сервис.
+
+    Нужен, чтобы «доехал ли деплой» проверялось снаружи одним запросом, а не
+    угадывалось по косвенным признакам: правка вроде порядка вариантов в
+    ответах сервиса никак не видна, и убедиться в ней иначе нельзя.
+
+    Читаем .git руками, без вызова git: у сервиса нет ни шелла, ни нужды
+    порождать процессы ради одной строки. Нет .git (установка не из чекаута) —
+    возвращаем None, это не ошибка.
+    """
+    for parent in [REPO_ROOT, *REPO_ROOT.parents]:
+        dot_git = parent / ".git"
+        try:
+            if dot_git.is_file():
+                # git worktree: .git — файл со строкой «gitdir: <путь>».
+                # На сервере чекаут обычный, но разработка идёт в worktree,
+                # и без этой ветки версия читалась бы только в проде.
+                pointer = dot_git.read_text(encoding="utf-8").strip()
+                if not pointer.startswith("gitdir: "):
+                    return None
+                git_dir = Path(pointer[8:])
+                if not git_dir.is_absolute():
+                    git_dir = (parent / git_dir).resolve()
+            elif dot_git.is_dir():
+                git_dir = dot_git
+            else:
+                continue
+
+            ref = (git_dir / "HEAD").read_text(encoding="utf-8").strip()
+            if not ref.startswith("ref: "):
+                return ref[:12]  # detached HEAD
+
+            name = ref[5:]
+            # У worktree свои ссылки лежат в его каталоге, общие — в основном.
+            for base in (git_dir, *git_dir.parents):
+                target = base / name
+                if target.is_file():
+                    return target.read_text(encoding="utf-8").strip()[:12]
+                packed = base / "packed-refs"
+                if packed.is_file():
+                    for line in packed.read_text(encoding="utf-8").splitlines():
+                        if line.endswith(" " + name):
+                            return line.split()[0][:12]
+                if (base / "HEAD").is_file() and base != git_dir:
+                    break
+            return None
+        except OSError:
+            return None
+    return None
