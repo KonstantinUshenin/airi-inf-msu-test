@@ -188,8 +188,9 @@ def check_seminar(directory: pathlib.Path, rep: Report, stats: list) -> None:
 def changed_seminars(base_ref: str, root: pathlib.Path) -> list[pathlib.Path] | None:
     """Каталоги семинаров, затронутых относительно `base_ref`.
 
-    Возвращает None, если правка задевает сам линтер или правила формата:
-    тогда проверять надо все семинары, а не только изменённые.
+    Проверяются ровно те семинары, файлы которых попали в diff, — и никакие
+    другие: автор правки отвечает за свой материал, а не за чужой долг.
+    Возвращает None, только если diff посчитать не удалось.
     """
     diff = subprocess.run(
         ["git", "diff", "--name-only", f"{base_ref}...HEAD"],
@@ -200,10 +201,6 @@ def changed_seminars(base_ref: str, root: pathlib.Path) -> list[pathlib.Path] | 
         return None
 
     files = [f for f in diff.stdout.split("\n") if f.strip()]
-    if any(f.startswith(("tools/", ".claude/skills/seminar-format/")) for f in files):
-        print("изменены правила или сам линтер — проверяем все семинары")
-        return None
-
     dirs = []
     for f in files:
         parts = pathlib.Path(f).parts
@@ -232,7 +229,7 @@ def main() -> int:
         dirs = [pathlib.Path(p).resolve() for p in args.paths]
     elif args.changed:
         dirs = changed_seminars(args.changed, root)
-        if dirs is None:
+        if dirs is None:                # diff не посчитался — проверяем всё, чтобы не пропустить
             dirs = all_dirs
         elif not dirs:
             print(f"семинары не затронуты относительно {args.changed} — проверять нечего")
