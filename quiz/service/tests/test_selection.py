@@ -7,7 +7,7 @@ from __future__ import annotations
 import pytest
 
 from quizapp.bank import parse_bank
-from quizapp.selection import option_order, pick_question_ids
+from quizapp.selection import option_order, pick_question_ids, shown_options
 
 from conftest import make_bank_text
 
@@ -42,9 +42,25 @@ def test_different_lecture_gives_different_set():
 
 def test_option_order_is_stable_and_a_permutation(small_bank):
     q = small_bank.by_id["q-mc-utf8-ya"]
-    order = option_order(q)
-    assert order == option_order(q)
+    order = option_order(q, "ivanov")
+    assert order == option_order(q, "ivanov")
     assert sorted(order) == list(range(len(q.options)))
+
+
+def test_option_order_differs_between_students(big_bank):
+    """Один вопрос достаётся нескольким студентам — порядок вариантов у них
+    не должен совпадать, иначе хватит крикнуть «второй»."""
+    q = big_bank.by_id["q-mc-000"]
+    orders = {tuple(option_order(q, f"student-{i}")) for i in range(30)}
+    assert len(orders) > 1
+
+
+def test_shown_options_keep_the_original_index(small_bank):
+    """В базу уходит индекс из банка, а не позиция на экране — иначе сводка
+    «какой вариант выбирали» поехала бы вслед за перемешиванием."""
+    q = small_bank.by_id["q-mc-utf8-ya"]
+    for original, text in shown_options(q, "ivanov"):
+        assert q.options[original].text == text
 
 
 def test_bank_too_small_is_refused():

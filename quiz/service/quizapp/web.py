@@ -187,7 +187,7 @@ def create_app(settings: Settings | None = None, *, store: Store | None = None) 
                     "id": q.id,
                     "kind": q.kind,
                     "prompt": q.prompt,
-                    "options": shown_options(q) if q.kind == "mc" else [],
+                    "options": shown_options(q, attempt.login) if q.kind == "mc" else [],
                     "choice": row["choice"],
                     "text": row["text"] or "",
                 }

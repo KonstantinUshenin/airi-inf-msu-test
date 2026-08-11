@@ -76,18 +76,23 @@ def _spread_by_slide(bank: Bank, ids: list[str], count: int, rnd: random.Random)
     return picked
 
 
-def option_order(question: Question) -> list[int]:
+def option_order(question: Question, login: str) -> list[int]:
     """Порядок показа вариантов — перестановка исходных индексов.
 
-    Зависит только от идентификатора вопроса: у соседей всё равно разные
-    вопросы, а привязка к логину сделала бы невоспроизводимой сводку
-    «какой вариант чаще выбирали».
+    Зависит и от вопроса, и от того, кто его смотрит. Наборы у соседей разные,
+    но при сорока вопросах по четыре на человека один вопрос всё равно
+    достаётся трём-четырём студентам сразу — с общим порядком им хватило бы
+    сказать «второй».
+
+    На аналитику это не влияет: в базу пишется исходный индекс варианта из
+    банка, а не позиция на экране, поэтому «какой вариант чаще выбирали»
+    считается одинаково при любом порядке показа.
     """
     order = list(range(len(question.options)))
-    _rng("options", question.id).shuffle(order)
+    _rng("options", question.id, login).shuffle(order)
     return order
 
 
-def shown_options(question: Question) -> list[tuple[int, str]]:
+def shown_options(question: Question, login: str) -> list[tuple[int, str]]:
     """Пары (исходный индекс, текст) в порядке показа."""
-    return [(i, question.options[i].text) for i in option_order(question)]
+    return [(i, question.options[i].text) for i in option_order(question, login)]
