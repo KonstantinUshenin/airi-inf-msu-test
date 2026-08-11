@@ -10,28 +10,17 @@ from __future__ import annotations
 from test_flow import issue, login, make_quiz, questions_on_page
 
 
-def test_index_offers_a_create_form_with_the_available_lectures(teacher):
+def test_index_lists_lectures_with_their_quizzes(teacher):
     page = teacher.get("/teacher").text
-    assert 'action="/teacher/quizzes"' in page
-    assert 'value="10-encoding"' in page
-    assert "Пробный прогон" in page and "Боевой режим" in page
-
-
-def test_create_button_makes_a_quiz_and_lands_on_it(teacher):
-    resp = teacher.post(
-        "/teacher/quizzes",
-        data={"lecture": "10-encoding", "mode": "practice", "timeout_sec": 120},
-        follow_redirects=False,
-    )
-    assert resp.status_code == 303
-    assert resp.headers["location"] == "/teacher/quizzes/1"
-    assert "Управление" in teacher.get("/teacher/quizzes/1").text
+    assert "10-encoding" in page
+    assert "По каждой лекции — ровно одна пятиминутка" in page
+    # Пятиминутка заведена автоматически, значит есть кнопка открытия и ссылка.
+    assert "Открыть" in page
+    assert "настройки и результаты" in page
 
 
 def test_create_for_an_unknown_lecture_says_so_instead_of_crashing(teacher):
-    resp = teacher.post(
-        "/teacher/quizzes", data={"lecture": "99-nope", "mode": "practice"}, follow_redirects=True
-    )
+    resp = teacher.post("/teacher/quizzes", data={"lecture": "99-nope"}, follow_redirects=True)
     assert resp.status_code == 200
     assert "нет банка для лекции 99-nope" in resp.text
 

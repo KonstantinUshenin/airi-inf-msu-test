@@ -46,6 +46,9 @@ def create_app(settings: Settings | None = None, *, store: Store | None = None) 
     for name, problem in bank_errors.items():
         log.error("банк %s не разобран и пропущен: %s", name, problem)
     db = store or Store(s.db_path)
+    if s.auto_provision and banks:
+        for lecture in provision_from_banks(db, banks, ticket_count=s.auto_tickets):
+            log.info("лекция %s: заведена пятиминутка и %d билетов", lecture, s.auto_tickets)
     sessions = Sessions(s.secret_key)
     oidc = OidcClient(s) if s.auth_mode == "oidc" else None
     judge = Judge(s, db, banks)
@@ -309,12 +312,22 @@ def create_app(settings: Settings | None = None, *, store: Store | None = None) 
         supplied = request.cookies.get(TEACHER_COOKIE) or ""
         if not s.teacher_token or not _same(supplied, s.teacher_token):
             return page("teacher_login.html", request)
+        # Страница строится от лекций, а не от пятиминуток: пятиминутка теперь
+        # ровно одна на лекцию и заводится сама, так что «список лекций» и есть
+        # список пятиминуток.
+        quizzes = {q.lecture: q for q in db.list_quizzes()}
+        rows = [
+            {"lecture": slug, "bank": banks[slug], "quiz": quizzes.get(slug)}
+            for slug in sorted(banks)
+        ]
+        orphans = [q for lecture, q in sorted(quizzes.items()) if lecture not in banks]
         return page(
             "teacher_index.html",
             request,
-            quizzes=db.list_quizzes(),
-            banks={slug: banks[slug] for slug in sorted(banks)},
+            rows=rows,
+            orphans=orphans,
             bank_errors=bank_errors,
+            auto=s.auto_provision,
             error=error,
             note=note,
         )
@@ -327,19 +340,21 @@ def create_app(settings: Settings | None = None, *, store: Store | None = None) 
     # JSON-ручки рядом никуда не делись: их зовут CLI и скрипты.
 
     @app.post("/teacher/quizzes", dependencies=[Depends(require_teacher)])
-    async def teacher_create(
-        lecture: str = Form(...),
-        mode: str = Form("practice"),
-        timeout_sec: int = Form(0),
-    ):
+    async def teacher_create(lecture: str = Form(...)):
+        """Завести пятиминутку по лекции, у которой её почему-то нет.
+
+        Обычно этого не требуется: пятиминутки заводятся сами при появлении
+        банка. Кнопка остаётся на случай выключенного автозаведения. Настройки
+        здесь не спрашиваются — их правят на странице самой пятиминутки.
+        """
         if lecture not in banks:
             return _back("/teacher", error=f"нет банка для лекции {lecture}")
-        quiz = db.create_quiz(
-            lecture,
-            banks[lecture].title,
-            mode=mode if mode in ("practice", "graded") else "practice",
-            timeout_sec=timeout_sec or s.default_timeout_sec,
-        )
+        existing = db.quiz_for_lecture(lecture)
+        if existing is not None:
+            return _back(f"/teacher/quizzes/{existing.id}",
+                         note="По этой лекции пятиминутка уже была")
+        quiz = db.create_quiz(lecture, banks[lecture].title)
+        db.issue_tickets(quiz.id, s.auto_tickets)
         return RedirectResponse(f"/teacher/quizzes/{quiz.id}", status_code=303)
 
     @app.post("/teacher/quizzes/{quiz_id}/state", dependencies=[Depends(require_teacher)])
@@ -373,16 +388,26 @@ def create_app(settings: Settings | None = None, *, store: Store | None = None) 
 
     @app.post("/api/teacher/quizzes", dependencies=[Depends(require_teacher)])
     async def create_quiz(request: Request):
+        """Идемпотентно: по лекции может существовать ровно одна пятиминутка.
+
+        Повторный вызов возвращает уже существующую, а не заводит вторую и не
+        падает: скрипту так проще, а «одна лекция — одна пятиминутка» держит
+        уникальный индекс в базе.
+        """
         body = await _json_object(request)
         lecture = str(body.get("lecture", "")).strip()
         if lecture not in banks:
             raise HTTPException(400, f"нет банка для лекции {lecture!r}; есть: {sorted(banks)}")
-        quiz = db.create_quiz(
-            lecture,
-            str(body.get("title") or banks[lecture].title),
-            mode=str(body.get("mode", "practice")),
-            timeout_sec=body.get("timeout_sec") or s.default_timeout_sec,
-        )
+
+        quiz = db.quiz_for_lecture(lecture)
+        if quiz is None:
+            quiz = db.create_quiz(
+                lecture,
+                str(body.get("title") or banks[lecture].title),
+                mode=str(body.get("mode", "practice")),
+                timeout_sec=body.get("timeout_sec") or s.default_timeout_sec,
+            )
+            db.issue_tickets(quiz.id, s.auto_tickets)
         return _quiz_json(quiz)
 
     @app.post("/api/teacher/quizzes/{quiz_id}/state", dependencies=[Depends(require_teacher)])
@@ -601,6 +626,29 @@ def _start_or_resume(request, db: Store, s: Settings, banks, ticket, quiz, ident
         timeout_sec=quiz.timeout_sec if quiz.graded else None,
     )
     return RedirectResponse(f"/quiz/{attempt.id}", status_code=303)
+
+
+def provision_from_banks(
+    db: Store, banks: dict[str, Bank], *, ticket_count: int
+) -> list[str]:
+    """Завести пятиминутку и билеты для каждой лекции, у которой их ещё нет.
+
+    Появился в репозитории банк новой лекции — после деплоя всё уже готово:
+    остаётся поправить настройки и открыть приём. Пятиминутка создаётся
+    ЗАКРЫТОЙ и в пробном режиме: открыть должен человек, а не выкатка.
+
+    Идемпотентно. Существующие пятиминутки не трогаются вовсе — ни настройки,
+    ни билеты: преподаватель мог их менять, и перезапуск сервиса не имеет права
+    это откатывать. Билеты досоздаются только если их нет совсем.
+    """
+    created: list[str] = []
+    for lecture in sorted(banks):
+        if db.quiz_for_lecture(lecture) is not None:
+            continue
+        quiz = db.create_quiz(lecture, banks[lecture].title)
+        db.issue_tickets(quiz.id, ticket_count)
+        created.append(lecture)
+    return created
 
 
 def _back(path: str, *, note: str = "", error: str = "") -> RedirectResponse:

@@ -12,13 +12,15 @@ LOGIN = "Иванов Иван"
 
 
 def make_quiz(teacher, *, mode="practice", timeout=120):
-    resp = teacher.post(
-        "/api/teacher/quizzes",
-        json={"lecture": "10-encoding", "mode": mode, "timeout_sec": timeout},
-    )
+    """Пятиминутка по лекции уже заведена автоматически при старте сервиса —
+    здесь только доводим её до нужного режима и открываем."""
+    resp = teacher.post("/api/teacher/quizzes", json={"lecture": "10-encoding"})
     assert resp.status_code == 200, resp.text
     quiz = resp.json()
-    teacher.post(f"/api/teacher/quizzes/{quiz['id']}/state", json={"state": "open"})
+    teacher.post(
+        f"/api/teacher/quizzes/{quiz['id']}/state",
+        json={"state": "open", "mode": mode, "timeout_sec": timeout},
+    )
     return quiz
 
 

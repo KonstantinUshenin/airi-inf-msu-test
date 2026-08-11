@@ -47,6 +47,12 @@ class Settings:
 
     default_timeout_sec: int = field(default_factory=lambda: int(os.environ.get("QUIZ_DEFAULT_TIMEOUT_SEC", "120")))
 
+    # Появился банк новой лекции — пятиминутка и билеты заводятся сами, чтобы
+    # преподавателю осталось только поправить настройки и открыть приём.
+    # Создаётся закрытой: открыть должен человек, а не деплой.
+    auto_provision: bool = field(default_factory=lambda: _bool("QUIZ_AUTO_PROVISION", True))
+    auto_tickets: int = field(default_factory=lambda: int(os.environ.get("QUIZ_AUTO_TICKETS", "36")))
+
     judge_enabled: bool = field(default_factory=lambda: _bool("QUIZ_JUDGE_ENABLED", True))
     judge_poll_sec: float = field(default_factory=lambda: float(os.environ.get("QUIZ_JUDGE_POLL_SEC", "2")))
     llm_base_url: str = field(default_factory=lambda: os.environ.get("QUIZ_LLM_BASE_URL", "https://api.deepseek.com/v1").rstrip("/"))

@@ -129,6 +129,10 @@ def settings(tmp_path: Path, banks_dir: Path, monkeypatch) -> Settings:
     monkeypatch.setenv("QUIZ_AUTH_MODE", "test")
     monkeypatch.setenv("QUIZ_JUDGE_ENABLED", "0")
     monkeypatch.setenv("QUIZ_BASE_URL", "http://testserver")
+    # Пятиминутки заводятся автоматически, а билеты в большинстве тестов
+    # выпускаются явно и по счёту — поэтому автовыпуск здесь выключен.
+    # У него свои тесты, где он включается намеренно.
+    monkeypatch.setenv("QUIZ_AUTO_TICKETS", "0")
     return Settings()
 
 

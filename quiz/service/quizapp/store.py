@@ -97,6 +97,48 @@ class Store:
         self._db.create_function("casefold", 1, _casefold, deterministic=True)
         self._db.executescript(SCHEMA.read_text(encoding="utf-8"))
         self._db.commit()
+        self._migrate()
+
+    def _migrate(self) -> None:
+        """Довести уже существующую базу до текущей схемы.
+
+        Нетривиальная часть одна — уникальность лекции. Раньше по одной лекции
+        можно было завести сколько угодно пятиминуток, и такие записи в базах
+        уже есть. Пустые дубликаты (без единой попытки) удаляем молча: они
+        появились от лишнего нажатия и ничего не хранят. Непустые не трогаем
+        вовсе и падаем с внятным текстом — выбирать за преподавателя, чьи
+        ответы выкинуть, нельзя.
+        """
+        with self._lock:
+            duplicated = self._db.execute(
+                "SELECT lecture FROM quiz GROUP BY lecture HAVING COUNT(*) > 1"
+            ).fetchall()
+
+            for row in duplicated:
+                quizzes = self._db.execute(
+                    "SELECT q.id,"
+                    " (SELECT COUNT(*) FROM attempt a WHERE a.quiz_id = q.id) AS attempts"
+                    " FROM quiz q WHERE q.lecture = ? ORDER BY q.id",
+                    (row["lecture"],),
+                ).fetchall()
+                used = [q for q in quizzes if q["attempts"]]
+                if len(used) > 1:
+                    raise StoreError(
+                        f"по лекции {row['lecture']} несколько пятиминуток с ответами "
+                        f"(id {', '.join(str(q['id']) for q in used)}). Оставьте одну руками: "
+                        f"объединять или выкидывать чужие ответы автоматически нельзя"
+                    )
+                keep = used[0]["id"] if used else quizzes[0]["id"]
+                for quiz in quizzes:
+                    if quiz["id"] == keep:
+                        continue
+                    self._db.execute("DELETE FROM ticket WHERE quiz_id = ?", (quiz["id"],))
+                    self._db.execute("DELETE FROM quiz WHERE id = ?", (quiz["id"],))
+
+            self._db.execute(
+                "CREATE UNIQUE INDEX IF NOT EXISTS quiz_one_per_lecture ON quiz(lecture)"
+            )
+            self._db.commit()
 
     def close(self) -> None:
         with self._lock:
@@ -115,13 +157,23 @@ class Store:
     ) -> Quiz:
         now = time.time() if now is None else now
         with self._lock:
-            cur = self._db.execute(
-                "INSERT INTO quiz(lecture, title, state, mode, timeout_sec, created_at)"
-                " VALUES (?, ?, 'closed', ?, ?, ?)",
-                (lecture, title, mode, timeout_sec, now),
-            )
+            try:
+                cur = self._db.execute(
+                    "INSERT INTO quiz(lecture, title, state, mode, timeout_sec, created_at)"
+                    " VALUES (?, ?, 'closed', ?, ?, ?)",
+                    (lecture, title, mode, timeout_sec, now),
+                )
+            except sqlite3.IntegrityError:
+                raise StoreError(f"по лекции {lecture} пятиминутка уже есть") from None
             self._db.commit()
             return self.get_quiz(int(cur.lastrowid))
+
+    def quiz_for_lecture(self, lecture: str) -> Quiz | None:
+        with self._lock:
+            row = self._db.execute(
+                "SELECT * FROM quiz WHERE lecture = ?", (lecture,)
+            ).fetchone()
+        return _quiz(row) if row else None
 
     def get_quiz(self, quiz_id: int) -> Quiz:
         with self._lock:

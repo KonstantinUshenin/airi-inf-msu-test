@@ -2,6 +2,12 @@
 {% block title %}Пятиминутки — преподавателю{% endblock %}
 {% block body %}
 <h1>Пятиминутки</h1>
+<p class="muted">
+  По каждой лекции — ровно одна пятиминутка.
+  {% if auto %}Она заводится сама, как только в репозитории курса появляется банк
+  вопросов: вместе с ней выпускаются билеты. Создаётся закрытой — открыть приём
+  и поправить настройки нужно руками.{% endif %}
+</p>
 
 {% if note %}<p class="ok">{{ note }}</p>{% endif %}
 {% if error %}<p class="bad">{{ error }}</p>{% endif %}
@@ -17,61 +23,68 @@
 </div>
 {% endif %}
 
-<h2>Новая пятиминутка</h2>
-{% if banks %}
-<form class="card" method="post" action="/teacher/quizzes">
-  <p>
-    <label for="lecture">Лекция</label>
-    <select id="lecture" name="lecture">
-      {% for slug, bank in banks.items() %}
-      <option value="{{ slug }}">{{ slug }} — {{ bank.mc|length }} с вариантами, {{ bank.open|length }} открытых</option>
-      {% endfor %}
-    </select>
-  </p>
-  <p>
-    <label class="opt"><input type="radio" name="mode" value="practice" checked>
-      <span><b>Пробный прогон</b> — без таймера и без оценок. Первые два занятия идут так:
-      собираем тайминги и обкатываем процесс.</span></label>
-    <label class="opt"><input type="radio" name="mode" value="graded">
-      <span><b>Боевой режим</b> — таймер и подсчёт верных.</span></label>
-  </p>
-  <p>
-    <label for="timeout_sec">Таймер, секунд (только в боевом режиме)</label>
-    <input type="number" id="timeout_sec" name="timeout_sec" value="{{ settings.default_timeout_sec }}" min="30" max="1800">
-  </p>
-  <button type="submit">Создать</button>
-</form>
-{% else %}
-<p class="card bad">Ни одного пригодного банка вопросов — создавать не по чему.
-Положите файл в <code>quiz/banks/</code> репозитория курса и дождитесь деплоя.</p>
-{% endif %}
-
-<h2>Все пятиминутки</h2>
-{% if quizzes %}
+{% if rows %}
 <div class="scroll">
 <table>
-  <tr><th>#</th><th>Лекция</th><th>Состояние</th><th>Режим</th><th></th><th></th></tr>
-  {% for q in quizzes %}
   <tr>
-    <td>{{ q.id }}</td>
-    <td>{{ q.title or q.lecture }}<br><span class="muted">{{ q.lecture }}</span></td>
-    <td>{% if q.is_open %}<span class="pill ok">открыта</span>{% else %}<span class="pill muted">закрыта</span>{% endif %}</td>
-    <td>{{ 'с оценками, ' ~ q.timeout_sec ~ ' с' if q.graded else 'пробный' }}</td>
+    <th>Лекция</th><th class="num">Банк</th><th>Состояние</th><th>Режим</th><th></th><th></th>
+  </tr>
+  {% for row in rows %}
+  <tr>
     <td>
-      <form method="post" action="/teacher/quizzes/{{ q.id }}/state">
-        <input type="hidden" name="state" value="{{ 'closed' if q.is_open else 'open' }}">
-        <button type="submit" class="{{ 'ghost' if q.is_open else '' }}">
-          {{ 'Закрыть' if q.is_open else 'Открыть' }}
+      {{ row.bank.title }}<br><span class="muted">{{ row.lecture }}</span>
+    </td>
+    <td class="num">{{ row.bank.mc|length }} + {{ row.bank.open|length }}</td>
+    {% if row.quiz %}
+    <td>{% if row.quiz.is_open %}<span class="pill ok">открыта</span>{% else %}<span class="pill muted">закрыта</span>{% endif %}</td>
+    <td>{{ 'с оценками, ' ~ row.quiz.timeout_sec ~ ' с' if row.quiz.graded else 'пробный' }}</td>
+    <td>
+      <form method="post" action="/teacher/quizzes/{{ row.quiz.id }}/state">
+        <input type="hidden" name="state" value="{{ 'closed' if row.quiz.is_open else 'open' }}">
+        <button type="submit" class="{{ 'ghost' if row.quiz.is_open else '' }}">
+          {{ 'Закрыть' if row.quiz.is_open else 'Открыть' }}
         </button>
       </form>
     </td>
+    <td><a href="/teacher/quizzes/{{ row.quiz.id }}">настройки и результаты →</a></td>
+    {% else %}
+    <td colspan="2" class="muted">пятиминутки нет</td>
+    <td>
+      <form method="post" action="/teacher/quizzes">
+        <input type="hidden" name="lecture" value="{{ row.lecture }}">
+        <button type="submit">Завести</button>
+      </form>
+    </td>
+    <td></td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+</table>
+</div>
+<p class="muted">Столбец «Банк» — сколько в нём вопросов с вариантами и открытых.
+Студенту достаётся четыре первых и один второй.</p>
+{% else %}
+<p class="card bad">Ни одного пригодного банка вопросов. Положите файл в
+<code>quiz/banks/</code> репозитория курса и дождитесь деплоя — пятиминутка
+появится здесь сама.</p>
+{% endif %}
+
+{% if orphans %}
+<h2>Без банка</h2>
+<p class="muted">Пятиминутки есть, а банков к ним больше нет — файл переименовали
+или удалили. Ответы сохранены, но войти по билету нельзя.</p>
+<div class="scroll">
+<table>
+  <tr><th>Лекция</th><th>Состояние</th><th></th></tr>
+  {% for q in orphans %}
+  <tr>
+    <td>{{ q.title or q.lecture }}<br><span class="muted">{{ q.lecture }}</span></td>
+    <td>{% if q.is_open %}<span class="pill ok">открыта</span>{% else %}<span class="pill muted">закрыта</span>{% endif %}</td>
     <td><a href="/teacher/quizzes/{{ q.id }}">результаты →</a></td>
   </tr>
   {% endfor %}
 </table>
 </div>
-{% else %}
-<p class="muted">Пятиминуток пока нет.</p>
 {% endif %}
 
 <details>
@@ -79,10 +92,10 @@
   <pre class="card">TOKEN=…
 B={{ settings.base_url }}
 
+# завести (идемпотентно: вернёт существующую, второй не создаст)
 curl -sX POST $B/api/teacher/quizzes -H "X-Quiz-Token: $TOKEN" \
-  -H 'Content-Type: application/json' -d '{"lecture":"01-history","mode":"practice"}'
-curl -sX POST $B/api/teacher/quizzes/1/tickets -H "X-Quiz-Token: $TOKEN" \
-  -H 'Content-Type: application/json' -d '{"count":36}'
+  -H 'Content-Type: application/json' -d '{"lecture":"01-history"}'
+
 curl -sX POST $B/api/teacher/quizzes/1/state -H "X-Quiz-Token: $TOKEN" \
   -H 'Content-Type: application/json' -d '{"state":"open"}'
 curl -s $B/api/teacher/quizzes/1/tickets.pdf -H "X-Quiz-Token: $TOKEN" -o tickets.pdf</pre>

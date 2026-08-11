@@ -9,6 +9,9 @@
 PRAGMA journal_mode = WAL;
 PRAGMA foreign_keys = ON;
 
+-- Одна лекция — одна пятиминутка. Уникальный индекс создаётся не здесь, а в
+-- Store._migrate(): в уже существующих базах есть дубликаты, и их надо сперва
+-- разобрать, иначе создание индекса упадёт при старте сервиса.
 CREATE TABLE IF NOT EXISTS quiz (
     id          INTEGER PRIMARY KEY,
     lecture     TEXT    NOT NULL,
