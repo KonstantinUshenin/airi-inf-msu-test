@@ -742,7 +742,7 @@ FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch -f \
 
 # filter-branch оставляет резервные ссылки на СТАРУЮ историю —
 # пока они есть, объект жив и место не освободится
-git for-each-ref --format='%(refname)' refs/original | xargs -n1 git update-ref -d
+git for-each-ref --format='%(refname)' refs/original | xargs -n 1 git update-ref -d
 git reflog expire --expire=now --all
 git gc --prune=now -q
 
@@ -756,7 +756,7 @@ git count-objects -vH                           # count: 0
 пройдёт только с `--force`. Поэтому договариваются заранее: все выкладывают
 работу, один человек чистит, остальные клонируют репозиторий заново. И поэтому
 дешевле не допускать таких коммитов — `.gitignore` (раздел 6) и LFS
-(раздел 13).
+(раздел 16).
 
 ### H9. Проверка соглашений автоматикой
 
