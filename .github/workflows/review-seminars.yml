@@ -83,6 +83,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.number }}
+          MARKER: "<!-- opencode-seminar-review -->"
         run: |
           {
             echo "<!-- opencode-seminar-review -->"
@@ -93,6 +94,20 @@ jobs:
             echo "_Это подсказка автору, а не приговор: модель читает материалы без контекста занятия и может ошибаться. На эталоне из реальных замечаний преподавателя промпт находит меньше половины — молчание ревью ничего не доказывает._"
           } > comment.md
 
-          # обновляем свой предыдущий комментарий, чтобы не плодить их на каждый push
-          gh pr comment "$PR" --body-file comment.md --edit-last \
-            || gh pr comment "$PR" --body-file comment.md
+          # Обновляем свой предыдущий комментарий, чтобы не плодить их на каждый
+          # push. Ищем его ПО МАРКЕРУ, а не через `--edit-last`: в этих же PR
+          # комментирует colab-links, и оба комментария принадлежат одному и
+          # тому же github-actions[bot]. «Последний свой» регулярно оказывался
+          # комментарием со ссылками на Colab, и ревью затирало его собой —
+          # ссылки в PR просто исчезали.
+          ID=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+                 --jq ".[] | select(.body | startswith(\"$MARKER\")) | .id" \
+               | tail -n 1)
+
+          if [ -n "$ID" ]; then
+            jq -Rs '{body: .}' comment.md \
+              | gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$ID" --input - >/dev/null
+            echo "комментарий $ID обновлён"
+          else
+            gh pr comment "$PR" --body-file comment.md
+          fi
