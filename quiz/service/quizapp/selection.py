@@ -40,8 +40,39 @@ def pick_question_ids(
         )
 
     rnd = _rng(bank.lecture, login)
-    picked = rnd.sample(mc_ids, n_mc)
+    picked = _spread_by_slide(bank, mc_ids, n_mc, rnd)
     picked += rnd.sample(open_ids, n_open)
+    return picked
+
+
+def _spread_by_slide(bank: Bank, ids: list[str], count: int, rnd: random.Random) -> list[str]:
+    """Выбрать `count` вопросов, стараясь не брать два с одного слайда.
+
+    Без этого набор из пяти вопросов легко вырождается: в банке по восемь
+    вопросов на раздел, и честно случайная выборка регулярно выдаёт студенту
+    два вопроса про одно и то же, а половину лекции не трогает вовсе.
+
+    Если разных слайдов меньше, чем нужно вопросов, ограничение отпускается —
+    маленький банк лучше, чем отказ выдать набор.
+    """
+    by_slide: dict[str, list[str]] = {}
+    for qid in ids:
+        by_slide.setdefault(bank.by_id[qid].slide, []).append(qid)
+
+    slides = sorted(by_slide)
+    rnd.shuffle(slides)
+
+    picked: list[str] = []
+    for slide in slides:
+        if len(picked) == count:
+            break
+        picked.append(rnd.choice(sorted(by_slide[slide])))
+
+    if len(picked) < count:
+        rest = sorted(set(ids) - set(picked))
+        picked += rnd.sample(rest, count - len(picked))
+
+    rnd.shuffle(picked)
     return picked
 
 

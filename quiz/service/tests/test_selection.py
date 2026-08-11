@@ -51,3 +51,28 @@ def test_bank_too_small_is_refused():
     bank, _ = parse_bank(make_bank_text(n_mc=3, n_open=1))
     with pytest.raises(ValueError, match="вопросов с вариантами"):
         pick_question_ids(bank, "ivanov")
+
+
+def test_set_spreads_across_slides(big_bank):
+    """Пять вопросов не должны кучковаться на одном разделе лекции."""
+    for i in range(40):
+        ids = pick_question_ids(big_bank, f"student-{i}")
+        slides = [big_bank.by_id[q].slide for q in ids if q.startswith("q-mc-")]
+        assert len(set(slides)) == len(slides), (i, slides)
+
+
+def test_small_bank_still_yields_a_set():
+    """Если разных слайдов меньше, чем вопросов, ограничение отпускается."""
+    text = make_bank_text(n_mc=6, n_open=1).replace("> Слайд: раздел 1", "> Слайд: раздел 0")
+    text = text.replace("> Слайд: раздел 2", "> Слайд: раздел 0")
+    text = text.replace("> Слайд: раздел 3", "> Слайд: раздел 0")
+    text = text.replace("> Слайд: раздел 4", "> Слайд: раздел 0")
+    bank, problems = parse_bank(text)
+    assert problems == []
+    ids = pick_question_ids(bank, "ivanov")
+    assert len(ids) == 5
+    assert len(set(ids)) == 5
+
+
+def test_spread_is_still_deterministic(big_bank):
+    assert pick_question_ids(big_bank, "ivanov") == pick_question_ids(big_bank, "ivanov")
