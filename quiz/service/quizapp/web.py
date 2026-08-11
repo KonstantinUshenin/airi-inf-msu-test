@@ -558,6 +558,9 @@ def create_app(settings: Settings | None = None, *, store: Store | None = None) 
                 "broken_banks": bank_errors,
                 "auth": s.auth_mode,
                 "judge": "on" if (s.judge_enabled and s.judge_configured) else "off",
+                "judge_model": s.llm_model if s.judge_configured else None,
+                "judge_endpoint": s.llm_base_url if s.judge_configured else None,
+                "judge_queue": db.judge_queue_stats(),
             }
         )
 

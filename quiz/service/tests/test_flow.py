@@ -365,3 +365,40 @@ def test_service_starts_and_reports_a_broken_bank(settings, banks_dir, monkeypat
         assert "Не разобрано банков: 1" in page
         # По битой лекции пятиминутку завести нельзя — её просто нет в списке.
         assert 'value="11-hierarchy"' not in page
+
+
+def test_healthz_reports_the_judge_and_its_queue(client, teacher, monkeypatch):
+    """«Судья работает» должно быть видно снаружи, без преподавательского токена."""
+    body = client.get("/healthz").json()
+    assert body["judge"] == "off"          # ключа нет — судейства нет
+    assert body["judge_model"] is None
+    assert body["judge_queue"] == {"queued": 0, "running": 0, "done": 0, "error": 0}
+
+    quiz = make_quiz(teacher)
+    token = issue(teacher, quiz["id"], 1)[0]
+    login(client, token)
+    attempt = attempt_id_of(client, token)
+    qid = [q for q in questions_on_page(client.get(f"/quiz/{attempt}").text) if q.startswith("q-open-")][0]
+    client.post(f"/api/attempt/{attempt}/answer", json={"question_id": qid, "text": "ответ"})
+    client.post(f"/api/attempt/{attempt}/submit")
+
+    # Сдача поставила открытый ответ в очередь и ничего никуда не отправила.
+    assert client.get("/healthz").json()["judge_queue"]["queued"] == 1
+
+
+def test_healthz_names_the_model_when_the_key_is_present(settings, monkeypatch, banks_dir):
+    from fastapi.testclient import TestClient
+
+    from quizapp.config import Settings
+    from quizapp.web import create_app
+
+    monkeypatch.setenv("REVIEW_API_KEY", "тестовый-ключ")
+    monkeypatch.setenv("REVIEW_MODEL", "deepseek-v4-pro")
+    monkeypatch.setenv("QUIZ_JUDGE_ENABLED", "1")
+    with TestClient(create_app(Settings())) as client:
+        body = client.get("/healthz").json()
+    assert body["judge"] == "on"
+    assert body["judge_model"] == "deepseek-v4-pro"
+    assert body["judge_endpoint"].startswith("https://")
+    # Сам ключ наружу не отдаётся.
+    assert "тестовый-ключ" not in str(body)

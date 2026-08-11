@@ -400,6 +400,22 @@ class Store:
             ).fetchall()
         return {r["answer_id"]: r for r in rows}
 
+    def judge_queue_stats(self) -> dict[str, int]:
+        """Сколько ответов в каком состоянии судейства — по всем пятиминуткам.
+
+        Нужно, чтобы «судья работает» можно было проверить снаружи, не заходя
+        под преподавательским токеном: очередь, которая не пустеет, и растущее
+        число ошибок видны в /healthz.
+        """
+        with self._lock:
+            rows = self._db.execute(
+                "SELECT status, COUNT(*) AS n FROM judgement GROUP BY status"
+            ).fetchall()
+        stats = {"queued": 0, "running": 0, "done": 0, "error": 0}
+        for row in rows:
+            stats[row["status"]] = row["n"]
+        return stats
+
     def judge_failures(self, quiz_id: int) -> list[sqlite3.Row]:
         with self._lock:
             return self._db.execute(
