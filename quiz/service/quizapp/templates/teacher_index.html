@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Пятиминутки — преподавателю{% endblock %}
+{% block body %}
+<h1>Пятиминутки</h1>
+<p class="muted">Банки лекций на диске: {{ banks|join(', ') if banks else 'ни одного — положите файл в quiz/banks/' }}</p>
+
+{% if quizzes %}
+<div class="scroll">
+<table>
+  <tr>
+    <th>#</th><th>Лекция</th><th>Состояние</th><th>Режим</th><th class="num">Таймер</th><th></th>
+  </tr>
+  {% for q in quizzes %}
+  <tr>
+    <td>{{ q.id }}</td>
+    <td>{{ q.title or q.lecture }}<br><span class="muted">{{ q.lecture }}</span></td>
+    <td>{% if q.is_open %}<span class="pill ok">открыта</span>{% else %}<span class="pill muted">закрыта</span>{% endif %}</td>
+    <td>{{ 'с оценками' if q.graded else 'пробный' }}</td>
+    <td class="num">{{ q.timeout_sec if q.graded else '—' }}</td>
+    <td><a href="/teacher/quizzes/{{ q.id }}">результаты →</a></td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+{% else %}
+<p>Пятиминуток пока нет.</p>
+{% endif %}
+
+<h2>Как завести и открыть</h2>
+<p class="muted">Управление — по API, тем же токеном. Он же в заголовке <code>X-Quiz-Token</code>.</p>
+<pre class="card">TOKEN=…
+BASE={{ settings.base_url }}
+
+# создать (mode: practice — без оценок и таймера; graded — боевой режим)
+curl -sX POST $BASE/api/teacher/quizzes -H "X-Quiz-Token: $TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"lecture":"10-encoding","mode":"practice"}'
+
+# выпустить билеты и забрать лист на печать
+curl -sX POST $BASE/api/teacher/quizzes/1/tickets -H "X-Quiz-Token: $TOKEN" \
+  -H 'Content-Type: application/json' -d '{"count":36}'
+curl -s $BASE/api/teacher/quizzes/1/tickets.pdf -H "X-Quiz-Token: $TOKEN" -o tickets.pdf
+
+# открыть перед раздачей и закрыть после
+curl -sX POST $BASE/api/teacher/quizzes/1/state -H "X-Quiz-Token: $TOKEN" \
+  -H 'Content-Type: application/json' -d '{"state":"open"}'</pre>
+{% endblock %}
