@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ attempt.full_name }} — разбор попытки{% endblock %}
+{% block body %}
+<p class="muted"><a href="/teacher/quizzes/{{ quiz.id }}">← к списку попыток</a></p>
+<h1>{{ attempt.full_name }}{% if attempt.is_test %} <span class="pill">тест</span>{% endif %}</h1>
+<p class="muted">
+  логин {{ attempt.login }} · билет {{ ticket }} ·
+  вход {{ attempt.started_at|clock }} ·
+  {% if attempt.submitted_at %}сдал {{ attempt.submitted_at|clock }}
+    ({{ (attempt.submitted_at - attempt.started_at)|mmss }}){% else %}не сдал{% endif %}
+</p>
+
+{% for row in rows %}
+<section class="card">
+  <div class="prompt">{{ loop.index }}. {{ row.prompt }}</div>
+
+  {% if row.kind == 'mc' %}
+    <p>{% if row.chosen is none %}<span class="muted">не ответил</span>
+       {% elif row.is_correct %}<span class="ok">✓ {{ row.chosen }}</span>
+       {% else %}<span class="bad">✗ {{ row.chosen }}</span>{% endif %}</p>
+  {% else %}
+    <p>{{ row.text or '(пусто)' }}</p>
+    <p>
+      {% if row.judge_status == 'done' %}
+        {% if row.is_correct %}<span class="ok">засчитано</span>{% else %}<span class="bad">не засчитано</span>{% endif %}
+        <span class="muted">— {{ row.rationale }}</span>
+      {% elif row.judge_status == 'error' %}
+        <span class="warn">проверка не сработала</span>
+      {% elif row.judge_status %}
+        <span class="muted">проверяется…</span>
+      {% else %}
+        <span class="muted">не судился</span>
+      {% endif %}
+    </p>
+  {% endif %}
+
+  <p class="muted">
+    {% if row.since_start is not none %}
+      ответ через {{ row.since_start|mmss }} от входа, {{ row.since_previous|mmss }} после предыдущего
+    {% else %}без ответа{% endif %}
+    {% if row.changes %} · менял ответ {{ row.changes }} раз{% endif %}
+    · {{ row.question_id }}
+  </p>
+</section>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quizapp"
+version = "0.1.0"
+description = "Пятиминутки: короткие квизы после лекций (ФИИ МГУ)"
+# 3.10, а не 3.11: учебная машина — Ubuntu 22.04, там системный python3.10,
+# и роль собирает venv именно им. Ничего из 3.11 в коде нет; из зависимостей
+# от версии критичен только SQLite (нужен RETURNING, то есть 3.35+ — в 22.04
+# идёт 3.37).
+requires-python = ">=3.10"
+
+# Зависимости здесь есть — и это осознанное расхождение с соседним classroom,
+# у которого их нет. Разбор в docs/adr/0007... нет, в 0006: сервис открывают
+# 36 телефонов сразу и он печатает PDF с QR, а свой QR-кодировщик и свой
+# писатель PDF — это сотни строк, которые никто не будет сопровождать.
+dependencies = [
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.27",
+  "jinja2>=3.1",
+  "itsdangerous>=2.1",
+  "httpx>=0.27",
+  "qrcode[pil]>=7.4",
+  "reportlab>=4.0",
+  "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+quizapp = "quizapp.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["quizapp*"]
+
+[tool.setuptools.package-data]
+quizapp = ["schema.sql", "templates/*.html", "static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

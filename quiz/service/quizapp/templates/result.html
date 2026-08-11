@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Разбор пятиминутки{% endblock %}
+{% block body %}
+<h1>Готово</h1>
+<p class="muted">
+  {{ attempt.full_name }} · заняло {{ duration|mmss }}
+  {% if quiz.graded %} · верных: {{ correct }} из {{ total }}{% else %} · пробный прогон, оценка не выставляется{% endif %}
+</p>
+
+{% for item in items %}
+<section class="card" {% if item.kind == 'open' %}data-open="1"{% endif %}>
+  <div class="prompt">{{ loop.index }}. {{ item.prompt }}</div>
+
+  {% if item.kind == 'mc' %}
+    {% if not item.answered %}
+      <p class="warn">Вы не ответили на этот вопрос.</p>
+    {% elif item.is_correct %}
+      <p class="ok">Верно: {{ item.chosen }}</p>
+    {% else %}
+      <p class="bad">Ваш ответ: {{ item.chosen }}</p>
+      <p class="ok">Верный ответ: {{ item.correct_option }}</p>
+    {% endif %}
+  {% else %}
+    <p><span class="muted">Ваш ответ:</span><br>{{ item.text or '(пусто)' }}</p>
+    <p class="verdict">
+      {% if item.status == 'done' and item.is_correct is not none %}
+        {% if item.is_correct %}<span class="ok">Засчитано.</span>{% else %}<span class="bad">Не засчитано.</span>{% endif %}
+        {{ item.rationale }}
+      {% elif item.status == 'error' %}
+        <span class="warn">Автоматическая проверка не сработала — ответ увидит преподаватель.</span>
+      {% else %}
+        <span class="muted">Проверяется…</span>
+      {% endif %}
+    </p>
+    <details>
+      <summary class="muted">Эталонный ответ</summary>
+      <p>{{ item.reference }}</p>
+    </details>
+  {% endif %}
+
+  {% if item.slide %}<p class="muted">Слайд: {{ item.slide }}</p>{% endif %}
+</section>
+{% endfor %}
+
+<p class="muted">Страницу можно закрыть.</p>
+
+<script>
+// Судейство открытого вопроса идёт в фоне: если вердикт ещё не готов, страница
+// подтягивает его сама, пока студент не ушёл.
+const pending = document.querySelectorAll('[data-open] .verdict .muted');
+if (pending.length) {
+  const attempt = {{ attempt.id }};
+  let tries = 0;
+  const poll = setInterval(async () => {
+    if (++tries > 60) { clearInterval(poll); return; }
+    try {
+      const resp = await fetch(`/api/attempt/${attempt}/verdict`);
+      const data = await resp.json();
+      if (data.items.every(i => i.status === 'done' || i.status === 'error')) {
+        clearInterval(poll);
+        location.reload();
+      }
+    } catch (e) { /* сеть моргнула — попробуем на следующем тике */ }
+  }, 3000);
+}
+</script>
+{% endblock %}

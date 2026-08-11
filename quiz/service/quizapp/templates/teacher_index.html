@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Пятиминутки — преподавателю{% endblock %}
+{% block body %}
+<h1>Пятиминутки</h1>
+
+{% if note %}<p class="ok">{{ note }}</p>{% endif %}
+{% if error %}<p class="bad">{{ error }}</p>{% endif %}
+
+{% if bank_errors %}
+<div class="card">
+  <p class="bad">Не разобрано банков: {{ bank_errors|length }}. Эти лекции недоступны,
+  остальные работают.</p>
+  {% for name, problem in bank_errors.items() %}
+  <p class="muted"><code>{{ name }}</code> — {{ problem }}</p>
+  {% endfor %}
+  <p class="muted">Проверить локально: <code>python3 tools/lint_quiz_banks.py</code></p>
+</div>
+{% endif %}
+
+<h2>Новая пятиминутка</h2>
+{% if banks %}
+<form class="card" method="post" action="/teacher/quizzes">
+  <p>
+    <label for="lecture">Лекция</label>
+    <select id="lecture" name="lecture">
+      {% for slug, bank in banks.items() %}
+      <option value="{{ slug }}">{{ slug }} — {{ bank.mc|length }} с вариантами, {{ bank.open|length }} открытых</option>
+      {% endfor %}
+    </select>
+  </p>
+  <p>
+    <label class="opt"><input type="radio" name="mode" value="practice" checked>
+      <span><b>Пробный прогон</b> — без таймера и без оценок. Первые два занятия идут так:
+      собираем тайминги и обкатываем процесс.</span></label>
+    <label class="opt"><input type="radio" name="mode" value="graded">
+      <span><b>Боевой режим</b> — таймер и подсчёт верных.</span></label>
+  </p>
+  <p>
+    <label for="timeout_sec">Таймер, секунд (только в боевом режиме)</label>
+    <input type="number" id="timeout_sec" name="timeout_sec" value="{{ settings.default_timeout_sec }}" min="30" max="1800">
+  </p>
+  <button type="submit">Создать</button>
+</form>
+{% else %}
+<p class="card bad">Ни одного пригодного банка вопросов — создавать не по чему.
+Положите файл в <code>quiz/banks/</code> репозитория курса и дождитесь деплоя.</p>
+{% endif %}
+
+<h2>Все пятиминутки</h2>
+{% if quizzes %}
+<div class="scroll">
+<table>
+  <tr><th>#</th><th>Лекция</th><th>Состояние</th><th>Режим</th><th></th><th></th></tr>
+  {% for q in quizzes %}
+  <tr>
+    <td>{{ q.id }}</td>
+    <td>{{ q.title or q.lecture }}<br><span class="muted">{{ q.lecture }}</span></td>
+    <td>{% if q.is_open %}<span class="pill ok">открыта</span>{% else %}<span class="pill muted">закрыта</span>{% endif %}</td>
+    <td>{{ 'с оценками, ' ~ q.timeout_sec ~ ' с' if q.graded else 'пробный' }}</td>
+    <td>
+      <form method="post" action="/teacher/quizzes/{{ q.id }}/state">
+        <input type="hidden" name="state" value="{{ 'closed' if q.is_open else 'open' }}">
+        <button type="submit" class="{{ 'ghost' if q.is_open else '' }}">
+          {{ 'Закрыть' if q.is_open else 'Открыть' }}
+        </button>
+      </form>
+    </td>
+    <td><a href="/teacher/quizzes/{{ q.id }}">результаты →</a></td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+{% else %}
+<p class="muted">Пятиминуток пока нет.</p>
+{% endif %}
+
+<details>
+  <summary class="muted">То же самое из терминала</summary>
+  <pre class="card">TOKEN=…
+B={{ settings.base_url }}
+
+curl -sX POST $B/api/teacher/quizzes -H "X-Quiz-Token: $TOKEN" \
+  -H 'Content-Type: application/json' -d '{"lecture":"01-history","mode":"practice"}'
+curl -sX POST $B/api/teacher/quizzes/1/tickets -H "X-Quiz-Token: $TOKEN" \
+  -H 'Content-Type: application/json' -d '{"count":36}'
+curl -sX POST $B/api/teacher/quizzes/1/state -H "X-Quiz-Token: $TOKEN" \
+  -H 'Content-Type: application/json' -d '{"state":"open"}'
+curl -s $B/api/teacher/quizzes/1/tickets.pdf -H "X-Quiz-Token: $TOKEN" -o tickets.pdf</pre>
+</details>
+{% endblock %}
