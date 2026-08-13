@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Готовит каталог `data/` с учебной выгрузкой экспериментов для семинара 13.
 
-    python3 assets/make_data.py          # создать ./data
-    python3 assets/make_data.py /tmp/s13 # создать /tmp/s13/data
+    python3 assets/make_data.py               # создать ./data
+    python3 assets/make_data.py ~/seminar-13  # создать ~/seminar-13/data
 
 Содержимое фиксировано (никакой генерации случайных чисел): у всех студентов
 одинаковые входные данные, поэтому тестовые примеры в `tasks.md` совпадают до

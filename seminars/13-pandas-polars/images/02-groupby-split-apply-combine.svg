@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1020" height="470" viewBox="0 0 1020 470" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+  </defs>
+
+  <rect width="1020" height="470" fill="#ffffff"/>
+  <text x="510" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">groupby + agg: разделить — посчитать — склеить</text>
+
+  <!-- ===== кадр 1 ===== -->
+  <rect x="25" y="56" width="300" height="326" rx="10" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="175" y="82" text-anchor="middle" font-size="16" font-weight="600" fill="#0f172a">1. Разделить</text>
+  <text x="175" y="104" text-anchor="middle" font-size="13" fill="#64748b">runs.groupby("model")</text>
+
+  <g font-size="14" fill="#0f172a">
+    <rect x="45" y="118" width="260" height="30" fill="#e2e8f0" stroke="#475569" stroke-width="1"/>
+    <text x="120" y="139" text-anchor="middle" font-size="13" font-weight="600">model</text>
+    <text x="245" y="139" text-anchor="middle" font-size="13" font-weight="600">val_acc</text>
+
+    <rect x="45" y="148" width="260" height="32" fill="#dcfce7" stroke="#94a3b8" stroke-width="1"/>
+    <text x="120" y="169" text-anchor="middle">resnet18</text>
+    <text x="245" y="169" text-anchor="middle">0.872</text>
+
+    <rect x="45" y="180" width="260" height="32" fill="#dcfce7" stroke="#94a3b8" stroke-width="1"/>
+    <text x="120" y="201" text-anchor="middle">resnet18</text>
+    <text x="245" y="201" text-anchor="middle">0.901</text>
+
+    <rect x="45" y="212" width="260" height="32" fill="#dbeafe" stroke="#94a3b8" stroke-width="1"/>
+    <text x="120" y="233" text-anchor="middle">resnet50</text>
+    <text x="245" y="233" text-anchor="middle">0.915</text>
+
+    <rect x="45" y="244" width="260" height="32" fill="#dbeafe" stroke="#94a3b8" stroke-width="1"/>
+    <text x="120" y="265" text-anchor="middle">resnet50</text>
+    <text x="245" y="265" text-anchor="middle" fill="#b91c1c" font-weight="600">NaN</text>
+
+    <rect x="45" y="276" width="260" height="32" fill="#fae8ff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="120" y="297" text-anchor="middle">vit_small</text>
+    <text x="245" y="297" text-anchor="middle">0.924</text>
+
+    <rect x="45" y="308" width="260" height="32" fill="#fae8ff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="120" y="329" text-anchor="middle">vit_small</text>
+    <text x="245" y="329" text-anchor="middle">0.931</text>
+  </g>
+  <text x="175" y="364" text-anchor="middle" font-size="12" fill="#64748b">строки разложены по значению ключа</text>
+
+  <!-- стрелка 1→2 -->
+  <line x1="330" y1="215" x2="358" y2="215" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arrB)"/>
+
+  <!-- ===== кадр 2 ===== -->
+  <rect x="363" y="56" width="300" height="326" rx="10" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="513" y="82" text-anchor="middle" font-size="16" font-weight="600" fill="#0f172a">2. Посчитать в каждой</text>
+  <text x="513" y="104" text-anchor="middle" font-size="13" fill="#64748b">["val_acc"].mean()</text>
+
+  <g font-size="13">
+    <rect x="383" y="122" width="260" height="66" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="1.5"/>
+    <text x="397" y="145" font-size="14" font-weight="600" fill="#14532d">resnet18</text>
+    <text x="397" y="168" fill="#334155">0.872 · 0.901 → mean 0.8865</text>
+
+    <rect x="383" y="198" width="260" height="66" rx="8" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+    <text x="397" y="221" font-size="14" font-weight="600" fill="#1e3a8a">resnet50</text>
+    <text x="397" y="244" fill="#334155">0.915 · NaN → mean 0.9150</text>
+
+    <rect x="383" y="274" width="260" height="66" rx="8" fill="#fae8ff" stroke="#a21caf" stroke-width="1.5"/>
+    <text x="397" y="297" font-size="14" font-weight="600" fill="#701a75">vit_small</text>
+    <text x="397" y="320" fill="#334155">0.924 · 0.931 → mean 0.9275</text>
+  </g>
+  <text x="513" y="364" text-anchor="middle" font-size="12" fill="#64748b">каждая группа сворачивается в число</text>
+
+  <!-- стрелка 2→3 -->
+  <line x1="668" y1="215" x2="696" y2="215" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arrB)"/>
+
+  <!-- ===== кадр 3 ===== -->
+  <rect x="701" y="56" width="294" height="326" rx="10" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="848" y="82" text-anchor="middle" font-size="16" font-weight="600" fill="#0f172a">3. Склеить</text>
+  <text x="848" y="104" text-anchor="middle" font-size="13" fill="#64748b">одна строка на группу</text>
+
+  <g font-size="14" fill="#0f172a">
+    <rect x="721" y="122" width="254" height="30" fill="#e2e8f0" stroke="#475569" stroke-width="1"/>
+    <text x="798" y="143" text-anchor="middle" font-size="13" font-weight="600">model</text>
+    <text x="920" y="143" text-anchor="middle" font-size="13" font-weight="600">mean</text>
+
+    <rect x="721" y="152" width="254" height="34" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="798" y="175" text-anchor="middle">resnet18</text>
+    <text x="920" y="175" text-anchor="middle">0.8865</text>
+
+    <rect x="721" y="186" width="254" height="34" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="798" y="209" text-anchor="middle">resnet50</text>
+    <text x="920" y="209" text-anchor="middle">0.9150</text>
+
+    <rect x="721" y="220" width="254" height="34" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="798" y="243" text-anchor="middle">vit_small</text>
+    <text x="920" y="243" text-anchor="middle">0.9275</text>
+  </g>
+  <text x="848" y="282" text-anchor="middle" font-size="12" font-weight="600" fill="#b45309">ключ группировки ушёл в индекс</text>
+  <text x="848" y="302" text-anchor="middle" font-size="12" fill="#64748b">вернуть столбцом — reset_index()</text>
+  <text x="848" y="336" text-anchor="middle" font-size="12" fill="#64748b">было 6 строк — стало 3</text>
+
+  <text x="510" y="418" text-anchor="middle" font-size="14" fill="#0f172a">groupby сам ничего не считает: он только режет таблицу на группы, считает уже agg, а результат склеивается обратно.</text>
+  <text x="510" y="444" text-anchor="middle" font-size="13" fill="#64748b">У resnet50 в группе 2 строки, но mean посчитан по одной: size считает строки, count — непропущенные значения</text>
+</svg>
