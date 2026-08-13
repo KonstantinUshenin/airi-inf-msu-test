@@ -14,7 +14,7 @@
   <!-- ЛЕВАЯ ПАНЕЛЬ -->
   <rect x="24" y="52" width="440" height="330" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
   <text x="244" y="80" text-anchor="middle" font-size="15" font-weight="600" fill="#991b1b" font-family="ui-monospace, 'DejaVu Sans Mono', monospace">--bind 127.0.0.1</text>
-  <text x="244" y="100" text-anchor="middle" font-size="12.5" fill="#7f1d1d">слушает только петлю</text>
+  <text x="244" y="100" text-anchor="middle" font-size="12.5" fill="#7f1d1d">слушает только loopback</text>
 
   <!-- машина слева -->
   <rect x="150" y="118" width="190" height="92" rx="9" fill="#ffffff" stroke="#475569" stroke-width="2"/>
