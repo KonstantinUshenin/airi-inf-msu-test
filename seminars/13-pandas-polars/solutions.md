@@ -87,9 +87,11 @@ import pandas as pd
 
 notes = pd.read_csv("data/notes.csv", encoding="cp1251")
 print(notes.shape)
-print(notes.loc[notes["run_id"] == "r06", "comment"].item())
+print(notes.loc[notes["run_id"] == "r06", "comment"].iloc[0])
 ```
 
+`.iloc[0]` берёт из отобранного `Series` первое значение по позиции — то же
+самое умеет `.item()`, но он требует, чтобы значение было ровно одно.
 Без `encoding="cp1251"` чтение упало бы с `UnicodeDecodeError` (кодировки —
 семинар 10). Разобрать файл через `split(",")` нельзя: комментарии взяты в
 кавычки и сами содержат запятые, так что `split` порезал бы строку в неверном
