@@ -304,6 +304,7 @@ echo -n "(б) сервер молчит:       "
 curl -s -o /dev/null --connect-timeout 3 --max-time 5 -w "$FMT" http://127.0.0.1:8001/
 echo "код $?"
 kill "$srv" 2>/dev/null
+sleep 1
 
 timeout 2 nc -l 127.0.0.1 8001 > /dev/null 2>&1 &
 sleep 1
