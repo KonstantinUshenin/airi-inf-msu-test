@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="430" viewBox="0 0 900 430" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="430" fill="#ffffff"/>
+  <text x="450" y="30" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Что происходит после push: пайплайн и раннеры</text>
+
+  <!-- push -->
+  <rect x="24" y="150" width="150" height="80" rx="10" fill="#e0e7ff" stroke="#4338ca" stroke-width="2"/>
+  <text x="99" y="182" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">git push</text>
+  <text x="99" y="204" text-anchor="middle" font-size="12" fill="#334155">ветка / MR</text>
+
+  <!-- сервер -->
+  <rect x="214" y="124" width="170" height="136" rx="10" fill="#fef9c3" stroke="#a16207" stroke-width="2"/>
+  <text x="299" y="160" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">сервер</text>
+  <text x="299" y="182" text-anchor="middle" font-size="12" fill="#334155">читает .gitlab-ci.yml</text>
+  <text x="299" y="200" text-anchor="middle" font-size="12" fill="#334155">(или .github/workflows)</text>
+  <text x="299" y="236" text-anchor="middle" font-size="12" fill="#64748b">и ставит джобы в очередь</text>
+
+  <!-- раннеры -->
+  <rect x="424" y="60" width="200" height="66" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="524" y="86" text-anchor="middle" font-size="13" font-weight="600" fill="#0f172a">раннер 1</text>
+  <text x="524" y="108" text-anchor="middle" font-size="12" fill="#334155">lint: ruff check</text>
+
+  <rect x="424" y="156" width="200" height="66" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="524" y="182" text-anchor="middle" font-size="13" font-weight="600" fill="#0f172a">раннер 2</text>
+  <text x="524" y="204" text-anchor="middle" font-size="12" fill="#334155">test: pytest</text>
+
+  <rect x="424" y="252" width="200" height="66" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="524" y="278" text-anchor="middle" font-size="13" font-weight="600" fill="#0f172a">раннер 3</text>
+  <text x="524" y="300" text-anchor="middle" font-size="12" fill="#334155">train: короткий прогон</text>
+
+  <!-- результат -->
+  <rect x="676" y="120" width="196" height="60" rx="10" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+  <text x="774" y="146" text-anchor="middle" font-size="13" font-weight="600" fill="#15803d">всё зелёное</text>
+  <text x="774" y="167" text-anchor="middle" font-size="12" fill="#334155">merge разрешён</text>
+
+  <rect x="676" y="212" width="196" height="60" rx="10" fill="#ffe4e6" stroke="#be123c" stroke-width="2"/>
+  <text x="774" y="238" text-anchor="middle" font-size="13" font-weight="600" fill="#be123c">хоть один красный</text>
+  <text x="774" y="259" text-anchor="middle" font-size="12" fill="#334155">merge заблокирован</text>
+
+  <!-- стрелки -->
+  <line x1="174" y1="190" x2="208" y2="190" stroke="#475569" stroke-width="2" marker-end="url(#p)"/>
+  <line x1="384" y1="170" x2="418" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#p)"/>
+  <line x1="384" y1="190" x2="418" y2="190" stroke="#475569" stroke-width="2" marker-end="url(#p)"/>
+  <line x1="384" y1="212" x2="418" y2="280" stroke="#475569" stroke-width="2" marker-end="url(#p)"/>
+  <line x1="624" y1="95" x2="670" y2="140" stroke="#475569" stroke-width="2" marker-end="url(#p)"/>
+  <line x1="624" y1="190" x2="670" y2="165" stroke="#475569" stroke-width="2" marker-end="url(#p)"/>
+  <line x1="624" y1="285" x2="670" y2="248" stroke="#475569" stroke-width="2" marker-end="url(#p)"/>
+
+  <text x="524" y="345" text-anchor="middle" font-size="12" fill="#64748b">раннер — обычная машина с агентом, которая забирает джоб и выполняет его команды</text>
+
+  <text x="450" y="386" text-anchor="middle" font-size="13.5" fill="#0f172a">Пайплайн описан файлом в репозитории, значит он версионируется и проходит ревью,</text>
+  <text x="450" y="408" text-anchor="middle" font-size="13.5" fill="#0f172a">а проверки выполняются одинаково у всех — независимо от того, что настроено на ноутбуке.</text>
+</svg>

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Вход в пятиминутку{% endblock %}
+{% block body %}
+<h1>{{ quiz.title or quiz.lecture }}</h1>
+<p class="muted">Тестовый вход: университетский SSO ещё не подключён, поэтому имя вводится руками.
+Эти попытки помечаются как тестовые.</p>
+
+{% if error %}<p class="bad">{{ error }}</p>{% endif %}
+
+<form method="post" action="/t/{{ token }}/test-login" class="card">
+  <label for="full_name">Фамилия и имя</label>
+  <input type="text" id="full_name" name="full_name" autofocus required
+         autocomplete="name" placeholder="Иванов Иван">
+  <p class="muted">Пишите одинаково каждый раз — по имени сервис узнаёт вас при возврате.</p>
+  <button type="submit">Войти</button>
+</form>
+{% endblock %}
