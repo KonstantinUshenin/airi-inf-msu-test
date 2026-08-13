@@ -52,7 +52,7 @@ pull request в свой репозиторий задания, проверяю
 | 7 | октябрь | Unix-terminal. Работа с сетью | nc, scp, ifconfig, ufw, ports, netstat, ss, nslookup, dig, ping, whois, wget, curl | Диагностика недоступного сервиса | Dmitrii | Максим |
 | [8](08-unix-ssh/) | октябрь | Unix-terminal. ssh | ssh, scp, rsync, ssh-keygen, tunneling, fail2ban | SSH-ключ, `~/.ssh/config`, туннель до сервиса на сервере | Николай | Dmitrii |
 | 9 | ноябрь | Контейнеризация и облачные технологии | Виртуализация (VM против контейнера, гипервизоры, образы).<br>Docker, Docker compose.<br>Ansible как система управления конфигурацией: инвентарь, плейбук, идемпотентность.<br>aws cli, boto3 (и аналоги), s3cmd, terraform (в клауде он пока очень сырой, невозможно пользоваться)<br>Знакомство с cloud.ru | Свой контейнер + запуск на сервере | Максим | Николай |
-| 10 | ноябрь | Python. Работа с текстами | Кодировки. Операции над строками. Практикум по glob, Практикум по regexp | Парсер текстового лога на regexp | Dmitrii | Максим |
+| [10](10-python-text/) | ноябрь | Python. Работа с текстами | Кодировки. Операции над строками. Практикум по glob, Практикум по regexp | Парсер текстового лога на regexp | Dmitrii | Максим |
 | 11 | ноябрь | Python. Работа с json и XML | Чтение jsom, xml. XPath.<br>REST API requests.<br>Скрапинг интеренет страниц -- Beautiful soup | Забрать данные через REST API и разобрать json | Николай | Dmitrii |
 | 12 | ноябрь | SQL | Select *, SQLite, SQLAlchemy | Запросы к SQLite по учебной базе | Максим | Николай |
 | 13 | декабрь | Pandas/Polars | pandas | Мини-исследование датасета в pandas | Dmitrii | Максим |

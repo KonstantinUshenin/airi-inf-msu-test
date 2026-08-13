@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="500" viewBox="0 0 1000 500" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <rect width="1000" height="500" fill="#ffffff"/>
+  <text x="500" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Одна и та же запись в маске glob и в регулярке значит разное</text>
+  <rect x="30" y="72" width="186" height="46" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="216" y="72" width="388" height="46" fill="#ffedd5" stroke="#c2410c" stroke-width="1.5"/>
+  <rect x="604" y="72" width="366" height="46" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="123" y="101" text-anchor="middle" font-size="15" font-weight="600" fill="#334155">запись</text>
+  <text x="410" y="93" text-anchor="middle" font-size="15" font-weight="600" fill="#9a3412">маска glob</text>
+  <text x="410" y="111" text-anchor="middle" font-size="12" fill="#9a3412">сравнивается имя файла целиком</text>
+  <text x="787" y="93" text-anchor="middle" font-size="15" font-weight="600" fill="#1d4ed8">регулярка re.search</text>
+  <text x="787" y="111" text-anchor="middle" font-size="12" fill="#1d4ed8">ищется любой кусок строки</text>
+  <rect x="30" y="118" width="186" height="82" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="216" y="118" width="388" height="82" fill="#fffbf5" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="604" y="118" width="366" height="82" fill="#f8fbff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="123" y="166" text-anchor="middle" font-size="20" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a">*.csv</text>
+  <text x="234" y="148" font-size="13.5" fill="#334155">любое имя, кончающееся на .csv</text>
+  <text x="234" y="178" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#9a3412">metrics.csv</text>
+  <text x="326" y="178" font-size="14" font-weight="600" fill="#15803d">✓</text>
+  <text x="356" y="178" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#9a3412">notes.txt</text>
+  <text x="432" y="178" font-size="14" font-weight="600" fill="#b91c1c">✗</text>
+  <text x="622" y="148" font-size="13.5" fill="#334155">ошибка: nothing to repeat —</text>
+  <text x="622" y="168" font-size="13.5" fill="#334155">«*» повторяет предыдущий элемент, а его нет</text>
+  <rect x="30" y="200" width="186" height="82" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="216" y="200" width="388" height="82" fill="#fffbf5" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="604" y="200" width="366" height="82" fill="#f8fbff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="123" y="248" text-anchor="middle" font-size="20" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a">run-?</text>
+  <text x="234" y="230" font-size="13.5" fill="#334155">«run-» и ровно один любой символ</text>
+  <text x="234" y="260" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#9a3412">run-1</text>
+  <text x="278" y="260" font-size="14" font-weight="600" fill="#15803d">✓</text>
+  <text x="308" y="260" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#9a3412">run-01</text>
+  <text x="360" y="260" font-size="14" font-weight="600" fill="#b91c1c">✗</text>
+  <text x="622" y="230" font-size="13.5" fill="#334155">«run» и необязательный дефис:</text>
+  <text x="622" y="250" font-size="13.5" fill="#334155">«?» — ноль или одно повторение дефиса</text>
+  <text x="622" y="272" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#1d4ed8">run</text>
+  <text x="650" y="272" font-size="14" font-weight="600" fill="#15803d">✓</text>
+  <text x="680" y="272" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#1d4ed8">run-01</text>
+  <text x="732" y="272" font-size="14" font-weight="600" fill="#15803d">✓</text>
+  <rect x="30" y="282" width="186" height="82" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="216" y="282" width="388" height="82" fill="#fffbf5" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="604" y="282" width="366" height="82" fill="#f8fbff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="123" y="330" text-anchor="middle" font-size="20" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a">data.csv</text>
+  <text x="234" y="312" font-size="13.5" fill="#334155">ровно такое имя</text>
+  <text x="234" y="342" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#9a3412">data.csv</text>
+  <text x="302" y="342" font-size="14" font-weight="600" fill="#15803d">✓</text>
+  <text x="332" y="342" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#9a3412">dataXcsv</text>
+  <text x="400" y="342" font-size="14" font-weight="600" fill="#b91c1c">✗</text>
+  <text x="622" y="312" font-size="13.5" fill="#334155">точка — любой символ,</text>
+  <text x="622" y="332" font-size="13.5" fill="#334155">нужна именно точка — пишут «\.»</text>
+  <text x="622" y="354" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#1d4ed8">data.csv</text>
+  <text x="690" y="354" font-size="14" font-weight="600" fill="#15803d">✓</text>
+  <text x="720" y="354" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#1d4ed8">dataXcsv</text>
+  <text x="788" y="354" font-size="14" font-weight="600" fill="#15803d">✓</text>
+  <rect x="30" y="386" width="940" height="60" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="50" y="412" font-size="14" fill="#166534">Маске glob <tspan font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" font-weight="600">*.csv</tspan> соответствует регулярка <tspan font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" font-weight="600">.*\.csv</tspan> — «любые символы» это <tspan font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace">.*</tspan>, а точку экранируют.</text>
+  <text x="50" y="434" font-size="14" fill="#166534">Обратно тоже не работает: регулярку в glob не подставишь — это разные языки, а не разный синтаксис одного.</text>
+  <text x="30" y="484" font-size="13" fill="#64748b">Символы * и ? есть в обоих языках: в маске это «любые символы» и «ровно один», в регулярке — квантификаторы.</text>
+</svg>
