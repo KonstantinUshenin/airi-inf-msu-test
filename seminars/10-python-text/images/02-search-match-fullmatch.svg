@@ -1,0 +1,222 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1020" height="462" viewBox="0 0 1020 462" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="mg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#15803d"/>
+    </marker>
+  </defs>
+  <rect width="1020" height="462" fill="#ffffff"/>
+  <text x="510" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">search, match, fullmatch: разница только в том, где шаблону разрешено совпасть</text>
+  <text x="30" y="76" font-size="14" fill="#475569">шаблон:</text>
+  <text x="110" y="76" font-size="16" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#1d4ed8">r"epoch=(\d+)"</text>
+  <text x="320" y="76" font-size="13" fill="#64748b">— один и тот же для всех трёх вызовов</text>
+  <text x="30" y="122" font-size="14" fill="#475569">строка:</text>
+  <rect x="240" y="100" width="580" height="30" rx="5" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="250" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">2</text>
+  <text x="263" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">0</text>
+  <text x="276" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">2</text>
+  <text x="289" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">6</text>
+  <text x="302" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">-</text>
+  <text x="315" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">1</text>
+  <text x="328" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">1</text>
+  <text x="341" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">-</text>
+  <text x="354" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">0</text>
+  <text x="367" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">3</text>
+  <text x="380" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1"> </text>
+  <text x="393" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">1</text>
+  <text x="406" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">2</text>
+  <text x="419" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">:</text>
+  <text x="432" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">0</text>
+  <text x="445" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">4</text>
+  <text x="458" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">:</text>
+  <text x="471" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">1</text>
+  <text x="484" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">2</text>
+  <text x="497" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1"> </text>
+  <text x="510" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">I</text>
+  <text x="523" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">N</text>
+  <text x="536" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">F</text>
+  <text x="549" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">O</text>
+  <text x="562" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1"> </text>
+  <text x="575" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">e</text>
+  <text x="588" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">p</text>
+  <text x="601" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">o</text>
+  <text x="614" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">c</text>
+  <text x="627" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">h</text>
+  <text x="640" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">=</text>
+  <text x="653" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">1</text>
+  <text x="666" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1"> </text>
+  <text x="679" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">l</text>
+  <text x="692" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">o</text>
+  <text x="705" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">s</text>
+  <text x="718" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">s</text>
+  <text x="731" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">=</text>
+  <text x="744" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">0</text>
+  <text x="757" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">.</text>
+  <text x="770" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">7</text>
+  <text x="783" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">1</text>
+  <text x="796" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">0</text>
+  <text x="809" y="121" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#0f172a" opacity="1">0</text>
+  <text x="30" y="190" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#15803d">re.search</text>
+  <rect x="240" y="168" width="580" height="34" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <rect x="569" y="171" width="91" height="28" rx="4" fill="#16a34a"/>
+  <text x="250" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">2</text>
+  <text x="263" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">0</text>
+  <text x="276" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">2</text>
+  <text x="289" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">6</text>
+  <text x="302" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">-</text>
+  <text x="315" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">1</text>
+  <text x="328" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">1</text>
+  <text x="341" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">-</text>
+  <text x="354" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">0</text>
+  <text x="367" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">3</text>
+  <text x="380" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55"> </text>
+  <text x="393" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">1</text>
+  <text x="406" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">2</text>
+  <text x="419" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">:</text>
+  <text x="432" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">0</text>
+  <text x="445" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">4</text>
+  <text x="458" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">:</text>
+  <text x="471" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">1</text>
+  <text x="484" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">2</text>
+  <text x="497" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55"> </text>
+  <text x="510" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">I</text>
+  <text x="523" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">N</text>
+  <text x="536" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">F</text>
+  <text x="549" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">O</text>
+  <text x="562" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55"> </text>
+  <text x="575" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">e</text>
+  <text x="588" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">p</text>
+  <text x="601" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">o</text>
+  <text x="614" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">c</text>
+  <text x="627" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">h</text>
+  <text x="640" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">=</text>
+  <text x="653" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">1</text>
+  <text x="666" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55"> </text>
+  <text x="679" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">l</text>
+  <text x="692" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">o</text>
+  <text x="705" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">s</text>
+  <text x="718" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">s</text>
+  <text x="731" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">=</text>
+  <text x="744" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">0</text>
+  <text x="757" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">.</text>
+  <text x="770" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">7</text>
+  <text x="783" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">1</text>
+  <text x="796" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">0</text>
+  <text x="809" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#166534" opacity="0.55">0</text>
+  <text x="575" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#ffffff" font-weight="600">e</text>
+  <text x="588" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#ffffff" font-weight="600">p</text>
+  <text x="601" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#ffffff" font-weight="600">o</text>
+  <text x="614" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#ffffff" font-weight="600">c</text>
+  <text x="627" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#ffffff" font-weight="600">h</text>
+  <text x="640" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#ffffff" font-weight="600">=</text>
+  <text x="653" y="191" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#ffffff" font-weight="600">1</text>
+  <text x="834" y="183" font-size="13" font-weight="600" fill="#15803d">✓ нашёл</text>
+  <text x="834" y="199" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#15803d">epoch=1</text>
+  <text x="30" y="210" font-size="12" fill="#64748b">ищет везде</text>
+  <text x="30" y="266" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#b91c1c">re.match</text>
+  <rect x="240" y="244" width="580" height="34" rx="5" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="250" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">2</text>
+  <text x="263" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">0</text>
+  <text x="276" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">2</text>
+  <text x="289" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">6</text>
+  <text x="302" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">-</text>
+  <text x="315" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">1</text>
+  <text x="328" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">1</text>
+  <text x="341" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">-</text>
+  <text x="354" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">0</text>
+  <text x="367" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">3</text>
+  <text x="380" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1"> </text>
+  <text x="393" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">1</text>
+  <text x="406" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">2</text>
+  <text x="419" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">:</text>
+  <text x="432" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">0</text>
+  <text x="445" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">4</text>
+  <text x="458" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">:</text>
+  <text x="471" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">1</text>
+  <text x="484" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">2</text>
+  <text x="497" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1"> </text>
+  <text x="510" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">I</text>
+  <text x="523" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">N</text>
+  <text x="536" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">F</text>
+  <text x="549" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">O</text>
+  <text x="562" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1"> </text>
+  <text x="575" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">e</text>
+  <text x="588" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">p</text>
+  <text x="601" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">o</text>
+  <text x="614" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">c</text>
+  <text x="627" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">h</text>
+  <text x="640" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">=</text>
+  <text x="653" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">1</text>
+  <text x="666" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1"> </text>
+  <text x="679" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">l</text>
+  <text x="692" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">o</text>
+  <text x="705" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">s</text>
+  <text x="718" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">s</text>
+  <text x="731" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">=</text>
+  <text x="744" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">0</text>
+  <text x="757" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">.</text>
+  <text x="770" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">7</text>
+  <text x="783" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">1</text>
+  <text x="796" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">0</text>
+  <text x="809" y="267" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">0</text>
+  <rect x="242" y="247" width="143" height="28" rx="4" fill="none" stroke="#b91c1c" stroke-width="2" stroke-dasharray="5 3"/>
+  <text x="315" y="302" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#b91c1c">epoch=(\d+)</text>
+  <text x="315" y="318" text-anchor="middle" font-size="12" fill="#b91c1c">шаблон обязан совпасть отсюда — а здесь дата</text>
+  <text x="834" y="259" font-size="13" font-weight="600" fill="#b91c1c">✗ None</text>
+  <text x="834" y="275" font-size="13" fill="#64748b">дальше не</text>
+  <text x="834" y="291" font-size="13" fill="#64748b">смотрит</text>
+  <text x="30" y="286" font-size="12" fill="#64748b">только с начала</text>
+  <text x="30" y="362" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#b91c1c">re.fullmatch</text>
+  <rect x="240" y="340" width="580" height="34" rx="5" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="250" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">2</text>
+  <text x="263" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">0</text>
+  <text x="276" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">2</text>
+  <text x="289" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">6</text>
+  <text x="302" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">-</text>
+  <text x="315" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">1</text>
+  <text x="328" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">1</text>
+  <text x="341" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">-</text>
+  <text x="354" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">0</text>
+  <text x="367" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">3</text>
+  <text x="380" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1"> </text>
+  <text x="393" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">1</text>
+  <text x="406" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">2</text>
+  <text x="419" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">:</text>
+  <text x="432" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">0</text>
+  <text x="445" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">4</text>
+  <text x="458" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">:</text>
+  <text x="471" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">1</text>
+  <text x="484" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">2</text>
+  <text x="497" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1"> </text>
+  <text x="510" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">I</text>
+  <text x="523" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">N</text>
+  <text x="536" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">F</text>
+  <text x="549" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">O</text>
+  <text x="562" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1"> </text>
+  <text x="575" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">e</text>
+  <text x="588" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">p</text>
+  <text x="601" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">o</text>
+  <text x="614" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">c</text>
+  <text x="627" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">h</text>
+  <text x="640" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">=</text>
+  <text x="653" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">1</text>
+  <text x="666" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1"> </text>
+  <text x="679" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">l</text>
+  <text x="692" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">o</text>
+  <text x="705" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">s</text>
+  <text x="718" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">s</text>
+  <text x="731" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">=</text>
+  <text x="744" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">0</text>
+  <text x="757" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">.</text>
+  <text x="770" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">7</text>
+  <text x="783" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">1</text>
+  <text x="796" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">0</text>
+  <text x="809" y="363" text-anchor="middle" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', 'Courier New', monospace" fill="#94a3b8" opacity="1">0</text>
+  <rect x="569" y="343" width="91" height="28" rx="4" fill="none" stroke="#b91c1c" stroke-width="2" stroke-dasharray="5 3"/>
+  <line x1="244" y1="388" x2="816" y2="388" stroke="#15803d" stroke-width="2" marker-end="url(#mg)"/>
+  <text x="530" y="406" text-anchor="middle" font-size="12" fill="#15803d">шаблон обязан покрыть строку целиком, а покрывает только 7 символов</text>
+  <text x="834" y="355" font-size="13" font-weight="600" fill="#b91c1c">✗ None</text>
+  <text x="834" y="371" font-size="13" fill="#64748b">строка</text>
+  <text x="834" y="387" font-size="13" fill="#64748b">длиннее</text>
+  <text x="30" y="382" font-size="12" fill="#64748b">строка целиком</text>
+  <text x="30" y="446" font-size="13" fill="#64748b">Половина жалоб «регулярка не работает» — это re.match там, где нужен re.search. Для проверки формата берут fullmatch.</text>
+</svg>

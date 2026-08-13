@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Готовит каталог `data/` с учебными файлами для задач семинара 10.
 
-    python3 assets/make_data.py          # создать ./data
-    python3 assets/make_data.py /tmp/s10 # создать /tmp/s10/data
+    python3 assets/make_data.py               # создать ./data
+    python3 assets/make_data.py ~/seminar-10  # создать ~/seminar-10/data
 
 Содержимое фиксировано: у всех студентов одинаковые входные данные, поэтому
 тестовые примеры в `tasks.md` совпадают до последней цифры. Скрипт можно
