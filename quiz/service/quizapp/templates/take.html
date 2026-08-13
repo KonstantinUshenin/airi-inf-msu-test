@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Пятиминутка — {{ quiz.title or quiz.lecture }}{% endblock %}
+{% block body %}
+
+{% if seconds_left is not none %}
+<div class="timer" id="timer" data-left="{{ seconds_left }}">
+  <span class="muted">Осталось</span><strong id="clock">—</strong>
+</div>
+{% else %}
+<div class="timer"><span class="muted">Без таймера — отвечайте спокойно</span></div>
+{% endif %}
+
+<h1>{{ quiz.title or quiz.lecture }}</h1>
+<p class="muted">{{ attempt.full_name }} · вопросов: {{ items|length }}{% if not quiz.graded %} · пробный прогон, оценки не выставляются{% endif %}</p>
+
+<form id="quiz" data-attempt="{{ attempt.id }}">
+  {% for item in items %}
+  <section class="card" data-question="{{ item.id }}" data-kind="{{ item.kind }}">
+    <div class="prompt">{{ loop.index }}. {{ item.prompt }}</div>
+    {% if item.kind == 'mc' %}
+      {% for index, text in item.options %}
+      <label class="opt">
+        <input type="radio" name="q-{{ item.id }}" value="{{ index }}"
+               {% if item.choice == index %}checked{% endif %}>
+        <span>{{ text }}</span>
+      </label>
+      {% endfor %}
+    {% else %}
+      <textarea name="q-{{ item.id }}" placeholder="Ответ своими словами — двух-трёх предложений хватит">{{ item.text }}</textarea>
+    {% endif %}
+  </section>
+  {% endfor %}
+
+  <p class="muted" id="state">Ответы сохраняются сразу, как вы их отмечаете.</p>
+  <button type="submit" id="send">Сдать</button>
+</form>
+
+<script>
+const form = document.getElementById('quiz');
+const attempt = form.dataset.attempt;
+const state = document.getElementById('state');
+
+async function save(questionId, payload) {
+  state.textContent = 'Сохраняю…';
+  try {
+    const resp = await fetch(`/api/attempt/${attempt}/answer`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(Object.assign({question_id: questionId}, payload)),
+    });
+    if (resp.status === 409) { location.href = `/result/${attempt}`; return; }
+    state.textContent = resp.ok ? 'Сохранено' : 'Не сохранилось — проверьте связь';
+  } catch (e) {
+    state.textContent = 'Нет связи — ответ не сохранён, попробуйте ещё раз';
+  }
+}
+
+for (const section of form.querySelectorAll('[data-question]')) {
+  const id = section.dataset.question;
+  if (section.dataset.kind === 'mc') {
+    section.addEventListener('change', ev => save(id, {choice: Number(ev.target.value)}));
+  } else {
+    const area = section.querySelector('textarea');
+    let timer = null;
+    // Открытый ответ уходит с задержкой, иначе на каждую букву был бы запрос.
+    area.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => save(id, {text: area.value}), 900);
+    });
+    area.addEventListener('blur', () => { clearTimeout(timer); save(id, {text: area.value}); });
+  }
+}
+
+form.addEventListener('submit', async ev => {
+  ev.preventDefault();
+  document.getElementById('send').disabled = true;
+  for (const section of form.querySelectorAll('[data-kind=open]')) {
+    await save(section.dataset.question, {text: section.querySelector('textarea').value});
+  }
+  const resp = await fetch(`/api/attempt/${attempt}/submit`, {method: 'POST'});
+  const data = await resp.json().catch(() => ({next: `/result/${attempt}`}));
+  location.href = data.next || `/result/${attempt}`;
+});
+
+const box = document.getElementById('timer');
+if (box) {
+  // Отсчёт нарисован от серверного дедлайна: клиентские часы ни на что не влияют,
+  // время сдачи всё равно проверяет сервер.
+  let left = Number(box.dataset.left);
+  const clock = document.getElementById('clock');
+  const tick = () => {
+    if (left <= 0) { form.requestSubmit(); return; }
+    const m = Math.floor(left / 60), s = left % 60;
+    clock.textContent = `${m}:${String(s).padStart(2, '0')}`;
+    box.classList.toggle('low', left <= 20);
+    left -= 1;
+  };
+  tick();
+  setInterval(tick, 1000);
+}
+</script>
+{% endblock %}

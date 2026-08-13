@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}{{ quiz.title or quiz.lecture }} — результаты{% endblock %}
+{% block body %}
+<script>document.querySelector('main').classList.add('wide');</script>
+
+<p class="muted"><a href="/teacher">← ко всем пятиминуткам</a></p>
+<h1>{{ quiz.title or quiz.lecture }}</h1>
+<p class="muted">
+  {% if quiz.is_open %}<span class="pill ok">открыта</span>{% else %}<span class="pill muted">закрыта</span>{% endif %}
+  · {{ 'боевой режим, таймер ' ~ quiz.timeout_sec ~ ' с' if quiz.graded else 'пробный прогон: без таймера и без оценок' }}
+  · банк {{ quiz.lecture }}{% if bank %} ({{ bank.mc|length }} с вариантами, {{ bank.open|length }} открытых){% endif %}
+</p>
+
+{% if note %}<p class="ok">{{ note }}</p>{% endif %}
+{% if error %}<p class="bad">{{ error }}</p>{% endif %}
+
+<div class="card">
+  <h2 style="margin-top:0">Управление</h2>
+  <div class="controls">
+    <form method="post" action="/teacher/quizzes/{{ quiz.id }}/state">
+      <input type="hidden" name="state" value="{{ 'closed' if quiz.is_open else 'open' }}">
+      <button type="submit" class="{{ 'ghost' if quiz.is_open else '' }}">
+        {{ 'Закрыть приём' if quiz.is_open else 'Открыть приём' }}
+      </button>
+    </form>
+
+    <form method="post" action="/teacher/quizzes/{{ quiz.id }}/tickets">
+      <input type="number" name="count" value="36" min="1" max="500" style="width:6em">
+      <button type="submit" class="ghost">Выпустить билеты</button>
+    </form>
+
+    <form method="post" action="/teacher/quizzes/{{ quiz.id }}/mode">
+      <input type="hidden" name="mode" value="{{ 'practice' if quiz.graded else 'graded' }}">
+      <input type="hidden" name="timeout_sec" value="{{ quiz.timeout_sec or settings.default_timeout_sec }}">
+      <button type="submit" class="ghost">
+        {{ 'Вернуть пробный режим' if quiz.graded else 'Включить таймер и оценки' }}
+      </button>
+    </form>
+
+    <a class="btn ghost" href="/api/teacher/quizzes/{{ quiz.id }}/tickets.pdf">Лист билетов (PDF)</a>
+    <a class="btn ghost" href="/teacher/quizzes/{{ quiz.id }}/export.csv">Выгрузка CSV</a>
+  </div>
+  <p class="muted">
+    Билетов выпущено {{ tickets|length }}, из них не использовано {{ fresh|length }}.
+    {% if not quiz.is_open %}Пока пятиминутка закрыта, войти по билету нельзя.{% endif %}
+  </p>
+</div>
+
+{% if failures %}
+<p class="warn">Автопроверка не справилась с {{ failures|length }} ответом(ами) — в разборе попыток
+они помечены «проверка не сработала». Сами ответы на месте, их можно прочитать глазами.</p>
+{% endif %}
+
+{% if fresh %}
+<details class="card">
+  <summary>Свободные билеты ({{ fresh|length }}) — можно открыть ссылкой, не печатая</summary>
+  <p class="muted">Удобно, чтобы посмотреть на пятиминутку глазами студента. Один билет —
+  одна попытка; чтобы увидеть другой набор вопросов, откройте второй билет в приватном окне
+  и представьтесь другим именем.</p>
+  <div class="tickets">
+    {% for t in fresh %}<a href="/t/{{ t.token }}">{{ t.pretty }}</a>{% endfor %}
+  </div>
+</details>
+{% endif %}
+
+<form class="row" method="get">
+  <input type="text" name="q" value="{{ query }}" placeholder="Поиск по ФИО или коду билета">
+  <button type="submit">Найти</button>
+  {% if query %}<a class="btn ghost" href="/teacher/quizzes/{{ quiz.id }}">Сбросить</a>{% endif %}
+</form>
+
+<h2>Попытки ({{ attempts|length }})</h2>
+<div class="scroll">
+<table>
+  <tr>
+    <th>ФИО</th><th>Билет</th><th>Старт</th><th class="num">Длительность</th>
+    <th class="num">Отвечено</th><th class="num">Верных</th><th></th>
+  </tr>
+  {% for a in attempts %}
+  <tr>
+    <td>{{ a.full_name }}{% if a.is_test %} <span class="pill">тест</span>{% endif %}<br><span class="muted">{{ a.login }}</span></td>
+    <td>{{ a.ticket }}</td>
+    <td>{{ a.started_at|clock }}</td>
+    <td class="num">{% if a.duration %}{{ a.duration|mmss }}{% else %}<span class="muted">не сдал</span>{% endif %}</td>
+    <td class="num">{{ a.answered }}/{{ a.total }}</td>
+    <td class="num">{{ a.correct }}{% if a.pending %} <span class="muted">+{{ a.pending }}?</span>{% endif %}</td>
+    <td><a href="/teacher/attempts/{{ a.id }}">разбор →</a></td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7" class="muted">{{ 'Ничего не найдено.' if query else 'Пока никто не заходил.' }}</td></tr>
+  {% endfor %}
+</table>
+</div>
+
+{% if durations %}
+<h2>Сколько занимает прохождение</h2>
+<p class="muted">
+  Быстрейший {{ durations[0]|mmss }} ·
+  медиана {{ durations[durations|length // 2]|mmss }} ·
+  90-й перцентиль {{ durations[(durations|length * 9 // 10) if (durations|length * 9 // 10) < durations|length else durations|length - 1]|mmss }} ·
+  самый долгий {{ durations[-1]|mmss }}
+</p>
+<div class="bars">
+  {% set longest = durations[-1] or 1 %}
+  {% for d in durations %}<span style="height: {{ (100 * d / longest)|round|int }}%" title="{{ d|mmss }}"></span>{% endfor %}
+</div>
+{% endif %}
+
+<h2>Сводка по вопросам банка</h2>
+<p class="muted">Отсортировано по доле верных: сверху то, что стоит переписать или разобрать у доски.</p>
+<div class="scroll">
+<table>
+  <tr><th>Вопрос</th><th>Тип</th><th class="num">Достался</th><th class="num">Ответили</th><th class="num">Верных</th><th class="num">Медиана</th></tr>
+  {% for row in summary %}
+  <tr>
+    <td>{{ row.prompt[:130] }}<br><span class="muted">{{ row.question_id }}</span></td>
+    <td>{{ 'варианты' if row.kind == 'mc' else 'открытый' }}</td>
+    <td class="num">{{ row.shown }}</td>
+    <td class="num">{{ row.answered }}</td>
+    <td class="num">
+      {% if row.share_correct is none %}<span class="muted">—</span>
+      {% else %}{{ (row.share_correct * 100)|round|int }}%{% endif %}
+    </td>
+    <td class="num">{% if row.median_time %}{{ row.median_time|mmss }}{% else %}—{% endif %}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6" class="muted">Пока никто не отвечал.</td></tr>
+  {% endfor %}
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+# Question banks are Markdown, and a linter is the price
+
+A question bank is read by a machine — the service picks four multiple-choice questions and one open question out of it on every login — so YAML was the obvious storage format: a schema, a validator, and a broken bank fails on `pip`-installable tooling rather than in the lecture hall. Markdown was chosen instead.
+
+The reason is who actually edits these files. A bank is written by a model from one lecture's slides and is wrong in the ordinary ways models are wrong: two options that are both correct, a question about a slide that got cut, wording that gives the answer away. Fixing that is not a data-entry task, it is reading and rewriting prose, done by the lecturer in a pull request between other work. Everything else the lecturer reads in this repo — `tasks.md`, `solutions.md` — is Markdown, and a bank that looks like the rest of the course gets read; a YAML file with quoted strings and block scalars gets skimmed and merged. Banks are public precisely so they get corrected (ADR 0005), and that only pays off if correcting them is pleasant.
+
+The cost is real and is not waved away: a hand-rolled Markdown parser is fragile, and the failure mode is silent. A missing blank line merges two options; a stray asterisk moves which answer is marked correct. Nothing about that surfaces at edit time, and the first symptom would be a student staring at a broken question with a two-minute clock running.
+
+So the format comes with a linter, `tools/lint_quiz_banks.py`, on the model of `tools/lint_seminars.py`, wired into the same CI that already lints seminars on GitHub and Gitea. It checks what a machine checks reliably: every question parses, exactly one option is marked correct, ids are unique and stable, counts clear the minimum, every open question has a reference answer. A bank that does not lint is not a bank. That is what makes the fragile parser acceptable — not that it will not break, but that it breaks in CI instead of in front of thirty-six people.
+
+Stable question ids are load-bearing here for a reason unrelated to parsing: the per-student set is derived from (lecture, login), and the teacher's per-question summary accumulates across runs. Renumbering questions on edit would silently reshuffle both. The linter enforces that ids are explicit and never reused for different text.
