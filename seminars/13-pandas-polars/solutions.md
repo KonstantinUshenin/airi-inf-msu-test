@@ -95,6 +95,23 @@ print(notes.loc[notes["run_id"] == "r06", "comment"].item())
 кавычки и сами содержат запятые, так что `split` порезал бы строку в неверном
 месте. `read_csv` правило экранирования знает.
 
+### B7
+
+```python
+import pandas as pd
+
+runs = pd.read_csv("data/runs.csv")
+by_id = runs.set_index("run_id")
+print(by_id.shape)
+print(by_id.loc["r05"])
+print(by_id.loc[["r02", "r08"], "val_acc"].tolist())
+```
+
+`run_id` ушёл из столбцов в индекс, поэтому столбцов стало 9 вместо 10. Обращение
+`.loc["r05"]` не зависит от порядка строк: после сортировки или фильтрации ключ
+продолжит указывать на тот же запуск, а `.iloc[4]` — уже на какой-то другой.
+Вернуть ключ в обычный столбец можно через `reset_index()`.
+
 ## Среднее
 
 ### M1
@@ -205,6 +222,25 @@ print(report)
 
 Это «длинная» таблица: одна строка — одна эпоха одного запуска. Группировка по
 `run_id` сворачивает её в одну строку на запуск.
+
+### M7
+
+```python
+import pandas as pd
+
+runs = pd.read_csv("data/runs.csv")
+runs.to_parquet("data/runs.parquet")
+back = pd.read_parquet("data/runs.parquet")
+print(back.shape, back.dtypes.equals(runs.dtypes))
+two = pd.read_parquet("data/runs.parquet", columns=["run_id", "val_acc"])
+print(two.shape)
+```
+
+Parquet хранит схему рядом с данными, поэтому типы после round-trip те же, а не
+угаданные заново, как при чтении csv. И он колоночный: значения каждого столбца
+лежат в файле отдельным куском, так что `columns=[...]` читает ровно два куска и
+не трогает остальные восемь. В csv строка файла — это строка таблицы, и чтобы
+добраться до второго столбца, придётся разобрать все.
 
 ## Сложное
 
