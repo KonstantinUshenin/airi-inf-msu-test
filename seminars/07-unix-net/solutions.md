@@ -35,14 +35,16 @@ cd ~/seminar-07 || exit 1
     echo "--- как это делают программы ---"
     getent hosts example.com
     echo "--- прямой запрос в DNS ---"
-    dig example.com | sed -n '/ANSWER SECTION/,+2p'
+    dig example.com +noall +answer
     dig example.com | grep 'SERVER:'
 } > dns.txt
 cat dns.txt
 ```
 
 Число перед `IN A` в ответе — TTL, время жизни записи в секундах: столько
-резолвер имеет право держать её в кэше.
+резолвер имеет право держать её в кэше. Ключи `+noall +answer` печатают секцию
+ответа целиком, сколько бы записей в ней ни оказалось: у сайтов за CDN их
+обычно несколько, и вырезание фиксированного числа строк потеряло бы часть.
 
 ### B3. Достижимость
 
@@ -51,9 +53,15 @@ cd ~/seminar-07 || exit 1
 ping -c 3 -W 2 example.com  > ping.txt 2>&1
 ping -c 3 -W 2 192.0.2.1   >> ping.txt 2>&1
 echo "example.com: ответы есть, 0% потерь, ~0.3 с." >> ping.txt
-echo "192.0.2.1: 100% потерь, ~6 с — адрес не маршрутизируется." >> ping.txt
+echo "192.0.2.1: 100% потерь, ответа нет вообще — адрес не маршрутизируется." >> ping.txt
 cat ping.txt
 ```
+
+Время второго вызова засеките сами (`time ping ...`): оно складывается из
+паузы между отправками (по умолчанию секунда) и ожидания последнего ответа
+(`-W 2`), поэтому точное число зависит от версии `ping` и настроек системы.
+Важен не секундомер, а качественная разница: в первом случае ответы есть, во
+втором — нет ни одного.
 
 ### B4. Свой сервер
 
@@ -242,7 +250,7 @@ chmod +x check-port.sh
 
 ```bash
 cd ~/seminar-07 || exit 1
-python3 -m http.server 8000 --bind 0.0.0.0 2>&1 | tail -2
+python3 -m http.server 8000 --bind 0.0.0.0 2>&1 | grep -i 'address already in use'
 ss -tlnp | grep ':8000'
 pid=$(ss -tlnpH 'sport = :8000' | grep -oP 'pid=\K[0-9]+' | head -1)
 echo "мешает процесс $pid"
@@ -341,7 +349,9 @@ pkill -f 's_server -accept 8443'
 ```bash
 cd ~/seminar-07 || exit 1
 bash /путь/к/seminars/07-unix-net/assets/broken-lab.sh start
-for t in 127.0.0.1:8101 127.0.0.1:8102 127.0.0.1:8103 127.0.0.1:8105; do
+MY_IP=$(ip route get 8.8.8.8 | grep -oP 'src \K\S+')
+for t in 127.0.0.1:8101 127.0.0.1:8102 127.0.0.1:8103 127.0.0.1:8105 \
+         192.0.2.1:8106 "$MY_IP:8107"; do
     host=${t%:*}
     port=${t##*:}
     printf '%-20s ' "$t"
