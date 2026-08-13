@@ -48,16 +48,19 @@ print(path.read_text(encoding="cp1251").splitlines()[0])
 
 ```python
 line = "2026-11-03 12:04:12 INFO epoch=1 loss=0.7100 acc=0.6210"
-date, time, level, *pairs = line.split()
+parts = line.split()
+date = parts[0]
+level = parts[2]
 values = {}
-for pair in pairs:
+for pair in parts[3:]:
     key, _, value = pair.partition("=")
     values[key] = value
 print(date, level, values)
 ```
 
-Распаковка со звёздочкой отделяет три фиксированных поля от переменного числа
-пар; `partition` разбивает пару ровно на две части даже без знака `=`.
+`split()` без аргументов режет по пробелам: первые три куска — дата, время и
+уровень, остальные (`parts[3:]`) — пары. `partition` разбивает пару ровно на две
+части даже если знака `=` в ней не окажется.
 
 ### B5
 
@@ -167,17 +170,22 @@ print(safe.splitlines()[-1])
 
 ```python
 import re
-from collections import Counter
 from pathlib import Path
 
 text = Path("data/train.log").read_text(encoding="utf-8")
-levels = re.findall(r"^\S+ \S+ (INFO|WARNING|ERROR)\b", text, re.MULTILINE)
-for level, count in Counter(levels).most_common():
+counts = {}
+for level in re.findall(r"^\S+ \S+ (INFO|WARNING|ERROR)\b", text, re.MULTILINE):
+    counts[level] = counts.get(level, 0) + 1
+for level, count in counts.items():
     print(level, count)
 ```
 
 `re.MULTILINE` заставляет `^` совпадать с началом каждой строки. Привязка к
-началу нужна, чтобы слово `ERROR` внутри текста сообщения не считалось уровнем.
+началу нужна, чтобы слово `ERROR` внутри текста сообщения не считалось уровнем,
+а `\b` после альтернативы — чтобы уровень не совпал с началом более длинного
+слова. `dict.get(level, 0)` даёт ноль для ещё не встречавшегося уровня; словарь
+помнит порядок вставки, поэтому уровни печатаются в порядке первого появления
+(тот же счётчик в одну строку делает `collections.Counter`).
 
 ## Сложное
 
@@ -207,7 +215,20 @@ print(skipped[0])
 
 Файл собран из строк методом `join`, потому что значения простые и запятых
 внутри них нет. Как только в поле может появиться запятая или перевод строки,
-собирать csv руками нельзя — нужен модуль `csv`, который расставит кавычки.
+собирать csv руками нельзя — нужен модуль `csv`, который расставит кавычки. Вот
+те же две последние строки записи через него (в бою писать надо так) — блок
+продолжает решение выше и использует уже собранный список `rows`:
+
+```python
+import csv
+
+with open("data/metrics.csv", "w", encoding="utf-8", newline="") as handle:
+    writer = csv.writer(handle)
+    writer.writerow(["epoch", "loss", "acc"])
+    writer.writerows(row.split(",") for row in rows)
+```
+
+`newline=""` обязателен: без него модуль `csv` на Windows напишет `\r\r\n`.
 
 ### H2
 
@@ -255,9 +276,11 @@ for name in ("data/report-cp1251.txt", "data/train.log"):
 
 Порядок важен: `utf-8` проверяется первой, потому что она единственная из двух
 падает на чужих данных. Отличить `cp1251` от `koi8-r` тем же приёмом нельзя:
-обе однобайтовые, в них допустим любой байт, поэтому `decode` не выбросит
-исключение ни в одной — различие видно только по осмысленности текста, а для
-этого нужны частотные эвристики или библиотека вроде `chardet`.
+обе однобайтовые и структурных ограничений на последовательность не
+накладывают, так что `decode` почти никогда не выбросит исключение (в `cp1251`
+не определён ровно один байт — `0x98`, в `koi8-r` определены все 256). Различие
+видно только по осмысленности текста, а для этого нужны частотные эвристики или
+библиотека вроде `chardet`.
 
 ### H4
 
