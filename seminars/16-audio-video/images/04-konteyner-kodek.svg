@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="470" viewBox="0 0 920 470" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <rect width="920" height="470" fill="#ffffff"/>
+  <text x="460.0" y="30" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Контейнер — коробка, кодек — то, чем сжато содержимое</text>
+  <rect x="50" y="62" width="400" height="303" rx="10" fill="#f8fafc" stroke="#334155" stroke-width="2.2"/>
+  <rect x="50" y="62" width="400" height="40" rx="10" fill="#e2e8f0" stroke="#334155" stroke-width="2.2"/>
+  <rect x="50" y="92" width="400" height="10" fill="#e2e8f0" stroke="none"/>
+  <text x="66" y="89" font-size="15" font-weight="600" fill="#0f172a">clip.mp4 — контейнер</text>
+  <rect x="70" y="118" width="360" height="46" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="82" y="138" font-size="13" font-weight="600" fill="#334155">заголовок — его и читает ffprobe</text>
+  <text x="82" y="156" font-size="12" fill="#475569">длительность 3.0 с, кадр 64×48, 10 кадров/с</text>
+  <rect x="70" y="176" width="360" height="60" rx="6" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.8"/>
+  <text x="82" y="197" font-size="13" font-weight="600" fill="#1e3a8a">видеодорожка</text>
+  <text x="82" y="215" font-size="12" fill="#1e3a8a">кодек H.264 (мы просили его флагом -c:v libx264),</text>
+  <text x="82" y="231" font-size="12" fill="#1e3a8a">пиксели уложены как yuv420p</text>
+  <rect x="70" y="246" width="360" height="62" rx="6" fill="#ffedd5" stroke="#c2410c" stroke-width="1.8"/>
+  <text x="82" y="266" font-size="13" font-weight="600" fill="#7c2d12">аудиодорожка</text>
+  <text x="82" y="284" font-size="12" fill="#7c2d12">кодек AAC, своя частота дискретизации, свои каналы</text>
+  <text x="82" y="301" font-size="11" fill="#9a3412">в нашем clip.mp4 её нет: мы подали только пиксели</text>
+  <rect x="70" y="316" width="360" height="34" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6" stroke-dasharray="5 4"/>
+  <text x="82" y="338" font-size="12" fill="#64748b">субтитры, обложка, метаданные — по желанию</text>
+  <text x="500" y="86" font-size="15" font-weight="600" fill="#334155">Связь «коробка — кодек» не жёсткая</text>
+  <rect x="500" y="118" width="96" height="34" rx="6" fill="#e2e8f0" stroke="#334155" stroke-width="1.6"/>
+  <text x="548" y="140" text-anchor="middle" font-size="13" fill="#0f172a">.mp4</text>
+  <rect x="500" y="166" width="96" height="34" rx="6" fill="#e2e8f0" stroke="#334155" stroke-width="1.6"/>
+  <text x="548" y="188" text-anchor="middle" font-size="13" fill="#0f172a">.mkv</text>
+  <rect x="500" y="214" width="96" height="34" rx="6" fill="#e2e8f0" stroke="#334155" stroke-width="1.6"/>
+  <text x="548" y="236" text-anchor="middle" font-size="13" fill="#0f172a">.mov</text>
+  <rect x="500" y="262" width="96" height="34" rx="6" fill="#e2e8f0" stroke="#334155" stroke-width="1.6"/>
+  <text x="548" y="284" text-anchor="middle" font-size="13" fill="#0f172a">.webm</text>
+  <rect x="746" y="118" width="104" height="34" rx="6" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+  <text x="798" y="140" text-anchor="middle" font-size="13" fill="#1e3a8a">H.264</text>
+  <rect x="746" y="166" width="104" height="34" rx="6" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+  <text x="798" y="188" text-anchor="middle" font-size="13" fill="#1e3a8a">H.265</text>
+  <rect x="746" y="214" width="104" height="34" rx="6" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+  <text x="798" y="236" text-anchor="middle" font-size="13" fill="#1e3a8a">AV1</text>
+  <rect x="746" y="262" width="104" height="34" rx="6" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+  <text x="798" y="284" text-anchor="middle" font-size="13" fill="#1e3a8a">VP9</text>
+  <line x1="598" y1="135" x2="744" y2="135" stroke="#94a3b8" stroke-width="1.2" stroke-opacity="0.75"/>
+  <line x1="598" y1="135" x2="744" y2="183" stroke="#94a3b8" stroke-width="1.2" stroke-opacity="0.75"/>
+  <line x1="598" y1="135" x2="744" y2="231" stroke="#94a3b8" stroke-width="1.2" stroke-opacity="0.75"/>
+  <line x1="598" y1="183" x2="744" y2="135" stroke="#94a3b8" stroke-width="1.2" stroke-opacity="0.75"/>
+  <line x1="598" y1="183" x2="744" y2="183" stroke="#94a3b8" stroke-width="1.2" stroke-opacity="0.75"/>
+  <line x1="598" y1="183" x2="744" y2="231" stroke="#94a3b8" stroke-width="1.2" stroke-opacity="0.75"/>
+  <line x1="598" y1="183" x2="744" y2="279" stroke="#94a3b8" stroke-width="1.2" stroke-opacity="0.75"/>
+  <line x1="598" y1="231" x2="744" y2="135" stroke="#94a3b8" stroke-width="1.2" stroke-opacity="0.75"/>
+  <line x1="598" y1="279" x2="744" y2="231" stroke="#94a3b8" stroke-width="1.2" stroke-opacity="0.75"/>
+  <line x1="598" y1="279" x2="744" y2="279" stroke="#94a3b8" stroke-width="1.2" stroke-opacity="0.75"/>
+  <text x="500" y="332" font-size="13" fill="#334155">Одно и то же видео H.264 лежит и в .mp4, и в .mkv,</text>
+  <text x="500" y="350" font-size="13" fill="#334155">а внутри .mp4 может оказаться и H.265, и AV1.</text>
+  <rect x="40" y="376" width="840" height="72" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="460.0" y="399" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">Расширение файла говорит про коробку, а не про то, чем сжато видео внутри.</text>
+  <text x="460.0" y="420" text-anchor="middle" font-size="13" fill="#334155">Поэтому у ffmpeg контейнер задаётся именем выходного файла, а кодек — отдельным флагом -c:v.</text>
+  <text x="460.0" y="440" text-anchor="middle" font-size="13" fill="#334155">А «-f rawvideo» — это вообще без коробки: голые пиксели, размер кадра и fps приходится сообщать руками.</text>
+</svg>
