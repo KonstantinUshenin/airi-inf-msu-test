@@ -111,7 +111,7 @@ cat http.txt
 ```bash
 cd ~/seminar-07 || exit 1
 ss -tlnp | grep ':8000' > who-holds-8000.txt
-pid=$(ss -tlnpH 'sport = :8000' | grep -oP 'pid=\K[0-9]+' | head -1)
+pid=$(ss -tlnp | grep ':8000' | grep -oP 'pid=\K[0-9]+' | head -1)
 echo "PID: $pid" >> who-holds-8000.txt
 ps -p "$pid" -o cmd= >> who-holds-8000.txt
 cat who-holds-8000.txt
@@ -257,7 +257,7 @@ chmod +x check-port.sh
 cd ~/seminar-07 || exit 1
 python3 -m http.server 8000 --bind 0.0.0.0 2>&1 | grep -i 'address already in use'
 ss -tlnp | grep ':8000'
-pid=$(ss -tlnpH 'sport = :8000' | grep -oP 'pid=\K[0-9]+' | head -1)
+pid=$(ss -tlnp | grep ':8000' | grep -oP 'pid=\K[0-9]+' | head -1)
 echo "мешает процесс $pid"
 kill "$pid"
 sleep 1
