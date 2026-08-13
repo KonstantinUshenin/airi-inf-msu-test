@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="r1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+    <marker id="r2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+    <marker id="r3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="360" fill="#ffffff"/>
+  <text x="450" y="30" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Два способа отменить коммит</text>
+
+  <line x1="450" y1="48" x2="450" y2="344" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- ══ reset ══ -->
+  <text x="26" y="76" font-size="16" font-weight="600" fill="#b91c1c">git reset --hard HEAD~1</text>
+  <text x="26" y="98" font-size="13" fill="#64748b">переписывает историю</text>
+
+  <line x1="158" y1="166" x2="122" y2="166" stroke="#475569" stroke-width="2" marker-end="url(#r1)"/>
+  <line x1="268" y1="166" x2="232" y2="166" stroke="#475569" stroke-width="2" marker-end="url(#r1)"/>
+  <circle cx="100" cy="166" r="22" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="100" y="171" text-anchor="middle" font-size="13" fill="#0f172a">c1</text>
+  <circle cx="210" cy="166" r="22" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="210" y="171" text-anchor="middle" font-size="13" fill="#0f172a">c2</text>
+  <circle cx="320" cy="166" r="22" fill="#ffffff" stroke="#b91c1c" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="320" y="171" text-anchor="middle" font-size="13" fill="#b91c1c">c3</text>
+
+  <rect x="168" y="104" width="84" height="26" rx="6" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="210" y="122" text-anchor="middle" font-size="13" font-weight="600" fill="#1d4ed8">main</text>
+  <line x1="210" y1="132" x2="210" y2="140" stroke="#1d4ed8" stroke-width="2" marker-end="url(#r2)"/>
+
+  <path d="M 320 118 L 264 118" fill="none" stroke="#b91c1c" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#r3)"/>
+  <text x="330" y="122" font-size="12" fill="#b91c1c">ветка уехала назад</text>
+  <text x="320" y="212" text-anchor="middle" font-size="12" fill="#b91c1c">c3 остался только в reflog</text>
+
+  <text x="26" y="252" font-size="13" fill="#334155">Коммита в истории больше нет.</text>
+  <text x="26" y="278" font-size="13" font-weight="600" fill="#b91c1c">На выложенной ветке так нельзя:</text>
+  <text x="26" y="298" font-size="13" fill="#334155">у коллег этот коммит уже есть, их история</text>
+  <text x="26" y="318" font-size="13" fill="#334155">разойдётся с вашей, а push пройдёт только</text>
+  <text x="26" y="338" font-size="13" fill="#334155">с --force, затирая чужую работу.</text>
+
+  <!-- ══ revert ══ -->
+  <text x="476" y="76" font-size="16" font-weight="600" fill="#166534">git revert HEAD</text>
+  <text x="476" y="98" font-size="13" fill="#64748b">добавляет коммит-антипод</text>
+
+  <line x1="608" y1="166" x2="572" y2="166" stroke="#475569" stroke-width="2" marker-end="url(#r1)"/>
+  <line x1="708" y1="166" x2="672" y2="166" stroke="#475569" stroke-width="2" marker-end="url(#r1)"/>
+  <line x1="808" y1="166" x2="772" y2="166" stroke="#475569" stroke-width="2" marker-end="url(#r1)"/>
+  <circle cx="550" cy="166" r="22" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="550" y="171" text-anchor="middle" font-size="13" fill="#0f172a">c1</text>
+  <circle cx="650" cy="166" r="22" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="650" y="171" text-anchor="middle" font-size="13" fill="#0f172a">c2</text>
+  <circle cx="750" cy="166" r="22" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="750" y="171" text-anchor="middle" font-size="13" fill="#0f172a">c3</text>
+  <circle cx="850" cy="166" r="22" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="850" y="171" text-anchor="middle" font-size="13" fill="#166534">c4</text>
+
+  <rect x="808" y="104" width="84" height="26" rx="6" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="850" y="122" text-anchor="middle" font-size="13" font-weight="600" fill="#1d4ed8">main</text>
+  <line x1="850" y1="132" x2="850" y2="140" stroke="#1d4ed8" stroke-width="2" marker-end="url(#r2)"/>
+
+  <line x1="850" y1="190" x2="850" y2="202" stroke="#166534" stroke-width="2"/>
+  <rect x="770" y="202" width="122" height="26" rx="6" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="831" y="220" text-anchor="middle" font-size="12" font-weight="600" fill="#166534">Revert "c3"</text>
+
+  <text x="476" y="252" font-size="13" fill="#334155">Файлы вернулись в прежнее состояние,</text>
+  <text x="476" y="278" font-size="13" fill="#334155">но c3 остался в истории — видно, что</text>
+  <text x="476" y="298" font-size="13" fill="#334155">именно отменяли и почему.</text>
+  <text x="476" y="330" font-size="13" font-weight="600" fill="#166534">Единственный безопасный способ для</text>
+  <text x="476" y="348" font-size="13" font-weight="600" fill="#166534">ветки, которая уже на сервере.</text>
+</svg>
