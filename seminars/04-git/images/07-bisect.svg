@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="430" viewBox="0 0 900 430" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <rect width="900" height="430" fill="#ffffff"/>
+  <text x="450" y="30" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">git bisect: бинарный поиск сломавшего коммита</text>
+  <text x="450" y="54" text-anchor="middle" font-size="13" fill="#64748b">Известно только начало и конец: одиннадцать коммитов назад метрика была 0.93, сейчас 0.71</text>
+
+  <!-- шкала -->
+  <g font-size="12">
+    <text x="30" y="98" font-size="13" font-weight="600" fill="#0f172a">Коммиты</text>
+    <g>
+      <rect x="120" y="82" width="52" height="30" rx="5" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+      <text x="146" y="102" text-anchor="middle" fill="#166534" font-weight="600">1</text>
+      <rect x="180" y="82" width="52" height="30" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+      <text x="206" y="102" text-anchor="middle" fill="#64748b">2</text>
+      <rect x="240" y="82" width="52" height="30" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+      <text x="266" y="102" text-anchor="middle" fill="#64748b">3</text>
+      <rect x="300" y="82" width="52" height="30" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+      <text x="326" y="102" text-anchor="middle" fill="#64748b">4</text>
+      <rect x="360" y="82" width="52" height="30" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+      <text x="386" y="102" text-anchor="middle" fill="#64748b">5</text>
+      <rect x="420" y="82" width="52" height="30" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+      <text x="446" y="102" text-anchor="middle" fill="#64748b">6</text>
+      <rect x="480" y="82" width="52" height="30" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+      <text x="506" y="102" text-anchor="middle" fill="#64748b">7</text>
+      <rect x="540" y="82" width="52" height="30" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+      <text x="566" y="102" text-anchor="middle" fill="#64748b">8</text>
+      <rect x="600" y="82" width="52" height="30" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+      <text x="626" y="102" text-anchor="middle" fill="#64748b">9</text>
+      <rect x="660" y="82" width="52" height="30" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+      <text x="686" y="102" text-anchor="middle" fill="#64748b">10</text>
+      <rect x="720" y="82" width="52" height="30" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+      <text x="746" y="102" text-anchor="middle" fill="#64748b">11</text>
+      <rect x="780" y="82" width="52" height="30" rx="5" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+      <text x="806" y="102" text-anchor="middle" fill="#b91c1c" font-weight="600">12</text>
+    </g>
+    <text x="146" y="130" text-anchor="middle" font-size="12" fill="#166534" font-weight="600">good</text>
+    <text x="806" y="130" text-anchor="middle" font-size="12" fill="#b91c1c" font-weight="600">bad</text>
+  </g>
+
+  <line x1="30" y1="152" x2="870" y2="152" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- шаг 1 -->
+  <text x="30" y="186" font-size="13" font-weight="600" fill="#0f172a">Шаг 1</text>
+  <rect x="180" y="170" width="652" height="24" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="420" y="170" width="52" height="24" rx="5" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="446" y="187" text-anchor="middle" font-size="12" font-weight="600" fill="#1d4ed8">6</text>
+  <text x="850" y="187" text-anchor="end" font-size="12" fill="#166534" font-weight="600">→ good</text>
+
+  <!-- шаг 2 -->
+  <text x="30" y="228" font-size="13" font-weight="600" fill="#0f172a">Шаг 2</text>
+  <rect x="480" y="212" width="352" height="24" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="600" y="212" width="52" height="24" rx="5" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="626" y="229" text-anchor="middle" font-size="12" font-weight="600" fill="#1d4ed8">9</text>
+  <text x="850" y="229" text-anchor="end" font-size="12" fill="#b91c1c" font-weight="600">→ bad</text>
+
+  <!-- шаг 3 -->
+  <text x="30" y="270" font-size="13" font-weight="600" fill="#0f172a">Шаг 3</text>
+  <rect x="480" y="254" width="172" height="24" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="540" y="254" width="52" height="24" rx="5" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="566" y="271" text-anchor="middle" font-size="12" font-weight="600" fill="#1d4ed8">8</text>
+  <text x="850" y="271" text-anchor="end" font-size="12" fill="#b91c1c" font-weight="600">→ bad</text>
+
+  <!-- шаг 4 -->
+  <text x="30" y="312" font-size="13" font-weight="600" fill="#0f172a">Шаг 4</text>
+  <rect x="480" y="296" width="112" height="24" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="480" y="296" width="52" height="24" rx="5" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="506" y="313" text-anchor="middle" font-size="12" font-weight="600" fill="#1d4ed8">7</text>
+  <text x="850" y="313" text-anchor="end" font-size="12" fill="#166534" font-weight="600">→ good</text>
+
+  <!-- результат -->
+  <rect x="120" y="340" width="712" height="36" rx="8" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="476" y="364" text-anchor="middle" font-size="14" font-weight="600" fill="#b91c1c">Коммит 8 — первый сломанный: 7 ещё хороший, 8 уже плохой</text>
+
+  <text x="450" y="404" text-anchor="middle" font-size="14" fill="#334155">Четыре проверки вместо одиннадцати. На тысяче коммитов — <tspan font-weight="600">десять вместо тысячи</tspan>.</text>
+  <text x="450" y="424" text-anchor="middle" font-size="13" fill="#64748b">Отсюда требование к коммитам: маленький и осмысленный коммит сразу показывает причину, коммит на 900 строк — нет.</text>
+</svg>
