@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="492" viewBox="0 0 920 492" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="492" fill="#ffffff"/>
+  <text x="460" y="30" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Один и тот же стереофайл — две раскладки массива</text>
+
+  <!-- ── файл ── -->
+  <text x="460" y="60" text-anchor="middle" font-size="13" fill="#64748b">внутри wav сэмплы каналов просто чередуются подряд</text>
+  <rect x="310" y="70" width="50" height="32" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+  <text x="335" y="91" text-anchor="middle" font-size="13" fill="#1e3a8a">L0</text>
+  <rect x="360" y="70" width="50" height="32" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+  <text x="385" y="91" text-anchor="middle" font-size="13" fill="#7c2d12">R0</text>
+  <rect x="410" y="70" width="50" height="32" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+  <text x="435" y="91" text-anchor="middle" font-size="13" fill="#1e3a8a">L1</text>
+  <rect x="460" y="70" width="50" height="32" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+  <text x="485" y="91" text-anchor="middle" font-size="13" fill="#7c2d12">R1</text>
+  <rect x="510" y="70" width="50" height="32" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+  <text x="535" y="91" text-anchor="middle" font-size="13" fill="#1e3a8a">L2</text>
+  <rect x="560" y="70" width="50" height="32" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+  <text x="585" y="91" text-anchor="middle" font-size="13" fill="#7c2d12">R2</text>
+  <text x="622" y="91" font-size="14" fill="#64748b">…</text>
+  <text x="335" y="122" text-anchor="middle" font-size="13" font-weight="600" fill="#334155">stereo.wav</text>
+
+  <path d="M 300 100 L 190 148" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#a1)"/>
+  <path d="M 620 100 L 700 148" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#a1)"/>
+
+  <!-- ── слева: soundfile ── -->
+  <text x="60" y="176" font-size="15" font-weight="600" fill="#1d4ed8">sf.read → (44100, 2)</text>
+  <text x="60" y="196" font-size="13" fill="#64748b">канал — последнее измерение</text>
+
+  <text x="171" y="220" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a">L</text>
+  <text x="216" y="220" text-anchor="middle" font-size="13" font-weight="600" fill="#7c2d12">R</text>
+  <rect x="148" y="228" width="46" height="140" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.8"/>
+  <rect x="194" y="228" width="46" height="140" fill="#ffedd5" stroke="#c2410c" stroke-width="1.8"/>
+  <line x1="148" y1="256" x2="240" y2="256" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="148" y1="284" x2="240" y2="284" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="148" y1="312" x2="240" y2="312" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="148" y1="340" x2="240" y2="340" stroke="#94a3b8" stroke-width="1"/>
+  <text x="135" y="298" text-anchor="middle" font-size="13" fill="#334155" transform="rotate(-90 135 298)">44100 сэмплов</text>
+
+  <text x="270" y="252" font-size="14" font-weight="600" fill="#166534">len(x) = 44100</text>
+  <text x="270" y="274" font-size="14" fill="#166534">44100 / 22050 = 2.0 с,</text>
+  <text x="270" y="294" font-size="14" fill="#166534">длительность верна</text>
+  <text x="270" y="322" font-size="13" fill="#334155">Канал последним кладёт</text>
+  <text x="270" y="340" font-size="13" fill="#334155">и ffmpeg для кадров видео:</text>
+  <text x="270" y="358" font-size="13" fill="#334155">ближе к порядку байт в файле.</text>
+
+  <line x1="460" y1="168" x2="460" y2="404" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- ── справа: librosa / torchaudio ── -->
+  <text x="500" y="176" font-size="14" font-weight="600" fill="#1d4ed8">librosa(mono=False), torchaudio → (2, 44100)</text>
+  <text x="500" y="196" font-size="13" fill="#64748b">канал — первое измерение</text>
+
+  <text x="490" y="245" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a">L</text>
+  <text x="490" y="277" text-anchor="middle" font-size="13" font-weight="600" fill="#7c2d12">R</text>
+  <rect x="504" y="228" width="336" height="28" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.8"/>
+  <rect x="504" y="256" width="336" height="28" fill="#ffedd5" stroke="#c2410c" stroke-width="1.8"/>
+  <line x1="560" y1="228" x2="560" y2="284" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="616" y1="228" x2="616" y2="284" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="672" y1="228" x2="672" y2="284" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="728" y1="228" x2="728" y2="284" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="784" y1="228" x2="784" y2="284" stroke="#94a3b8" stroke-width="1"/>
+  <text x="672" y="302" text-anchor="middle" font-size="13" fill="#334155">44100 сэмплов</text>
+
+  <text x="500" y="330" font-size="14" font-weight="600" fill="#b91c1c">len(x) = 2</text>
+  <text x="500" y="352" font-size="14" fill="#b91c1c">2 / 22050 = 0.00009 с — молча мимо</text>
+  <text x="500" y="378" font-size="13" fill="#334155">Зато каждый канал — готовая строка</text>
+  <text x="500" y="396" font-size="13" fill="#334155">матрицы: так удобнее дальше по конвейеру.</text>
+
+  <rect x="40" y="424" width="840" height="48" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="460" y="444" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">Оба соглашения законны, wav ни одно из них не навязывает.</text>
+  <text x="460" y="464" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">Исключения не будет — будет тихо неверная длительность, поэтому печатаем .shape, а не len().</text>
+</svg>
