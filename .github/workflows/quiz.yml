@@ -1,0 +1,44 @@
+name: quiz
+
+# Две проверки сервиса пятиминуток:
+#
+# 1. Линтер банков вопросов. Банк хранится в markdown с жёсткой разметкой
+#    (docs/adr/0007), а такой формат ломается молча: лишняя пустая строка или
+#    забытая звёздочка меняют смысл вопроса и всплывают только перед аудиторией
+#    с идущим таймером. Этот шаг — единственное место, где поломка становится
+#    громкой, поэтому он обязателен.
+# 2. Тесты самого сервиса.
+#
+# Оба шага запускаются, только когда PR трогает пятиминутки: остальным авторам
+# курса не за что ждать установку fastapi.
+#
+# Близнец .gitea/workflows/quiz.yml — правьте оба файла вместе.
+
+on:
+  push:
+    branches: [main]
+    paths: ['quiz/**', 'tools/lint_quiz_banks.py', '.github/workflows/quiz.yml']
+  pull_request:
+    paths: ['quiz/**', 'tools/lint_quiz_banks.py', '.github/workflows/quiz.yml']
+  workflow_dispatch:
+
+jobs:
+  quiz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Линтеру зависимости не нужны: он использует тот же парсер, что и сервис,
+      # а парсер — чистая стандартная библиотека.
+      - name: Проверить банки вопросов
+        run: python3 tools/lint_quiz_banks.py --stats
+
+      - name: Поставить зависимости сервиса
+        run: pip install -e 'quiz/service[dev]'
+
+      - name: Тесты сервиса
+        run: cd quiz/service && python3 -m pytest -q

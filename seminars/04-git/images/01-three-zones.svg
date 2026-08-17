@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="370" viewBox="0 0 940 370" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#166534"/>
+    </marker>
+    <marker id="arrL" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309"/>
+    </marker>
+  </defs>
+
+  <rect width="940" height="370" fill="#ffffff"/>
+  <text x="470" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Три зоны git</text>
+
+  <!-- зоны -->
+  <g>
+    <rect x="30" y="80" width="200" height="110" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+    <text x="130" y="115" text-anchor="middle" font-size="17" font-weight="600" fill="#0f172a">Рабочая копия</text>
+    <text x="130" y="139" text-anchor="middle" font-size="13" fill="#64748b">working tree</text>
+    <text x="130" y="167" text-anchor="middle" font-size="13" fill="#334155">файлы на диске</text>
+  </g>
+  <g>
+    <rect x="370" y="80" width="200" height="110" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+    <text x="470" y="115" text-anchor="middle" font-size="17" font-weight="600" fill="#0f172a">Индекс</text>
+    <text x="470" y="139" text-anchor="middle" font-size="13" fill="#64748b">staging area</text>
+    <text x="470" y="167" text-anchor="middle" font-size="13" fill="#334155">черновик коммита</text>
+  </g>
+  <g>
+    <rect x="710" y="80" width="200" height="110" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+    <text x="810" y="115" text-anchor="middle" font-size="17" font-weight="600" fill="#0f172a">Репозиторий</text>
+    <text x="810" y="139" text-anchor="middle" font-size="13" fill="#64748b">.git</text>
+    <text x="810" y="167" text-anchor="middle" font-size="13" fill="#334155">история коммитов</text>
+  </g>
+
+  <!-- вперёд -->
+  <text x="300" y="112" text-anchor="middle" font-size="13" fill="#166534" font-weight="600">git add</text>
+  <line x1="234" y1="122" x2="366" y2="122" stroke="#166534" stroke-width="2" marker-end="url(#arrR)"/>
+  <text x="640" y="112" text-anchor="middle" font-size="13" fill="#166534" font-weight="600">git commit</text>
+  <line x1="574" y1="122" x2="706" y2="122" stroke="#166534" stroke-width="2" marker-end="url(#arrR)"/>
+
+  <!-- назад -->
+  <line x1="366" y1="158" x2="234" y2="158" stroke="#b45309" stroke-width="2" marker-end="url(#arrL)"/>
+  <text x="300" y="178" text-anchor="middle" font-size="12" fill="#b45309" font-weight="600">git restore</text>
+  <line x1="706" y1="158" x2="574" y2="158" stroke="#b45309" stroke-width="2" marker-end="url(#arrL)"/>
+  <text x="640" y="178" text-anchor="middle" font-size="12" fill="#b45309" font-weight="600">git restore --staged</text>
+
+  <!-- что с чем сравнивают -->
+  <g stroke="#1d4ed8" stroke-width="2" fill="none">
+    <path d="M 130 218 L 130 228 L 470 228 L 470 218"/>
+    <path d="M 470 262 L 470 272 L 810 272 L 810 262"/>
+    <path d="M 130 306 L 130 316 L 810 316 L 810 306"/>
+  </g>
+  <text x="300" y="248" text-anchor="middle" font-size="14" fill="#1d4ed8" font-weight="600">git diff</text>
+  <text x="640" y="292" text-anchor="middle" font-size="14" fill="#1d4ed8" font-weight="600">git diff --cached</text>
+  <text x="470" y="336" text-anchor="middle" font-size="14" fill="#1d4ed8" font-weight="600">git diff HEAD</text>
+
+  <text x="470" y="360" text-anchor="middle" font-size="13" fill="#64748b">Каждая команда сравнения работает со своей парой зон — отсюда «после git add диff опустел»</text>
+</svg>
