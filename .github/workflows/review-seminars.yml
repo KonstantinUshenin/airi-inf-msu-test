@@ -1,0 +1,113 @@
+name: review-seminars
+
+# Смысловое ревью изменений в семинарах: то, что линтер проверить не может —
+# дублирование тем между семинарами, порядок понятий, выводится ли ответ на
+# вопрос из демки, честные ли уровни задач.
+#
+# Ревьюер — `tools/review_seminars.py`, один запрос к DeepSeek V4 Pro на каждый
+# изменённый семинар. Ключ берётся из секрета репозитория DEEPSEEK_API_KEY;
+# если секрета нет, джоба тихо пропускается.
+#
+# Раньше здесь работал агент opencode, которому отдавали дифф. Отказались по
+# двум причинам: агент сам решал, какие файлы открыть, и мог отревьюить материал,
+# не прочитав его целиком; и прогон было нечем мерить. Скрипт всегда собирает
+# полный текст семинара, строку плана курса и оглавления соседних семинаров, так
+# что вход воспроизводим, а промпт можно замерять на эталоне из реальных
+# замечаний преподавателя — см. tools/review_eval/.
+#
+# Ревью идёт в два независимых прохода со своими бюджетами пунктов:
+# .github/seminar-review-prompt.md — содержание и методика (12 пунктов),
+# .github/seminar-review-prompt-tech.md — исполнимость демки и факты (8).
+# При одном общем списке технические замечания находятся первыми и вытесняют
+# содержательные; замер это подтвердил. Критерии правьте в этих двух файлах,
+# workflow трогать не нужно.
+
+on:
+  pull_request:
+    paths:
+      - "seminars/**"
+      - "lectures/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Проверить, что ключ DeepSeek настроен
+        id: guard
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          if [ -z "$DEEPSEEK_API_KEY" ]; then
+            echo "секрет DEEPSEEK_API_KEY не задан — ревью пропускаем"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Собрать список изменённых файлов
+        if: steps.guard.outputs.ready == 'true'
+        env:
+          BASE: ${{ github.base_ref }}
+        run: |
+          git fetch --no-tags origin "$BASE"
+          git diff --name-only "origin/$BASE...HEAD" > changed_files.txt
+          echo "--- изменённые файлы ---"
+          cat changed_files.txt
+
+      - name: Прогнать ревью
+        if: steps.guard.outputs.ready == 'true'
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          python3 tools/review_seminars.py \
+            --changed-files changed_files.txt \
+            --out review_output.txt
+          if [ ! -s review_output.txt ]; then
+            echo "ревью пустое — изменённых семинаров нет" > review_output.txt
+          fi
+
+          echo "--- ответ модели ---"
+          cat review_output.txt
+
+      - name: Опубликовать ревью комментарием
+        if: steps.guard.outputs.ready == 'true' && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          MARKER: "<!-- opencode-seminar-review -->"
+        run: |
+          {
+            echo "<!-- opencode-seminar-review -->"
+            echo "🤖 **Смысловое ревью семинаров** (DeepSeek V4 Pro). Формальные правила проверяет \`lint-seminars\`."
+            echo
+            cat review_output.txt
+            echo
+            echo "_Это подсказка автору, а не приговор: модель читает материалы без контекста занятия и может ошибаться. На эталоне из реальных замечаний преподавателя промпт находит меньше половины — молчание ревью ничего не доказывает._"
+          } > comment.md
+
+          # Обновляем свой предыдущий комментарий, чтобы не плодить их на каждый
+          # push. Ищем его ПО МАРКЕРУ, а не через `--edit-last`: в этих же PR
+          # комментирует colab-links, и оба комментария принадлежат одному и
+          # тому же github-actions[bot]. «Последний свой» регулярно оказывался
+          # комментарием со ссылками на Colab, и ревью затирало его собой —
+          # ссылки в PR просто исчезали.
+          ID=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+                 --jq ".[] | select(.body | startswith(\"$MARKER\")) | .id" \
+               | tail -n 1)
+
+          if [ -n "$ID" ]; then
+            jq -Rs '{body: .}' comment.md \
+              | gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$ID" --input - >/dev/null
+            echo "комментарий $ID обновлён"
+          else
+            gh pr comment "$PR" --body-file comment.md
+          fi

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="440" viewBox="0 0 900 440" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#15803d"/>
+    </marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#be123c"/>
+    </marker>
+    <marker id="k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="440" fill="#ffffff"/>
+  <text x="450" y="30" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Как работает команда: все ветвятся от main и вливаются обратно</text>
+
+  <!-- ветка Ани: свой файл -->
+  <path d="M 150 250 C 195 250 200 130 250 130 L 470 130 C 520 130 525 250 570 250" fill="none" stroke="#15803d" stroke-width="3" marker-end="url(#g)"/>
+  <circle cx="300" cy="130" r="7" fill="#15803d"/>
+  <circle cx="400" cy="130" r="7" fill="#15803d"/>
+  <text x="256" y="112" font-size="13" font-weight="600" fill="#15803d">feature/plot — Аня правит plot.py</text>
+
+  <!-- ветка Бори: другой файл -->
+  <path d="M 210 250 C 255 250 260 190 310 190 L 520 190 C 570 190 575 250 620 250" fill="none" stroke="#15803d" stroke-width="3" marker-end="url(#g)"/>
+  <circle cx="380" cy="190" r="7" fill="#15803d"/>
+  <text x="316" y="176" font-size="13" font-weight="600" fill="#15803d">feature/loader — Боря правит data.py</text>
+
+  <!-- main -->
+  <line x1="60" y1="250" x2="860" y2="250" stroke="#334155" stroke-width="4" marker-end="url(#k)"/>
+  <circle cx="110" cy="250" r="8" fill="#334155"/>
+  <circle cx="150" cy="250" r="8" fill="#334155"/>
+  <circle cx="210" cy="250" r="8" fill="#334155"/>
+  <circle cx="290" cy="250" r="8" fill="#334155"/>
+  <circle cx="570" cy="250" r="9" fill="#15803d"/>
+  <circle cx="620" cy="250" r="9" fill="#15803d"/>
+  <circle cx="760" cy="250" r="9" fill="#be123c"/>
+  <text x="66" y="278" font-size="14" font-weight="600" fill="#334155">main</text>
+  <text x="455" y="292" font-size="12" fill="#15803d">слилось само, без конфликта</text>
+  <text x="770" y="292" text-anchor="middle" font-size="12" font-weight="600" fill="#be123c">конфликт: править руками</text>
+
+  <!-- ветка Веры: тот же файл, что у Ани -->
+  <path d="M 290 250 C 335 250 340 350 390 350 L 660 350 C 710 350 715 250 760 250" fill="none" stroke="#be123c" stroke-width="3" stroke-dasharray="7 4" marker-end="url(#r)"/>
+  <circle cx="450" cy="350" r="7" fill="#be123c"/>
+  <circle cx="560" cy="350" r="7" fill="#be123c"/>
+  <text x="396" y="374" font-size="13" font-weight="600" fill="#be123c">feature/legend — Вера правит те же строки в plot.py</text>
+
+  <text x="450" y="410" text-anchor="middle" font-size="13.5" fill="#0f172a">Ветка стоит 41 байт, поэтому каждый начинает свою от main и вливает обратно.</text>
+  <text x="450" y="430" text-anchor="middle" font-size="13.5" fill="#0f172a">Независимые изменения git сливает сам; одни и те же строки — это конфликт, и решать его человеку.</text>
+</svg>

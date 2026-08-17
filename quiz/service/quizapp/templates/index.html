@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Пятиминутки</h1>
+<p>Чтобы пройти пятиминутку, отсканируйте QR-код с розданной бумажки
+или введите код с неё.</p>
+
+<form class="row" onsubmit="event.preventDefault(); const t=this.code.value.replace(/[^0-9A-Za-z]/g,'').toUpperCase(); if(t) location.href='/t/'+t;">
+  <input type="text" name="code" placeholder="KM4P-2QXZ" autocomplete="off" autocapitalize="characters">
+  <button type="submit">Войти</button>
+</form>
+
+<p class="muted">Преподавателю — <a href="/teacher">сюда</a>.</p>
+{% endblock %}
