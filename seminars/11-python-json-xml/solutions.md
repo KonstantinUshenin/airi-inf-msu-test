@@ -1,5 +1,10 @@
 # Примеры решений
 
+Все решения запускаются из каталога семинара (`~/seminar-11/`) после
+`./generate.sh`: входные файлы читаются из `assets/{ID}/`, результаты
+создаются в текущем каталоге. Для M3, H1 и H4 нужен запущенный учебный сервер
+(`uv run uvicorn api_server:app --app-dir assets --port 8000`).
+
 ## База
 
 ### B1
@@ -7,7 +12,7 @@
 ```python
 import json
 
-with open("students.json", encoding="utf-8") as file:
+with open("assets/B1/students.json", encoding="utf-8") as file:
     students = json.load(file)
 
 scores = []
@@ -31,7 +36,7 @@ with open("summary.json", "w", encoding="utf-8") as file:
 ```python
 import json
 
-with open("students.json", encoding="utf-8") as file:
+with open("assets/B2/students.json", encoding="utf-8") as file:
     students = json.load(file)
 
 passed = []
@@ -92,7 +97,7 @@ with open("measurements-summary.json", "w", encoding="utf-8") as file:
 ```python
 import json
 
-with open("records.json", encoding="utf-8") as file:
+with open("assets/B4/records.json", encoding="utf-8") as file:
     records = json.load(file)
 
 valid = []
@@ -124,7 +129,7 @@ with open("errors.json", "w", encoding="utf-8") as file:
 import json
 import xml.etree.ElementTree as ET
 
-root = ET.parse("books.xml").getroot()
+root = ET.parse("assets/B5/books.xml").getroot()
 books = []
 counts = {}
 for catalog in root.findall("catalog"):
@@ -158,7 +163,7 @@ with open("books-summary.json", "w", encoding="utf-8") as file:
 import json
 from lxml import etree
 
-document = etree.parse("books.xml")
+document = etree.parse("assets/M1/books.xml")
 result = {
     "current_expensive_titles": document.xpath(
         "/library/catalog[@kind='current']/book[price > 1000]/title/text()"
@@ -179,7 +184,7 @@ with open("xpath-result.json", "w", encoding="utf-8") as file:
 import json
 import xml.etree.ElementTree as ET
 
-with open("students.json", encoding="utf-8") as file:
+with open("assets/M2/students.json", encoding="utf-8") as file:
     students = json.load(file)
 
 root = ET.Element("students")
@@ -232,7 +237,7 @@ from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 
 base_url = "https://example.test/catalog/page.html"
-with open("page.html", encoding="utf-8") as file:
+with open("assets/M4/page.html", encoding="utf-8") as file:
     soup = BeautifulSoup(file, "html.parser")
 
 links = []
@@ -256,7 +261,7 @@ with open("page.json", "w", encoding="utf-8") as file:
 import json
 from bs4 import BeautifulSoup
 
-with open("products.html", encoding="utf-8") as file:
+with open("assets/M5/products.html", encoding="utf-8") as file:
     soup = BeautifulSoup(file, "html.parser")
 
 products = []
@@ -325,7 +330,7 @@ with open("query-post.json", "w", encoding="utf-8") as file:
 import json
 import xml.etree.ElementTree as ET
 
-with open("data.json", encoding="utf-8") as file:
+with open("assets/H2/data.json", encoding="utf-8") as file:
     source = json.load(file)
 
 root = ET.Element("records")
@@ -362,7 +367,7 @@ with open("restored.json", "w", encoding="utf-8") as file:
 import json
 from bs4 import BeautifulSoup
 
-with open("table.html", encoding="utf-8") as file:
+with open("assets/H3/table.html", encoding="utf-8") as file:
     soup = BeautifulSoup(file, "html.parser")
 
 products = []
@@ -428,7 +433,7 @@ from pathlib import Path
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 
-pages = Path("pages").resolve()
+pages = Path("assets/H5/pages").resolve()
 pending = [pages / "page1.html"]
 visited = set()
 products = {}

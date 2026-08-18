@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="470" viewBox="0 0 1000 470" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arrDown" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#166534"/>
+    </marker>
+    <marker id="arrOut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="470" fill="#ffffff"/>
+  <text x="500" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Четыре этажа, на которых «ошибка» означает разное</text>
+  <text x="500" y="54" text-anchor="middle" font-size="13" fill="#64748b">данные проходят их сверху вниз; проверять надо в этом же порядке</text>
+
+  <!-- этаж 1 -->
+  <rect x="40" y="80" width="460" height="66" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="60" y="106" font-size="15" font-weight="600" fill="#0f172a">1. Транспорт — HTTP-ответа нет вовсе</text>
+  <text x="60" y="130" font-size="13" fill="#475569">нет сети, порт закрыт, сервер не успел ответить</text>
+  <line x1="504" y1="113" x2="600" y2="113" stroke="#b91c1c" stroke-width="2" marker-end="url(#arrOut)"/>
+  <rect x="606" y="92" width="360" height="42" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="622" y="118" font-size="13.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#7f1d1d">ConnectionError, Timeout</text>
+
+  <line x1="270" y1="146" x2="270" y2="172" stroke="#166534" stroke-width="2" marker-end="url(#arrDown)"/>
+  <text x="286" y="166" font-size="12.5" fill="#166534" font-weight="600">этаж пройден — идём ниже</text>
+
+  <!-- этаж 2 -->
+  <rect x="40" y="178" width="460" height="66" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="60" y="204" font-size="15" font-weight="600" fill="#0f172a">2. HTTP — ответ есть, статус 4xx или 5xx</text>
+  <text x="60" y="228" font-size="13" fill="#475569">4xx: виноват запрос клиента · 5xx: виноват сервер</text>
+  <line x1="504" y1="211" x2="600" y2="211" stroke="#b91c1c" stroke-width="2" marker-end="url(#arrOut)"/>
+  <rect x="606" y="190" width="360" height="42" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="622" y="216" font-size="13.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#7f1d1d">raise_for_status() → HTTPError</text>
+
+  <line x1="270" y1="244" x2="270" y2="270" stroke="#166534" stroke-width="2" marker-end="url(#arrDown)"/>
+
+  <!-- этаж 3 -->
+  <rect x="40" y="276" width="460" height="66" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="60" y="302" font-size="15" font-weight="600" fill="#0f172a">3. Формат тела — статус 200, но тело не JSON</text>
+  <text x="60" y="326" font-size="13" fill="#475569">HTML со страницей ошибки, пустое тело, обрезанный ответ</text>
+  <line x1="504" y1="309" x2="600" y2="309" stroke="#b91c1c" stroke-width="2" marker-end="url(#arrOut)"/>
+  <rect x="606" y="288" width="360" height="42" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="622" y="314" font-size="13.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#7f1d1d">.json() → JSONDecodeError</text>
+
+  <line x1="270" y1="342" x2="270" y2="368" stroke="#166534" stroke-width="2" marker-end="url(#arrDown)"/>
+
+  <!-- этаж 4 -->
+  <rect x="40" y="374" width="460" height="66" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="60" y="400" font-size="15" font-weight="600" fill="#0f172a">4. Данные — JSON разобран, структура не та</text>
+  <text x="60" y="424" font-size="13" fill="#475569">нет обязательного поля, вместо списка объект, число строкой</text>
+  <line x1="504" y1="407" x2="600" y2="407" stroke="#b91c1c" stroke-width="2" marker-end="url(#arrOut)"/>
+  <rect x="606" y="386" width="360" height="42" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="622" y="412" font-size="13.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#7f1d1d">тишина: проверяет ваш код</text>
+
+  <text x="500" y="460" text-anchor="middle" font-size="13.5" fill="#0f172a">Первые три этажа за вас проверит библиотека, четвёртый — только ваш код</text>
+</svg>

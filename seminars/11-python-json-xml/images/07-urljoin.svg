@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="390" viewBox="0 0 1000 390" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="ujArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="390" fill="#ffffff"/>
+  <text x="500" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Один ведущий слэш — и ссылка склеивается иначе</text>
+  <text x="500" y="54" text-anchor="middle" font-size="13" fill="#64748b">на странице лежат относительные адреса; чтобы скачать их, нужен абсолютный</text>
+
+  <!-- база -->
+  <text x="40" y="92" font-size="12.5" fill="#64748b">адрес страницы, где нашли ссылку (база):</text>
+  <rect x="40" y="102" width="230" height="34" rx="6" fill="#e0e7ff" stroke="#4338ca" stroke-width="2"/>
+  <text x="155" y="124" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#312e81">https://example.test</text>
+  <rect x="270" y="102" width="110" height="34" rx="6" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+  <text x="325" y="124" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#78350f">/catalog/</text>
+  <rect x="380" y="102" width="120" height="34" rx="6" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="440" y="124" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">page.html</text>
+  <text x="155" y="152" text-anchor="middle" font-size="11.5" fill="#4338ca">схема и хост</text>
+  <text x="325" y="152" text-anchor="middle" font-size="11.5" fill="#b45309">каталог</text>
+  <text x="440" y="152" text-anchor="middle" font-size="11.5" fill="#64748b">имя файла</text>
+
+  <line x1="40" y1="170" x2="960" y2="170" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- случай 1 -->
+  <rect x="40" y="184" width="250" height="30" rx="6" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="52" y="204" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">"py.html"</text>
+  <line x1="296" y1="199" x2="330" y2="199" stroke="#475569" stroke-width="2" marker-end="url(#ujArr)"/>
+  <text x="340" y="204" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a"><tspan fill="#312e81">https://example.test</tspan><tspan fill="#78350f">/catalog/</tspan><tspan fill="#166534" font-weight="600">py.html</tspan></text>
+  <text x="700" y="204" font-size="12.5" fill="#475569">заменилось только имя файла</text>
+
+  <!-- случай 2 -->
+  <rect x="40" y="228" width="250" height="30" rx="6" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="52" y="248" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">"/books/linux.html"</text>
+  <line x1="296" y1="243" x2="330" y2="243" stroke="#475569" stroke-width="2" marker-end="url(#ujArr)"/>
+  <text x="340" y="248" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a"><tspan fill="#312e81">https://example.test</tspan><tspan fill="#166534" font-weight="600">/books/linux.html</tspan></text>
+  <text x="700" y="248" font-size="12.5" fill="#475569">каталог отброшен целиком</text>
+
+  <!-- случай 3 -->
+  <rect x="40" y="272" width="250" height="30" rx="6" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="52" y="292" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">"https://other.test/x"</text>
+  <line x1="296" y1="287" x2="330" y2="287" stroke="#475569" stroke-width="2" marker-end="url(#ujArr)"/>
+  <text x="340" y="292" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#166534" font-weight="600">https://other.test/x</text>
+  <text x="700" y="292" font-size="12.5" fill="#475569">база не участвует вообще</text>
+
+  <text x="500" y="340" text-anchor="middle" font-size="13.5" fill="#0f172a">Ведущий <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">/</tspan> — от корня сайта; без него — от каталога текущей страницы.</text>
+  <text x="500" y="366" text-anchor="middle" font-size="12.5" fill="#64748b">Считать это руками не надо: <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">urljoin(base, href)</tspan> знает и про <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">../</tspan>, и про уже абсолютные адреса.</text>
+</svg>

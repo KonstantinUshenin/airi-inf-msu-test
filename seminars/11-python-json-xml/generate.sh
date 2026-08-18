@@ -9,13 +9,13 @@ rm -rf -- "$assets_dir"
 mkdir -p \
   "$assets_dir/B1" "$assets_dir/B2" "$assets_dir/B3" "$assets_dir/B4" "$assets_dir/B5" \
   "$assets_dir/M1" "$assets_dir/M2" "$assets_dir/M4" "$assets_dir/M5" \
-  "$assets_dir/H2" "$assets_dir/H3" "$assets_dir/H5/pages" \
-  "$assets_dir/HOME1" "$assets_dir/HOME2" "$assets_dir/HOME3/pages"
+  "$assets_dir/H2" "$assets_dir/H3" "$assets_dir/H5/pages" "$assets_dir/H5/products" \
+  "$assets_dir/HOME1" "$assets_dir/HOME2" "$assets_dir/HOME3/pages" "$assets_dir/HOME3/products"
 
 cat > "$assets_dir/api_server.py" <<'PY'
 import json
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 
 
 app = FastAPI(title="Seminar 11 API")
@@ -76,6 +76,39 @@ def items(page: int = 1, per_page: int = 2):
     selected = ITEMS[start:start + per_page]
     next_page = page + 1 if start + per_page < len(ITEMS) else None
     return {"items": selected, "next": next_page}
+
+
+# Три эндпоинта-двойника httpbin.org: демка разделов 4-5 должна работать и
+# без внешней сети. Совпадают по смыслу с httpbin /get, /status/{code}, /html.
+@app.get("/get")
+def get_echo(request: Request):
+    return {
+        "args": dict(request.query_params),
+        "headers": dict(request.headers),
+        "url": str(request.url),
+    }
+
+
+# Только POST — как и у httpbin: на QUERY оба отвечают 405, и демка ведёт себя
+# одинаково с сетью и без неё. QUERY живёт отдельно, на /echo (задача H1).
+@app.post("/anything")
+async def anything(request: Request):
+    raw_body = await request.body()
+    return {
+        "method": request.method,
+        "json": json.loads(raw_body) if raw_body else None,
+    }
+
+
+@app.get("/status/{code}")
+def status(code: int):
+    return Response(status_code=code)
+
+
+@app.get("/html")
+def html():
+    page = "<html><body><h1>Herman Melville - Moby-Dick</h1></body></html>"
+    return Response(content=page, media_type="text/html; charset=utf-8")
 
 
 @app.get("/v1/models")
@@ -236,6 +269,15 @@ cat > "$assets_dir/H5/pages/page3.html" <<'EOF'
 </body></html>
 EOF
 
+# Карточки товаров, на которые ссылаются страницы: без них ссылки в products.json
+# вели бы в никуда, и студент не смог бы проверить результат.
+for product in keyboard mouse monitor; do
+  for target in "$assets_dir/H5/products" "$assets_dir/HOME3/products"; do
+    printf '<!doctype html><html><body><h1>%s</h1></body></html>\n' "$product" \
+      > "$target/$product.html"
+  done
+done
+
 cat > "$assets_dir/HOME1/catalog.json" <<'EOF'
 [
   {"id": 1, "name": "Keyboard", "price": 4900},
@@ -244,6 +286,30 @@ cat > "$assets_dir/HOME1/catalog.json" <<'EOF'
   {"id": 4, "name": "Mouse", "price": 2100.5}
 ]
 EOF
-cp -R "$assets_dir/H5/pages/." "$assets_dir/HOME3/pages/"
+# Страницы домашней работы намеренно отличаются от H5: здесь есть ошибочные
+# карточки (без ссылки, с пустым названием) и ссылка на несуществующую страницу.
+cat > "$assets_dir/HOME3/pages/page1.html" <<'EOF'
+<!doctype html><html><body>
+  <article class="product"><a href="../products/keyboard.html">Keyboard</a></article>
+  <article class="product"><span>Товар без ссылки</span></article>
+  <a class="page" href="page2.html">Next</a>
+</body></html>
+EOF
+cat > "$assets_dir/HOME3/pages/page2.html" <<'EOF'
+<!doctype html><html><body>
+  <article class="product"><a href="../products/mouse.html">Mouse</a></article>
+  <article class="product"><a href="../products/keyboard.html">Keyboard duplicate</a></article>
+  <article class="product"><a href="../products/monitor.html"></a></article>
+  <a class="page" href="page1.html">Back</a>
+  <a class="page" href="page3.html">Next</a>
+</body></html>
+EOF
+cat > "$assets_dir/HOME3/pages/page3.html" <<'EOF'
+<!doctype html><html><body>
+  <article class="product"><a href="../products/monitor.html">Monitor</a></article>
+  <a class="page" href="page2.html">Back</a>
+  <a class="page" href="page4.html">Страницы нет</a>
+</body></html>
+EOF
 
 echo "Created $assets_dir"
