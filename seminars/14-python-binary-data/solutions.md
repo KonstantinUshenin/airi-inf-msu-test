@@ -59,14 +59,9 @@ np.savez_compressed(
 import json
 import numpy as np
 
-np.random.seed(42)
-first = np.random.normal(size=100)
-
-np.random.seed(42)
-same = np.random.normal(size=100)
-
-np.random.seed(43)
-different = np.random.normal(size=100)
+first = np.random.default_rng(42).normal(size=100)
+same = np.random.default_rng(42).normal(size=100)
+different = np.random.default_rng(43).normal(size=100)
 
 np.save("sample.npy", first)
 report = {
@@ -82,9 +77,9 @@ with open("determinism.json", "w", encoding="utf-8") as file:
 ```python
 import numpy as np
 
-np.random.seed(42)
-first = np.random.normal(size=(10, 2))
-second = np.random.normal(size=(8, 4))
+rng = np.random.default_rng(42)
+first = rng.normal(size=(10, 2))
+second = rng.normal(size=(8, 4))
 
 all_values = np.concatenate([first.ravel(), second.ravel()])
 combined = all_values.reshape(13, 4)
@@ -95,6 +90,64 @@ np.savez_compressed(
     second=second,
     combined=combined,
 )
+```
+
+### B6
+
+```python
+import json
+import h5py
+import numpy as np
+
+values = np.arange(60, dtype=np.float32).reshape(20, 3)
+
+with h5py.File("experiment.h5", "w") as file:
+    experiment = file.create_group("experiment")
+    dataset = experiment.create_dataset("values", data=values)
+    dataset.attrs["units"] = "mV"
+    file.attrs["description"] = "Учебные измерения"
+
+with h5py.File("experiment.h5", "r") as file:
+    dataset = file["experiment/values"]
+    info = {
+        "name": dataset.name,
+        "shape": list(dataset.shape),
+        "dtype": str(dataset.dtype),
+        "units": dataset.attrs["units"],
+        "rows_10_12": dataset[10:13].tolist(),
+    }
+
+with open("hdf5-info.json", "w", encoding="utf-8") as file:
+    json.dump(info, file, ensure_ascii=False, indent=2)
+```
+
+### B7
+
+```python
+import json
+import pickle
+import numpy as np
+
+state = {
+    "values": np.arange(10, dtype=np.float32).reshape(5, 2),
+    "columns": ["left", "right"],
+    "rows": 5,
+}
+
+with open("state.pkl", "wb") as file:
+    pickle.dump(state, file)
+
+with open("state.pkl", "rb") as file:
+    restored = pickle.load(file)
+
+report = {
+    "keys": list(restored.keys()),
+    "shape": list(restored["values"].shape),
+    "dtype": str(restored["values"].dtype),
+    "equal": bool(np.array_equal(state["values"], restored["values"])),
+}
+with open("pickle-report.json", "w", encoding="utf-8") as file:
+    json.dump(report, file, ensure_ascii=False, indent=2)
 ```
 
 ## Среднее
@@ -228,6 +281,48 @@ info = {
 }
 with open("archive-info.json", "w", encoding="utf-8") as file:
     json.dump(info, file, ensure_ascii=False, indent=2)
+```
+
+### M6
+
+```python
+import io
+import json
+import tarfile
+import numpy as np
+
+with tarfile.open("assets/M6/dataset.tar.gz", "r:*") as archive:
+    with archive.extractfile("dataset/train.npy") as file:
+        train = np.load(io.BytesIO(file.read()), allow_pickle=False)
+    with archive.extractfile("dataset/test.npy") as file:
+        test = np.load(io.BytesIO(file.read()), allow_pickle=False)
+    with archive.extractfile("dataset/metadata.json") as file:
+        metadata = json.load(file)
+
+mean = train.mean(axis=0)
+std = train.std(axis=0)
+
+train_normalized = (train - mean) / std
+test_normalized = (test - mean) / std
+
+np.savez_compressed(
+    "split-normalized.npz",
+    train=train,
+    test=test,
+    mean=mean,
+    std=std,
+    train_normalized=train_normalized,
+    test_normalized=test_normalized,
+)
+
+report = {
+    "columns": metadata["columns"],
+    "train_shape": list(train.shape),
+    "test_shape": list(test.shape),
+    "test_mean_after": test_normalized.mean(axis=0).tolist(),
+}
+with open("split-report.json", "w", encoding="utf-8") as file:
+    json.dump(report, file, ensure_ascii=False, indent=2)
 ```
 
 ## Сложное
@@ -443,8 +538,50 @@ report = {
     "shapes": shapes,
     "filled_values": int(missing.sum()),
     "max_abs_coordinate": [int(max_row), int(max_column)],
-    "max_abs_value": float(normalized[max_row, max_column]),
+    "value_at_coordinate": float(normalized[max_row, max_column]),
 }
 with open("experiment-report.json", "w", encoding="utf-8") as file:
+    json.dump(report, file, ensure_ascii=False, indent=2)
+```
+
+### H6
+
+```python
+import json
+import tarfile
+import h5py
+import numpy as np
+
+with tarfile.open("assets/H6/dataset.tar.gz", "r:*") as archive:
+    with archive.extractfile("dataset/manifest.json") as file:
+        manifest = json.load(file)
+
+    days = {}
+    for number, name in enumerate(manifest["files"], 1):
+        with archive.extractfile(name) as file:
+            rows = json.load(file)
+        # None превращается в NaN сам, если просить вещественный тип
+        array = np.asarray(rows, dtype=np.float64)
+        if array.ndim != 2 or array.shape[1] != len(manifest["columns"]):
+            raise ValueError(f"invalid shape in {name}: {array.shape}")
+        days[f"day{number}"] = (name, array)
+
+combined = np.concatenate([array for _, array in days.values()], axis=0)
+
+with h5py.File("days.h5", "w") as file:
+    file.attrs["columns"] = manifest["columns"]
+    for day, (name, array) in days.items():
+        group = file.create_group(day)
+        group.attrs["source"] = name
+        group.create_dataset("values", data=array)
+    file.create_dataset("combined", data=combined)
+
+report = {
+    "columns": manifest["columns"],
+    "shapes": {day: list(array.shape) for day, (_, array) in days.items()},
+    "missing_per_column": np.isnan(combined).sum(axis=0).tolist(),
+    "column_mean": np.nanmean(combined, axis=0).tolist(),
+}
+with open("days-report.json", "w", encoding="utf-8") as file:
     json.dump(report, file, ensure_ascii=False, indent=2)
 ```
