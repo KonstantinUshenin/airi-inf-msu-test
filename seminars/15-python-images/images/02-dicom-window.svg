@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="394" viewBox="0 0 980 394" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#166534"/>
+    </marker>
+    <marker id="arr-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309"/>
+    </marker>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/>
+    </marker>
+    <marker id="arr-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="980" height="394" fill="#ffffff"/>
+  <text x="490" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Как из единиц Хаунсфилда получают картинку</text>
+
+  <text x="490" y="76" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">Шкала Хаунсфилда: физическая плотность ткани</text>
+  <rect x="60" y="92" width="860" height="40" rx="6" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <line x1="100" y1="92" x2="100" y2="132" stroke="#475569" stroke-width="1"/>
+  <text x="100" y="152" text-anchor="middle" font-size="11" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">-1000</text>
+  <text x="100" y="170" text-anchor="middle" font-size="11" fill="#64748b">воздух</text>
+  <line x1="203" y1="92" x2="203" y2="132" stroke="#475569" stroke-width="1"/>
+  <text x="203" y="152" text-anchor="middle" font-size="11" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">-750</text>
+  <text x="203" y="170" text-anchor="middle" font-size="11" fill="#64748b">лёгкие</text>
+  <line x1="473" y1="92" x2="473" y2="132" stroke="#475569" stroke-width="1"/>
+  <text x="451" y="152" text-anchor="middle" font-size="11" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">-90</text>
+  <text x="451" y="170" text-anchor="middle" font-size="11" fill="#64748b">жир</text>
+  <line x1="526" y1="92" x2="526" y2="132" stroke="#475569" stroke-width="1"/>
+  <text x="548" y="152" text-anchor="middle" font-size="11" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">40</text>
+  <text x="548" y="170" text-anchor="middle" font-size="11" fill="#64748b">мягкие</text>
+  <line x1="879" y1="92" x2="879" y2="132" stroke="#475569" stroke-width="1"/>
+  <text x="879" y="152" text-anchor="middle" font-size="11" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">900</text>
+  <text x="879" y="170" text-anchor="middle" font-size="11" fill="#64748b">кость</text>
+  <rect x="444" y="86" width="164" height="52" rx="4" fill="#ffffff" stroke="#1d4ed8" stroke-width="3"/>
+  <text x="526" y="200" text-anchor="middle" font-size="13" fill="#1d4ed8" font-weight="600">окно 40 / 400</text>
+  <text x="526" y="220" text-anchor="middle" font-size="11" fill="#64748b">center ± width/2</text>
+  <line x1="404" y1="236" x2="200" y2="274" stroke="#b91c1c" stroke-width="2" marker-end="url(#arr-red)"/>
+  <line x1="526" y1="236" x2="490" y2="274" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <line x1="668" y1="236" x2="800" y2="274" stroke="#b91c1c" stroke-width="2" marker-end="url(#arr-red)"/>
+  <rect x="70" y="282" width="260" height="66" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="200" y="308" text-anchor="middle" font-size="13" fill="#b91c1c" font-weight="600">ниже окна → 0</text>
+  <text x="200" y="330" text-anchor="middle" font-size="11" fill="#64748b">воздух и лёгкие сливаются в чёрный</text>
+  <rect x="360" y="282" width="260" height="66" rx="6" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="490" y="308" text-anchor="middle" font-size="13" fill="#1d4ed8" font-weight="600">внутри окна → 0…255</text>
+  <text x="490" y="330" text-anchor="middle" font-size="11" fill="#64748b">здесь вся различимая картинка</text>
+  <rect x="650" y="282" width="260" height="66" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="780" y="308" text-anchor="middle" font-size="13" fill="#b91c1c" font-weight="600">выше окна → 255</text>
+  <text x="780" y="330" text-anchor="middle" font-size="11" fill="#64748b">кость сливается в белый</text>
+
+  <text x="490" y="378" text-anchor="middle" font-size="13" fill="#64748b">Окно выбирают под задачу, а не по min/max среза: значение 40 обязано означать мягкие ткани в любом файле</text>
+</svg>

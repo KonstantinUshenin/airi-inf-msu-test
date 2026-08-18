@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="410" viewBox="0 0 980 410" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#166534"/>
+    </marker>
+    <marker id="arr-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309"/>
+    </marker>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/>
+    </marker>
+    <marker id="arr-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="980" height="410" fill="#ffffff"/>
+  <text x="490" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Один массив, два формата</text>
+
+  <rect x="370" y="62" width="240" height="54" rx="6" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="490" y="86" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">массив пикселей</text>
+  <text x="490" y="106" text-anchor="middle" font-size="12" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">(128, 128, 3) uint8</text>
+  <line x1="430" y1="122" x2="300" y2="166" stroke="#166534" stroke-width="2" marker-end="url(#arr-green)"/>
+  <line x1="550" y1="122" x2="680" y2="166" stroke="#b91c1c" stroke-width="2" marker-end="url(#arr-red)"/>
+  <rect x="40" y="174" width="420" height="190" rx="10" fill="#ffffff" stroke="#166534" stroke-width="2"/>
+  <text x="250" y="202" text-anchor="middle" font-size="15" fill="#166534" font-weight="600">PNG — без потерь</text>
+  <rect x="80" y="220" width="160" height="60" rx="6" fill="#dcfce7" stroke="#166534" stroke-width="1"/>
+  <text x="160" y="246" text-anchor="middle" font-size="13" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">38 768 Б</text>
+  <text x="160" y="266" text-anchor="middle" font-size="11" fill="#64748b">файл больше</text>
+  <rect x="260" y="220" width="160" height="60" rx="6" fill="#dcfce7" stroke="#166534" stroke-width="1"/>
+  <text x="340" y="246" text-anchor="middle" font-size="13" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">diff = 0</text>
+  <text x="340" y="266" text-anchor="middle" font-size="11" fill="#64748b">пиксели те же</text>
+  <text x="250" y="306" text-anchor="middle" font-size="13" fill="#166534" font-weight="600">маски, 16 бит, медицина, эталоны</text>
+  <text x="250" y="330" text-anchor="middle" font-size="12" fill="#64748b">пересохранять можно сколько угодно</text>
+  <rect x="520" y="174" width="420" height="190" rx="10" fill="#ffffff" stroke="#b91c1c" stroke-width="2"/>
+  <text x="730" y="202" text-anchor="middle" font-size="15" fill="#b91c1c" font-weight="600">JPEG — с потерями</text>
+  <rect x="560" y="220" width="160" height="60" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="1"/>
+  <text x="640" y="246" text-anchor="middle" font-size="13" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">2 067 Б</text>
+  <text x="640" y="266" text-anchor="middle" font-size="11" fill="#64748b">в 19 раз меньше</text>
+  <rect x="740" y="220" width="160" height="60" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="1"/>
+  <text x="820" y="246" text-anchor="middle" font-size="13" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">diff до 171</text>
+  <text x="820" y="266" text-anchor="middle" font-size="11" fill="#64748b">из 255 уровней</text>
+  <text x="730" y="306" text-anchor="middle" font-size="13" fill="#b91c1c" font-weight="600">фотодатасеты, веб</text>
+  <text x="730" y="330" text-anchor="middle" font-size="12" fill="#64748b">каждое пересохранение добавляет потери</text>
+
+  <text x="490" y="394" text-anchor="middle" font-size="13" fill="#64748b">Ошибка не в том, что JPEG хуже, а в том, что его берут туда, где важно точное значение пикселя</text>
+</svg>
