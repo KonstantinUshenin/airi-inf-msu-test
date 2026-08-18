@@ -40,7 +40,7 @@ bash -c 'echo "child-after=$COURSE_NAME"' >> environment.txt
 ### B4
 
 ```bash
-cat parts/01.txt parts/02.txt parts/03.txt > document.txt
+cat assets/B4/parts/01.txt assets/B4/parts/02.txt assets/B4/parts/03.txt > document.txt
 cp document.txt document-draft.txt
 echo 'DRAFT' >> document-draft.txt
 ```
@@ -48,10 +48,10 @@ echo 'DRAFT' >> document-draft.txt
 ### B5
 
 ```bash
-rm -- remove-me.txt
-rmdir empty-directory
-rmdir non-empty-directory 2> rmdir-error.txt
-ls -l non-empty-directory
+rm -- assets/B5/remove-me.txt
+rmdir assets/B5/empty-directory
+rmdir assets/B5/non-empty-directory 2> rmdir-error.txt
+ls -l assets/B5/non-empty-directory
 ```
 
 ## Среднее
@@ -59,29 +59,29 @@ ls -l non-empty-directory
 ### M1
 
 ```bash
-ls exists.txt missing.txt > stdout.txt 2> stderr.txt || true
-ls exists.txt missing.txt > all.txt 2>&1 || true
+ls assets/M1/exists.txt assets/M1/missing.txt > stdout.txt 2> stderr.txt || true
+ls assets/M1/exists.txt assets/M1/missing.txt > all.txt 2>&1 || true
 echo 'finished' >> all.txt
 ```
 
 ### M2
 
 ```bash
-chmod 744 run.sh
-chmod 750 shared
-stat -c '%A %a %n' run.sh shared > permissions.txt
+chmod 744 assets/M2/run.sh
+chmod 750 assets/M2/shared
+stat -c '%A %a %n' assets/M2/run.sh assets/M2/shared > permissions.txt
 ```
 
 ### M3
 
 ```bash
-cat source.txt | cat > pipeline.txt
+cat assets/M3/source.txt | cat > pipeline.txt
 
-cat missing.txt | cat
+cat assets/M3/missing.txt | cat
 echo "$?" > without-pipefail.txt
 
 set -o pipefail
-cat missing.txt | cat
+cat assets/M3/missing.txt | cat
 echo "$?" > with-pipefail.txt
 ```
 
@@ -123,6 +123,7 @@ ps -o pid,stat,cmd -p "$process_id" > states.txt
 kill -STOP "$process_id"
 ps -o pid,stat,cmd -p "$process_id" >> states.txt
 kill -CONT "$process_id"
+sleep 0.2                       # дать планировщику снять T, иначе ps успеет прочитать старое состояние
 ps -o pid,stat,cmd -p "$process_id" >> states.txt
 kill -TERM "$process_id"
 wait "$process_id" 2>/dev/null || true
@@ -132,14 +133,14 @@ ps -p "$process_id" >> states.txt 2>&1 || echo 'finished' >> states.txt
 ### H2
 
 ```bash
-mkdir -p destination
-cp -r source/. destination/
+mkdir -p assets/H2/destination
+cp -r assets/H2/source/. assets/H2/destination/
 
-source_count=$(ls source | wc -l)
-destination_count=$(ls destination | wc -l)
+source_count=$(ls assets/H2/source | wc -l)
+destination_count=$(ls assets/H2/destination | wc -l)
 
-source_sizes=$(cd source && wc -c -- *)
-destination_sizes=$(cd destination && wc -c -- *)
+source_sizes=$(cd assets/H2/source && wc -c -- *)
+destination_sizes=$(cd assets/H2/destination && wc -c -- *)
 
 {
   echo "source_count=$source_count"
@@ -209,15 +210,15 @@ exit "$status"
 ### H5
 
 ```bash
-mkdir backups/staging || exit 1
-cp -r project/. backups/staging/
+mkdir assets/H5/backups/staging || exit 1
+cp -r assets/H5/project/. assets/H5/backups/staging/
 
-project_count=$(ls project | wc -l)
-backup_count=$(ls backups/staging | wc -l)
+project_count=$(find assets/H5/project -type f | wc -l)
+backup_count=$(find assets/H5/backups/staging -type f | wc -l)
 test "$project_count" -eq "$backup_count" || exit 1
 
-project_sizes=$(cd project && wc -c -- *)
-backup_sizes=$(cd backups/staging && wc -c -- *)
+project_sizes=$(cd assets/H5/project && find . -type f -printf '%s %p\n' | sort -k2)
+backup_sizes=$(cd assets/H5/backups/staging && find . -type f -printf '%s %p\n' | sort -k2)
 
 {
   echo "project_count=$project_count"
@@ -226,8 +227,9 @@ backup_sizes=$(cd backups/staging && wc -c -- *)
   echo "$project_sizes"
   echo 'backup sizes:'
   echo "$backup_sizes"
-} > backups/verification.txt
+} > verification.txt
 
 test "$project_sizes" = "$backup_sizes" || exit 1
-mv backups/staging backups/backup-ready
+rm -rf -- assets/H5/backups/backup-ready   # иначе mv вложит staging ВНУТРЬ готовой копии
+mv assets/H5/backups/staging assets/H5/backups/backup-ready
 ```

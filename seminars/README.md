@@ -14,7 +14,9 @@
 | `demo.ipynb` | Микро-лекция: мотивация, короткая демка, вопросы для коммуникации |
 | `tasks.md` | Формулировки задач по уровням (база / среднее / сложное) |
 | `solutions.md` | Примеры решений, по одному на каждую задачу |
-| `assets/` | Необязательный: данные и файлы, нужные задачам |
+| `home.md` | Необязательный: формулировка домашней работы из колонки «Домашка» |
+| `generate.sh` | Необязательный: готовит входные данные задач в `assets/` |
+| `assets/` | Порождается `generate.sh`, в репозиторий не коммитится |
 
 Микро-лекция называется `demo.ipynb`, а не `lecture.ipynb`: настоящие лекции
 курса живут в `lectures/` и нумеруются отдельно. Подробнее — `CONTEXT.md`,
@@ -50,10 +52,10 @@ pull request в свой репозиторий задания, проверяю
 | [5](05-unix-env/) | октябрь | Unix-terminal. Настройка окружения и установка пакетов | source, venv/virtualenv, apt/snap, pip/uv, export,  ldconfig -p, systemd services, PATH, LD_LIBRARY_PATH, PYTHONPATH | Воспроизвести окружение проекта из `requirements.txt` | Николай | Dmitrii |
 | 6 | октябрь | Unix-terminal. Работа с оборудованием | lsblk, lsusb, fdisk, lspci -v<br>mount, fdisk,<br>/proc/cpuinfo, /proc/meminfo,<br>nvidia-smi, nvtop,<br>argparse, subprocesses, fork? | — | Максим | Николай |
 | 7 | октябрь | Unix-terminal. Работа с сетью | nc, scp, ifconfig, ufw, ports, netstat, ss, nslookup, dig, ping, whois, wget, curl | Диагностика недоступного сервиса | Dmitrii | Максим |
-| [8](08-unix-ssh/) | октябрь | Unix-terminal. ssh | ssh, scp, rsync, ssh-keygen, tunneling, fail2ban | SSH-ключ, `~/.ssh/config`, туннель до сервиса на сервере | Николай | Dmitrii |
+| [8](08-unix-ssh/) | октябрь | Unix-terminal. ssh | ssh, scp, rsync, ssh-keygen, ssh-agent, ~/.ssh/config, tunneling, tmux, fail2ban | SSH-ключ, `~/.ssh/config`, туннель до сервиса на сервере | Николай | Dmitrii |
 | 9 | ноябрь | Контейнеризация и облачные технологии | Виртуализация (VM против контейнера, гипервизоры, образы).<br>Docker, Docker compose.<br>Ansible как система управления конфигурацией: инвентарь, плейбук, идемпотентность.<br>aws cli, boto3 (и аналоги), s3cmd, terraform (в клауде он пока очень сырой, невозможно пользоваться)<br>Знакомство с cloud.ru | Свой контейнер + запуск на сервере | Максим | Николай |
 | 10 | ноябрь | Python. Работа с текстами | Кодировки. Операции над строками. Практикум по glob, Практикум по regexp | Парсер текстового лога на regexp | Dmitrii | Максим |
-| 11 | ноябрь | Python. Работа с json и XML | Чтение jsom, xml. XPath.<br>REST API requests.<br>Скрапинг интеренет страниц -- Beautiful soup | Забрать данные через REST API и разобрать json | Николай | Dmitrii |
+| [11](11-python-json-xml/) | ноябрь | Python. Работа с json и XML | Чтение jsom, xml. XPath.<br>REST API requests.<br>Скрапинг интеренет страниц -- Beautiful soup | Забрать данные через REST API и разобрать json | Николай | Dmitrii |
 | 12 | ноябрь | SQL | Select *, SQLite, SQLAlchemy | Запросы к SQLite по учебной базе | Максим | Николай |
 | 13 | декабрь | Pandas/Polars | pandas | Мини-исследование датасета в pandas | Dmitrii | Максим |
 | 14 | декабрь | Python. Работа с бинарными данными | Чтение npy, hdfs, pickle, tar. Практикум по numpy | Чтение и запись npy/pickle | Николай | Dmitrii |
