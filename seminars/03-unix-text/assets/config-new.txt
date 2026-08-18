@@ -1,0 +1,8 @@
+dataset = cifar10
+batch_size = 256
+learning_rate = 0.003
+epochs = 10
+optimizer = adamw
+weight_decay = 0.05
+device = cuda:0
+seed = 42

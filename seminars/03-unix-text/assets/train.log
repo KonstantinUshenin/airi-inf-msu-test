@@ -1,0 +1,19 @@
+2026-09-01 10:00:01 INFO starting run id=exp-042 device=cuda:0
+2026-09-01 10:00:02 INFO dataset=cifar10 batch_size=128 lr=0.01
+2026-09-01 10:02:14 INFO epoch=1 loss=2.4013 acc=0.312
+2026-09-01 10:04:33 INFO epoch=2 loss=1.8720 acc=0.455
+2026-09-01 10:06:51 WARN gradient norm is large: 12.4
+2026-09-01 10:06:52 INFO epoch=3 loss=1.5104 acc=0.531
+2026-09-01 10:09:10 INFO epoch=4 loss=1.2887 acc=0.602
+2026-09-01 10:11:28 ERROR checkpoint directory is not writable
+2026-09-01 10:11:29 INFO epoch=5 loss=1.1002 acc=0.648
+2026-09-01 10:13:47 WARN learning rate schedule restarted
+2026-09-01 10:13:48 INFO epoch=6 loss=0.9741 acc=0.690
+2026-09-01 10:16:06 INFO epoch=7 loss=0.8813 acc=0.712
+2026-09-01 10:18:24 ERROR CUDA out of memory
+2026-09-01 10:18:25 INFO epoch=8 loss=0.8120 acc=0.735
+2026-09-01 10:20:43 INFO epoch=9 loss=0.7654 acc=0.751
+2026-09-01 10:23:01 WARN validation set is smaller than one batch
+2026-09-01 10:23:02 INFO epoch=10 loss=0.7231 acc=0.764
+2026-09-01 10:25:20 ERROR failed to upload metrics
+2026-09-01 10:25:21 INFO run finished id=exp-042 status=ok
