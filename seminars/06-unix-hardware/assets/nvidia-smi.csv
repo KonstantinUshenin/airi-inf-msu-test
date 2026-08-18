@@ -1,0 +1,5 @@
+index, name, memory.total [MiB], memory.used [MiB], utilization.gpu [%]
+0, NVIDIA A100-SXM4-40GB, 40960 MiB, 39012 MiB, 98 %
+1, NVIDIA A100-SXM4-40GB, 40960 MiB, 1024 MiB, 12 %
+2, NVIDIA A100-SXM4-40GB, 40960 MiB, 40448 MiB, 100 %
+3, NVIDIA A100-SXM4-40GB, 40960 MiB, 512 MiB, 0 %

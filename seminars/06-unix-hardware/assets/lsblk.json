@@ -1,0 +1,50 @@
+{
+   "blockdevices": [
+      {
+         "name": "nvme0n1",
+         "size": 1000204886016,
+         "type": "disk",
+         "fstype": null,
+         "mountpoint": null,
+         "children": [
+            {
+               "name": "nvme0n1p1",
+               "size": 536870912,
+               "type": "part",
+               "fstype": "vfat",
+               "mountpoint": "/boot/efi"
+            },
+            {
+               "name": "nvme0n1p2",
+               "size": 999666057216,
+               "type": "part",
+               "fstype": "ext4",
+               "mountpoint": "/"
+            }
+         ]
+      },
+      {
+         "name": "sda",
+         "size": 4000787030016,
+         "type": "disk",
+         "fstype": null,
+         "mountpoint": null,
+         "children": [
+            {
+               "name": "sda1",
+               "size": 4000785964032,
+               "type": "part",
+               "fstype": "xfs",
+               "mountpoint": "/data"
+            }
+         ]
+      },
+      {
+         "name": "sdb",
+         "size": 512110190592,
+         "type": "disk",
+         "fstype": "ext4",
+         "mountpoint": "/scratch"
+      }
+   ]
+}
