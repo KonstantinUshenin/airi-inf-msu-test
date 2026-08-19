@@ -135,10 +135,11 @@ code("""%%bash
 mkdir -p ~/seminar-04/git-demo
 cd ~/seminar-04/git-demo || exit 1
 
-git config --global init.defaultBranch main   # один раз на машину: иначе первая
-git init -q                                   # ветка называлась бы master
-git config user.name "Student"                # для себя это обычно ставят с --global
-git config user.email "student@example.org\"""")
+# --global: настройка машины, ложится в ~/.gitconfig и действует везде
+git config --global init.defaultBranch main   # иначе первая ветка звалась бы master
+git init -q                                   # завести .git — теперь это репозиторий
+git config user.name "Student"                # без --global: только этот репозиторий
+git config user.email "student@example.org"   # имя и почта попадут в каждый коммит""")
 
 md("""Обратите внимание на **область действия** настроек: с флагом `--global`
 настройка ложится в `~/.gitconfig` и действует во всех ваших репозиториях на
@@ -153,14 +154,23 @@ md("""Обратите внимание на **область действия**
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
+# заводим файл эксперимента — пока это просто новый файл на диске
 cat > train.py <<'PY'
 accuracy = 0.93
 print("accuracy =", accuracy)
 PY
 
-git add train.py              # git add нужен, чтобы git начал отслеживать новый файл
-git commit -q -m "feat(train): добавить baseline-эксперимент"
-git log --oneline""")
+git status --short            # ?? train.py — git видит файл, но не отслеживает его""")
+
+md("""`??` означает «незнакомый файл»: git о нём знает, но в историю не берёт и следить
+за изменениями не будет. Новый файл нужно один раз назвать явно.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+
+git add train.py              # с этого момента файл под контролем версий
+git commit -q -m "feat(train): добавить baseline-эксперимент"   # -q: без длинной сводки
+git log --oneline             # первая строка истории""")
 
 md("""У коммита нет номера версии — есть **хэш**: 40-значная шестнадцатеричная
 строка, посчитанная от содержимого файлов, метаданных и хэша родительского
@@ -170,7 +180,7 @@ md(img("05-hash-chain.svg", "Цепочка хэшей коммитов"))
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
-git log -1 --format='полный хэш: %H%nкороткий:   %h%nавтор:      %an%nдата:       %ad%nсообщение:  %s'""")
+git log -1 --format='полный хэш: %H%nкороткий:   %h%nавтор:      %an%nдата:       %ad%nсообщение:  %s'   # -1: только последний коммит""")
 
 q("Почему коммиты нумеруются хэшем, а не по-человечески — «версия 1», «версия 2»?",
   """Две причины.\n\n
@@ -214,18 +224,25 @@ git commit -am "тип(область): что сделано"
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
-sed -i 's/0\\.93/0.95/' train.py    # подняли гиперпараметр
+sed -i 's/0\\.93/0.95/' train.py   # правим уже отслеживаемый файл: подняли метрику
 
-git status --short            # M train.py — репозиторий грязный
-git diff                      # что именно изменилось с последнего коммита""")
+git status --short            # M = modified, файл разошёлся с последним коммитом""")
+
+md("""`M` говорит только «файл изменился». Что именно изменилось, показывает `git diff`:
+минусами — строки, которые были в коммите, плюсами — то, что лежит на диске сейчас.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+git diff                      # построчная разница: рабочая копия против индекса —
+                              # а в индексе сейчас лежит последний коммит""")
 
 md("""Коммитим — и репозиторий снова чистый.""")
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-git commit -qam "feat(train): поднять accuracy до 0.95"
-git status --short
+git commit -qam "feat(train): поднять accuracy до 0.95"   # -a: взять правки отслеживаемых файлов
+git status --short            # ничего не печатает — расхождений больше нет
 echo "(пусто = рабочая копия совпадает с последним коммитом)\"""")
 
 q("Правка видна в `git diff`, но `git log` про неё ничего не знает. Где она физически находится и что с ней случится, если сейчас выполнить `git restore .`?",
@@ -242,19 +259,19 @@ md("""## 3. Катастрофа: удалили всё
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
-rm *.py                       # «упс»
+rm *.py                       # «упс»: снесли весь код проекта
 
 ls                            # в каталоге пусто
-git status --short            # D train.py — git заметил пропажу""")
+git status --short            # D = deleted, git заметил пропажу файла из коммита""")
 
 md("""Файл был в последнем коммите — значит, его можно вернуть одной командой.""")
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-git restore .                 # вернуть рабочую копию к последнему коммиту
-ls
-cat train.py""")
+git restore .                 # вернуть рабочую копию из индекса — там последний коммит
+ls                            # файл на месте
+cat train.py                  # и содержимое то же, что было закоммичено""")
 
 q("Какой файл `git restore .` вернуть бы **не** смог?",
   """Тот, который ни разу не попадал ни в коммит, ни в индекс. `restore`
@@ -277,11 +294,19 @@ md("""### Мусор: файлы, которых git не касается
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
-touch checkpoint.pt nohup.out
-mkdir -p __pycache__ && touch __pycache__/x.pyc
 
-git status --short            # ?? = git про эти файлы ничего не знает
-git clean -nd                 # только показать, что будет удалено""")
+# засоряем каталог тем, что обычно порождает обучение
+touch checkpoint.pt nohup.out                     # чекпойнт модели и случайный лог
+mkdir -p __pycache__ && touch __pycache__/x.pyc   # кэш интерпретатора
+
+git status --short            # ?? = git про эти файлы ничего не знает""")
+
+md("""В историю эти файлы не попадали, поэтому `git restore` их не вернёт — и по той
+же причине их не жалко.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+git clean -nd                 # -n: только показать, что удалится; -d: вместе с каталогами""")
 
 md("""Посмотрели список — теперь удаляем по-настоящему.""")
 
@@ -289,7 +314,7 @@ code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
 git clean -fdq                # -f обязателен: восстановить это будет нечем
-git status --short
+git status --short            # мусора больше нет
 echo "(пусто = каталог чист)\"""")
 
 q("Почему `git clean` требует флаг `-f`, а `git restore` — нет?",
@@ -315,15 +340,22 @@ md("""## 4. История и её оформление
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
-git config --global alias.lg "log --oneline --graph --decorate --all"
+git config --global alias.lg "log --oneline --graph --decorate --all"   # свой короткий вызов
 
-echo "--- теперь просто git lg ---"
-git lg
+git lg                        # тот же log: строка на коммит, граф веток, имена веток""")
 
-echo "--- git show --stat: какие файлы затронул коммит ---"
-git show --stat --oneline HEAD
-echo "--- git show без флагов: что именно в них поменялось ---"
-git show HEAD | tail -8""")
+md("""Псевдоним лежит в `~/.gitconfig` и работает во всех ваших репозиториях: `git lg`
+теперь разворачивается в длинную строку с флагами.
+
+Отдельный коммит разглядывают командой `git show`.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+git show --stat --oneline HEAD   # --stat: какие файлы затронул коммит и на сколько строк""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+git show HEAD | tail -8       # без --stat: сами изменённые строки, как в git diff""")
 
 md("""### Сообщение коммита
 
@@ -366,9 +398,9 @@ cd ~/seminar-04/git-demo || exit 1
 
 echo "# Учебный ML-эксперимент" > README.md
 git add README.md
-git commit -qm "правки"       # так делать не надо
+git commit -qm "правки"       # так делать не надо: из сообщения ничего не понятно
 
-git log --oneline -2          # и вот это осталось в истории""")
+git log --oneline -2          # и вот это осталось в истории навсегда""")
 
 md("""Коммит ещё не выложен, поэтому сообщение можно переписать. Два флага `-m`
 дают заголовок и тело, разделённые пустой строкой.""")
@@ -426,12 +458,19 @@ md("""### Отменить коммит: `reset` или `revert`
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-echo "debug = True" >> train.py          # случайно закоммитили отладку
+echo "debug = True" >> train.py    # случайно оставили отладочную строку
 git commit -qam "chore: временная отладка"
+tail -1 train.py                   # строка уехала в историю""")
 
-git revert --no-edit HEAD                # отменяем — новым коммитом
-git log --oneline -3
-cat train.py""")
+md("""Коммит уже сделан. `git revert` его не стирает, а создаёт **новый** коммит с
+обратным изменением; `--no-edit` — не открывать редактор ради сообщения.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+
+git revert --no-edit HEAD     # отменяем последний коммит — новым коммитом
+git log --oneline -3          # в истории оба: и тот, что добавил, и тот, что убрал
+cat train.py                  # строки debug в файле больше нет""")
 
 md("""Оба коммита остались в истории: сначала тот, что добавил строку, потом
 тот, что её убрал. Именно поэтому `revert` безопасен на общей ветке — у коллег
@@ -478,10 +517,10 @@ md("""### Случай первый: независимые изменения
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-git switch -c feature/plot -q                 # switch — современная замена checkout
+git switch -c feature/plot -q                 # -c: создать ветку и сразу перейти в неё
 echo 'print("график сохранён")' > plot.py     # трогаем только новый файл
 git add plot.py
-git commit -qm "feat(plot): сохранять график обучения\"""")
+git commit -qm "feat(plot): сохранять график обучения"   # коммит лёг в ветку, не в main""")
 
 md("""Пока Аня работала в своей ветке, `main` тоже не стоял на месте — там
 поправили README. Ветки разошлись, но правки в разных файлах.""")
@@ -489,13 +528,19 @@ md("""Пока Аня работала в своей ветке, `main` тоже
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-git switch -q main
+git switch -q main                                 # вернулись в main
 echo "Метрика: accuracy на валидации." >> README.md
-git commit -qam "docs: описать метрику в README"
+git commit -qam "docs: описать метрику в README"   # теперь у каждой ветки свой коммит""")
 
-git merge feature/plot -m "Слить feature/plot"   # git сливает сам
-git branch -d feature/plot
-git lg | head -6""")
+md("""Ветки разошлись: в `main` правили `README.md`, в `feature/plot` — добавляли
+`plot.py`. Сливаем ветку обратно.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+
+git merge feature/plot -m "Слить feature/plot"   # разные файлы — git сливает сам
+git branch -d feature/plot    # ветка влита, указатель больше не нужен
+git lg | head -6              # в графе видно, как две линии сошлись""")
 
 q("Вы правите файл, не коммитите — и вам нужно срочно переключиться на другую ветку. Что сделает `git switch`?",
   """Возможны два исхода. Если на другой ветке этот файл выглядит **иначе**, git
@@ -519,11 +564,17 @@ code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
 git switch -c feature/augmentation -q       # гипотеза 1: аугментации
-sed -i 's/accuracy = 0.95/accuracy = 0.97/' train.py
-git commit -qam "feat(train): добавить аугментации"
+sed -i 's/accuracy = 0.95/accuracy = 0.97/' train.py   # правим строку с метрикой
+git commit -qam "feat(train): добавить аугментации\"""")
+
+md("""Вторую гипотезу проверяет коллега — прямо в `main`, и трогает он **ту же самую
+строку** `train.py`.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
 
 git switch -q main                          # гипотеза 2: другой оптимизатор
-sed -i 's/accuracy = 0.95/accuracy = 0.91/' train.py
+sed -i 's/accuracy = 0.95/accuracy = 0.91/' train.py   # та же строка, другое значение
 git commit -qam "feat(train): сменить оптимизатор\"""")
 
 md("""Обе ветки поменяли одну и ту же строку. Сливаем.""")
@@ -532,15 +583,18 @@ code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
 git merge feature/augmentation
-echo "код возврата: $?"
-cat train.py                  # вот что git положил в файл""")
+echo "код возврата: $?"       # не 0 — слияние остановилось на конфликте
+git status --short            # UU = обе стороны правили файл, слияние не закончено
+cat train.py                  # вот что git положил в файл вместо строки""")
 
-q("Эти `<<<<<<<`, `=======`, `>>>>>>>` в файле — вы их уже где-то видели?",
-  """Это тот же `diff`, что печатает `git diff` (раздел 2), только записанный
-прямо в файл. Между `<<<<<<< HEAD` и `=======` — версия текущей
-ветки, между `=======` и `>>>>>>>` — версия вливаемой. Git честно говорит: «я не
-знаю, какая из двух правок верна, реши сам». Разрешить конфликт — значит
-привести файл к нужному виду (**убрав маркеры**) и сделать `git add`.""")
+q("Эти `<<<<<<<`, `=======`, `>>>>>>>` в файле — что это и чем отличается от вывода `git diff`?",
+  """Это **маркеры конфликта**, а не диff: `git diff` только печатает разницу в
+терминал, а здесь git вписал в сам файл **обе версии строки целиком**. Между
+`<<<<<<< HEAD` и `=======` — версия текущей ветки, между `=======` и `>>>>>>>` —
+версия вливаемой. Git честно говорит: «я не знаю, какая из двух правок верна,
+реши сам». Пока маркеры в файле, код нерабочий: `python3 train.py` на нём
+упадёт. Разрешить конфликт — значит привести файл к нужному виду (**убрав
+маркеры**) и сделать `git add`.""")
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
@@ -557,7 +611,7 @@ md("""Файл приведён в порядок — осталось сказ�
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-git add train.py
+git add train.py              # add = «конфликт в этом файле разрешён»
 git commit -q -m "Слить feature/augmentation: оставить аугментации"
 git lg                        # в графе виден ромб слияния""")
 
@@ -656,9 +710,16 @@ md("""Создадим файлы, попадающие под эти прави
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 mkdir -p data
-touch secrets.env data/train.csv model.pt baseline.pt run.log notes.md
+touch secrets.env data/train.csv model.pt baseline.pt run.log notes.md   # часть попадёт под правила
 
-git status --short            # видно только то, что не попало под правила
+git status --short            # видно только то, что не попало под правила""")
+
+md("""Почему git решил именно так, объясняет `git check-ignore -v`: он печатает файл и
+правило, которое на нём сработало.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+# -v: показать не только вердикт, но и правило, которое сработало
 git check-ignore -v secrets.env data/train.csv model.pt run.log baseline.pt""")
 
 q("Почему в выводе `git check-ignore` для `baseline.pt` тоже показано правило, хотя файл не игнорируется?",
@@ -678,8 +739,14 @@ md("""**Главная грабля `.gitignore`**: правила действ�
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
-git add .gitignore baseline.pt notes.md
-git commit -q -m "chore: добавить .gitignore"
+git add .gitignore baseline.pt notes.md   # сам файл правил тоже лежит в репозитории
+git commit -q -m "chore: добавить .gitignore\"""")
+
+md("""А теперь ошибка, которую делают все: положим в репозиторий лог, хотя маска
+`*.log` его прячет. Флаг `-f` заставляет git взять игнорируемый файл.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
 
 echo "epoch 1" > train.log
 git add -f train.log          # -f, потому что маска *.log уже действует
@@ -692,19 +759,19 @@ code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
 echo "epoch 2" >> train.log
-git status --short            # M train.log — файл отслеживается""")
+git status --short            # M train.log — маска не помогает, файл отслеживается""")
 
 md("""Чтобы правило заработало, файл надо убрать из-под контроля версий.""")
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-git rm --cached -q train.log
+git rm --cached -q train.log  # снять с отслеживания, файл на диске не трогать
 git commit -q -m "chore: убрать лог из-под контроля версий"
 
-git status --short
+git status --short            # пусто: теперь маска *.log наконец работает
 echo "(пусто = лог игнорируется, а файл на диске остался)"
-ls train.log""")
+ls train.log                  # сам файл никуда не делся""")
 
 q("Почему git не начал игнорировать `train.log` сразу после того, как файл попал под маску `*.log`?",
   """Потому что `.gitignore` отвечает на вопрос «нужно ли **начинать**
@@ -810,12 +877,20 @@ md("""## 8. Отложить работу: `git stash`
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
-sed -i 's/accuracy = 0.97/accuracy = 0.99/' train.py   # недоделанная правка
+sed -i 's/accuracy = 0.97/accuracy = 0.99/' train.py   # правка начата, но не закончена
 
-git stash                     # отложили
+git status --short            # M train.py — с грязной копией ветку не сменить""")
+
+md("""Коммитить рано, а ветку сменить нужно сейчас. Убираем правку со стола, не
+записывая её в историю.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+
+git stash                     # снять незакоммиченные правки в стопку
 git status --short
 echo "(пусто = репозиторий чистый, можно переключаться)"
-git stash list                # стопка отложенного""")
+git stash list                # что лежит в стопке""")
 
 md("""Срочное дело сделано — возвращаем отложенное. `pop` применяет запись и
 убирает её из стопки, `apply` применяет, но запись оставляет (полезно, если
@@ -824,8 +899,8 @@ md("""Срочное дело сделано — возвращаем отлож
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-git stash pop                 # вернули правку в рабочую копию
-git status --short
+git stash pop                 # вернули правку в рабочую копию и убрали из стопки
+git status --short            # снова M train.py
 git restore .                 # для чистоты демонстрации откатим её совсем""")
 
 md("""Что важно помнить:
@@ -896,14 +971,14 @@ md("""## 10. Спасательный круг: `git reflog`
 ```bash
 cd ~/seminar-04/git-demo      # тот же репозиторий, что в демонстрации
 
-git log --oneline             # было три коммита
+git log --oneline -3          # запомните верхний коммит: сейчас мы его «потеряем»
 
 git reset --hard HEAD~1       # «удалили» последний
-git log --oneline             # его в истории нет
+git log --oneline -3          # верхнего коммита в истории нет
 
 git reflog -3                 # но reflog помнит все положения HEAD
 git reset --hard "HEAD@{1}"   # вернулись туда, где HEAD был шаг назад
-git log --oneline             # коммит на месте
+git log --oneline -3          # коммит снова на месте
 ```
 
 Так же спасают **удалённую ветку**: если `git branch -D` снёс ветку, не слитую в
@@ -949,14 +1024,19 @@ md("""## 12. Кто это сломал: `git blame` и `git bisect`
 `git blame файл` показывает для каждой строки коммит, автора и дату последнего
 изменения. Полезные флаги: `-L 10,20` — только строки 10–20, `-w` — игнорировать
 изменения отступов и пробелов, чтобы переформатирование не «перебивало»
-авторство.""")
+авторство.
+
+Соседний инструмент — `git log -S "текст"`: он находит коммиты, в которых число
+вхождений подстроки изменилось, то есть где её добавили или удалили. `blame`
+отвечает «кто трогал эту строку последним», `log -S` — «где эта строка вообще
+появлялась и исчезала» (пригодится в задаче **M6**).""")
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-git blame train.py            # коммит, автор, дата — для каждой строки
+git blame train.py            # для каждой строки: коммит, автор, дата
 echo "--- только первая строка, без учёта правок форматирования ---"
-git blame -L 1,1 -w train.py""")
+git blame -L 1,1 -w train.py  # -L: диапазон строк, -w: не считать правкой пробелы""")
 
 md("""`git bisect` — **бинарный поиск по истории**. Вы говорите «здесь всё было
 хорошо, здесь уже плохо», git ставит вас в середину оставшегося отрезка, и за
@@ -973,7 +1053,7 @@ rm -rf ~/seminar-04/bisect-demo    # ячейка стирает свой реп
 mkdir -p ~/seminar-04/bisect-demo
 cd ~/seminar-04/bisect-demo || exit 1
 
-git init -q
+git init -q                        # отдельный репозиторий: нужна длинная история
 git config user.name "Student"
 git config user.email "student@example.org\"""")
 
@@ -984,7 +1064,7 @@ for i in $(seq 1 10); do
   ACC=$([ "$i" -ge 7 ] && echo 0.42 || echo 0.93)   # с седьмого шага метрика падает
   printf '# шаг %s\\nprint(%s)\\n' "$i" "$ACC" > train.py
   git add train.py
-  git commit -qm "экспериментируем, шаг $i"
+  git commit -qm "экспериментируем, шаг $i"         # десять коммитов подряд
 done""")
 
 md("""Ручной режим — это `git bisect start`, затем `git bisect good` / `git
@@ -994,12 +1074,22 @@ bisect bad` на каждом шаге. Но если проверку можн�
 
 code("""%%bash
 cd ~/seminar-04/bisect-demo || exit 1
+# скрипт проверки: код возврата 0 = состояние хорошее, не 0 = сломано
 printf '#!/bin/sh\\ntest "$(python3 train.py)" = "0.93"\\n' > check.sh
-chmod +x check.sh
+chmod +x check.sh             # git будет запускать его сам, нужен бит выполнения
+
+./check.sh
+echo "проверка на текущем коммите: $?"   # 1 = здесь уже сломано""")
+
+md("""Проверка есть — осталось указать границы отрезка: где точно плохо и где точно
+хорошо. Дальше git ходит по истории сам.""")
+
+code("""%%bash
+cd ~/seminar-04/bisect-demo || exit 1
 
 git bisect start HEAD HEAD~9 --   # здесь плохо, девять коммитов назад — хорошо
-git bisect run ./check.sh
-git bisect reset""")
+git bisect run ./check.sh         # двоичный поиск: нашёл за три проверки вместо десяти
+git bisect reset                  # вернуться на исходный коммит""")
 
 q("Почему `bisect` бесполезен на истории из коммитов «разное» на 900 строк?",
   """Он честно найдёт коммит, но это ничего не даст: внутри такого коммита
@@ -1192,9 +1282,9 @@ md("""## 14. Удалённые репозитории: `remote`, upstream, pull
 
 code("""%%bash
 rm -rf ~/seminar-04/server.git
-git init --bare -q ~/seminar-04/server.git    # «сервер»: репозиторий без рабочей копии
+git init --bare -q ~/seminar-04/server.git    # --bare: репозиторий без рабочей копии
 
-ls ~/seminar-04/server.git    # HEAD, refs, objects — то же, что внутри .git""")
+ls ~/seminar-04/server.git    # HEAD, refs, objects — то же, что лежит внутри .git""")
 
 md("""Подключим наш репозиторий к этому «серверу» и выложим ветку. Флаг `-u`
 запоминает связь `main` ↔ `origin/main`, чтобы дальше хватало `git push` без
@@ -1213,12 +1303,12 @@ md("""Теперь заведём второго участника: он кло
 
 code("""%%bash
 rm -rf ~/seminar-04/colleague
-git clone -q ~/seminar-04/server.git ~/seminar-04/colleague
+git clone -q ~/seminar-04/server.git ~/seminar-04/colleague   # клон = вся история целиком
 cd ~/seminar-04/colleague || exit 1
 
-git config user.name "Colleague"
+git config user.name "Colleague"        # это другой человек на другой машине
 git config user.email "colleague@example.org"
-git log --oneline -1          # у коллеги та же история""")
+git log --oneline -1                    # у коллеги та же история, что у нас""")
 
 code("""%%bash
 cd ~/seminar-04/colleague || exit 1
@@ -1239,10 +1329,16 @@ md("""У нас на диске его коммита ещё нет. Снача�
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-git fetch origin
-git log --oneline HEAD..origin/main   # что есть у них и нет у нас
-git merge origin/main         # перемотка: своих коммитов у нас нет
-tail -1 README.md""")
+git fetch origin                      # скачать чужие коммиты, рабочую копию не трогать
+git log --oneline HEAD..origin/main   # что есть у них и нет у нас""")
+
+md("""Посмотрели, что приехало, — теперь вливаем в свою ветку.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
+
+git merge origin/main         # перемотка: своих новых коммитов у нас нет
+tail -1 README.md             # строка коллеги на месте""")
 
 md("""### Форк и `upstream`
 
@@ -1333,7 +1429,12 @@ cat ~/.ssh/id_ed25519.pub                    # открытый ключ — е�
 ssh -T git@github.com                        # проверить доступ
 ```
 
-После этого адрес репозитория выглядит как `git@github.com:user/repo.git`.""")
+После этого адрес репозитория выглядит как `git@github.com:user/repo.git`.
+
+**Что выбрать.** Для повседневной работы со своей машины удобнее SSH-ключ: он
+настраивается один раз и ничего не просит при каждом `push`. Токен нужен там,
+где ssh не пройдёт — за корпоративным прокси, в CI-раннере, в чужом контейнере,
+— и там его удобно ограничить по правам и сроку.""")
 
 q("Почему при доступе по ssh пользователь всегда называется `git` — и чем `ssh git@github.com` отличается от обычного `ssh user@server`?",
   """Протокол один и тот же: git просто использует ssh как транспорт. Разница в
@@ -1507,12 +1608,18 @@ SH""")
 
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
-chmod +x .githooks/commit-msg          # без этого git молча не выполнит хук
-git config core.hooksPath .githooks    # хуки берём из репозитория, а не из .git
+chmod +x .githooks/commit-msg          # без бита выполнения git молча пропустит хук
+git config core.hooksPath .githooks    # хуки берём из репозитория, а не из .git""")
+
+md("""Хук включён. Пробуем закоммитить с сообщением, которое соглашению не
+соответствует.""")
+
+code("""%%bash
+cd ~/seminar-04/git-demo || exit 1
 
 echo "ещё строка" >> notes.md
 git commit -qam "правки"               # плохое сообщение
-echo "код возврата: $?\"""")
+echo "код возврата: $?"                # не 0 — коммит остановлен хуком""")
 
 md("""Коммит не создан. Исправленное сообщение проходит — а вот флаг
 `--no-verify` пропускает хуки целиком.""")
@@ -1520,8 +1627,8 @@ md("""Коммит не создан. Исправленное сообщени�
 code("""%%bash
 cd ~/seminar-04/git-demo || exit 1
 
-git commit -qam "docs(notes): дописать заметку"
-git commit -q --allow-empty --no-verify -m "правки"   # хук обойдён
+git commit -qam "docs(notes): дописать заметку"   # сообщение по формату — проходит
+git commit -q --allow-empty --no-verify -m "правки"   # --no-verify: хук обойдён
 git log --oneline -2
 git config --unset core.hooksPath      # выключаем, чтобы не мешал дальше""")
 

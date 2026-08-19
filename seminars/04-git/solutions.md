@@ -57,7 +57,7 @@ git commit -m "feat(train): поднять accuracy до 0.95"
 ### B3. Восстановление после катастрофы
 
 ```bash
-rm -rf *.py
+rm *.py
 ls                          # пусто
 git status --short          # D train.py
 git restore .               # вернули из последнего коммита
@@ -115,8 +115,10 @@ touch secrets.env data/train.csv model.pt baseline.pt run.log
 git status --short                     # видны только .gitignore и baseline.pt
 git check-ignore -v secrets.env data/train.csv model.pt run.log
 
-git add .gitignore
+git add .gitignore baseline.pt        # baseline.pt виден из-за «!»: его тоже коммитим
 git commit -m "chore: добавить .gitignore"
+
+git status --short                    # пусто: всё остальное скрыто правилами
 ```
 
 Комментарий в `.gitignore` занимает всю строку: приписать `# ...` в конец
@@ -196,6 +198,9 @@ git rev-parse HEAD                          # запомнили хэш
 git commit -q --amend -m "feat(train): логировать метрику на валидации"
 git log --oneline -1                        # новый заголовок
 git rev-parse HEAD                          # хэш ДРУГОЙ
+
+git switch -q main                          # следующие задачи продолжают main
+git branch -D feature/augmentation          # учебную ветку не сливаем, просто убираем
 ```
 
 `--amend` не редактирует коммит, а создаёт новый (с новым хэшем) и передвигает
@@ -257,6 +262,11 @@ git restore .
 ### M3. `revert` против `reset`
 
 ```bash
+# отменять будем обычный коммит: у коммита слияния два родителя,
+# и git не знает, к какому из них возвращаться (revert потребует -m)
+echo "debug = True" >> train.py
+git commit -qam "chore: временная отладка"
+
 # способ 1: сдвинуть ветку — коммит исчезает из истории
 git log --oneline
 git reset --hard HEAD~1
@@ -694,7 +704,7 @@ git commit -am "Вариант B"
 git push
 # ! [rejected]  main -> main (fetch first)
 
-git pull                                  # скачал изменения A → конфликт
+git pull                                  # = fetch + merge: скачал изменения A → конфликт
 cat train.py                              # маркеры <<<<<<< / ======= / >>>>>>>
 # разрешаем, сохраняя смысл обеих правок
 git add train.py
