@@ -25,9 +25,11 @@
 from __future__ import annotations
 
 import argparse
+import http.client
 import json
 import os
 import sys
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -53,6 +55,16 @@ DEFAULT_PROMPT = (
 # Потолок обращений к файлам за одно ревью. Считался по замеру: агент обычно
 # укладывается в 4-6 шагов, 10 оставляет запас и не даёт зациклиться.
 MAX_TOOL_STEPS = int(os.environ.get("REVIEW_MAX_TOOL_STEPS", "10"))
+# Сколько раз повторять запрос, у которого оборвалась сеть или API ответил 429/5xx.
+# Ответ модели с инструментами идёт десятки минут, и на длинном соединении DeepSeek
+# иногда закрывает поток на полуслове (IncompleteRead) — на PR #26 из-за одного
+# такого обрыва пропали все восемь проходов. Пауза растёт 10 → 30 → 90 с.
+MAX_API_RETRIES = int(os.environ.get("REVIEW_MAX_API_RETRIES", "3"))
+RETRY_BACKOFF_SECONDS = 10
+
+
+class TransientApiError(RuntimeError):
+    """Сеть или перегруз API: повторять можно, содержательной ошибки нет."""
 
 
 def changed_seminar_dirs(repo: Path, changed_files: Path) -> list[Path]:
@@ -67,7 +79,7 @@ def changed_seminar_dirs(repo: Path, changed_files: Path) -> list[Path]:
     return [dirs[k] for k in sorted(dirs)]
 
 
-def post_chat(payload: dict, *, api_key: str, timeout: int = 900) -> dict:
+def post_chat_once(payload: dict, *, api_key: str, timeout: int) -> dict:
     request = urllib.request.Request(
         API_URL,
         data=json.dumps(payload).encode("utf-8"),
@@ -78,11 +90,55 @@ def post_chat(payload: dict, *, api_key: str, timeout: int = 900) -> dict:
     )
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            return json.loads(response.read().decode("utf-8"))
+            raw = response.read().decode("utf-8")
     except urllib.error.HTTPError as error:  # ошибку API видно в логах CI целиком
-        raise SystemExit(
-            f"DeepSeek вернул {error.code}: {error.read().decode('utf-8', 'replace')}"
+        detail = error.read().decode("utf-8", "replace")
+        # 429 и 5xx — это «сейчас занято», а не «запрос неверный»: счёт DeepSeek
+        # общий с другими задачами, и под нагрузкой такой ответ обычно проходит
+        # со второй попытки. Остальные 4xx (нет ключа, неизвестная модель) —
+        # настоящая поломка, её надо показать красным, а не прятать за повторами.
+        if error.code == 429 or error.code >= 500:
+            raise TransientApiError(f"DeepSeek вернул {error.code}: {detail}")
+        raise SystemExit(f"DeepSeek вернул {error.code}: {detail}")
+    except (OSError, http.client.HTTPException) as error:
+        # OSError покрывает и URLError, и голый ConnectionResetError, который
+        # прилетает мимо urllib, когда соединение рвётся уже во время чтения тела.
+        raise TransientApiError(f"обрыв связи с DeepSeek: {error!r}")
+
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError as error:
+        # Оборванный ответ доезжает и целым по HTTP, но битым по содержимому.
+        raise TransientApiError(
+            f"DeepSeek прислал не JSON: {error}; начало ответа: {raw[:200]!r}"
         )
+
+
+def post_chat(
+    payload: dict,
+    *,
+    api_key: str,
+    timeout: int = 900,
+    retries: int = MAX_API_RETRIES,
+) -> dict:
+    last: TransientApiError | None = None
+    for attempt in range(retries + 1):
+        try:
+            return post_chat_once(payload, api_key=api_key, timeout=timeout)
+        except TransientApiError as error:
+            last = error
+            if attempt == retries:
+                break
+            pause = RETRY_BACKOFF_SECONDS * (3**attempt)
+            print(
+                f"# попытка {attempt + 1}/{retries + 1} не удалась ({error}); "
+                f"повтор через {pause} с",
+                file=sys.stderr,
+                flush=True,
+            )
+            time.sleep(pause)
+    assert last is not None
+    raise last
 
 
 def call_model(
@@ -258,27 +314,35 @@ def main() -> int:
     for seminar, parts in prompts.items():
         trace: list[str] = []
         chunks = []
-        for prompt in parts:
-            if args.no_tools:
-                chunks.append(
-                    call_model(
-                        prompt,
-                        model=args.model,
-                        api_key=api_key,
-                        temperature=args.temperature,
+        try:
+            for prompt in parts:
+                if args.no_tools:
+                    chunks.append(
+                        call_model(
+                            prompt,
+                            model=args.model,
+                            api_key=api_key,
+                            temperature=args.temperature,
+                        )
                     )
-                )
-            else:
-                chunks.append(
-                    call_agent(
-                        prompt,
-                        repo=repo,
-                        model=args.model,
-                        api_key=api_key,
-                        temperature=args.temperature,
-                        trace=trace,
+                else:
+                    chunks.append(
+                        call_agent(
+                            prompt,
+                            repo=repo,
+                            model=args.model,
+                            api_key=api_key,
+                            temperature=args.temperature,
+                            trace=trace,
+                        )
                     )
-                )
+        except TransientApiError as error:
+            # Сеть не выдержала даже с повторами. Один упавший семинар не должен
+            # уносить остальные и красить PR: ревью — подсказка автору, а не
+            # проверка. Пишем это прямо в комментарий, чтобы молчание по
+            # семинару нельзя было принять за «замечаний нет».
+            print(f"# ревью для {seminar} не получено: {error}", file=sys.stderr)
+            chunks.append(f"⚠️ Ревью не получено — {error}")
         review = join_passes(chunks)
         if trace:
             print(f"# файлы, которые смотрел ревьюер: {'; '.join(trace)}",
