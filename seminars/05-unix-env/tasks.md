@@ -31,19 +31,21 @@
 
 ### B3. Source
 
-**need:** файл `course.env` с двумя переменными.
+**need:** нет.
 
-Подключите `course.env` к текущей оболочке. Сохраните полученные значения в `environment.txt`.
+Создайте файл `course.env` с двумя переменными — `COURSE_NAME` (без `export`) и `COURSE_DATA` (с
+`export`). Подключите его к текущей оболочке и сохраните полученные значения в `environment.txt`.
 
-**Пример:** для `course.env` с `COURSE_NAME='course-app'` и `DATA_DIRECTORY="$HOME/seminar-05/data"`
-файл `environment.txt` содержит `course-app` и `/home/student/seminar-05/data`.
+**Пример:** для `COURSE_NAME='course-app'` и `export COURSE_DATA="$HOME/seminar-05/data"` файл
+`environment.txt` содержит `course-app` и `/home/student/seminar-05/data`.
 
 ### B4. Virtual environment
 
 **need:** `uv`; доступ к Python 3.12.
 
-Создайте `.venv` на Python 3.12 через uv. Сохраните найденный Python до активации, путь и версию
-внутри окружения, найденный Python после деактивации.
+Создайте `.venv` на Python 3.12 через uv. Сохраните вывод `uv python find 3.12` до активации, путь и
+версию интерпретатора внутри активированного окружения и вывод `uv python find 3.12` после
+деактивации.
 
 **Пример:** `cat inside.txt` → `~/seminar-05/b4/.venv/bin/python` и `Python 3.12.3`; в `before.txt`
 и `after.txt` — путь вне окружения, и он одинаковый.
@@ -52,8 +54,9 @@
 
 **need:** `uv`; доступ к пакету `requests`.
 
-Создайте uv-проект и добавьте `requests`. Сохраните версии Python и `requests`, дерево
-зависимостей, `pyproject.toml` и `uv.lock`.
+Создайте uv-проект и добавьте `requests`. Сохраните версии Python и `requests` в `versions.txt`,
+дерево зависимостей — в `dependency-tree.txt`, а список появившихся файлов описания проекта
+(`pyproject.toml`, `uv.lock`) — в `project-files.txt`.
 
 **Пример:** `cat versions.txt` → `Python 3.12.3` и версия вида `2.32.3`; в `dependency-tree.txt`
 под строкой `requests` перечислены `certifi`, `charset-normalizer`, `idna`, `urllib3`.
@@ -76,9 +79,11 @@
 **need:** Debian или Ubuntu с актуальным индексом APT.
 
 Сохраните установленные системные пакеты в `installed-packages.txt`, доступные обновления — в
-`upgradable-packages.txt`, ошибки — в `apt-errors.txt`.
+`upgradable-packages.txt`, ошибки — в `apt-errors.txt`. В файлах должны быть только пакеты:
+служебную строку `Listing...` уберите, как в демке.
 
-**Пример:** `head -1 installed-packages.txt` → `Listing...`, `wc -l < installed-packages.txt` →
+**Пример:** `head -1 installed-packages.txt` → строка вида
+`adduser/noble,noble,now 3.137ubuntu1 all [installed,automatic]`; `wc -l < installed-packages.txt` →
 число порядка сотен.
 
 ### M2. PYTHONPATH
@@ -95,8 +100,8 @@
 
 **need:** `uv`; каталог `project-source` с `pyproject.toml`, `uv.lock` и прямой зависимостью `requests`.
 
-Создайте чистый каталог `project-restored`, перенесите в него только файлы описания проекта (код
-самого проекта не переносите) и восстановите окружение. Сохраните версии Python и `requests`.
+Создайте чистый каталог `project-restored`, перенесите в него проект **без каталога `.venv`** и
+восстановите окружение одной командой. Сохраните версии Python и `requests`.
 
 **Пример:** `diff restored-versions.txt ../project-source/versions.txt` → пусто: версии совпали,
 хотя `.venv` не копировали.
@@ -138,8 +143,8 @@
 
 **need:** `uv`; доступ к Python 3.11 и 3.12.
 
-Создайте два независимых окружения на Python 3.11 и 3.12. Сохраните путь и версию каждого
-интерпретатора.
+Создайте два независимых окружения на Python 3.11 и 3.12. Сохраните версии интерпретаторов в
+`python-versions.txt`, а пути к ним — в `python-paths.txt`.
 
 **Пример:** `cat python-versions.txt` → `Python 3.11.x` и `Python 3.12.x` — две разные версии из
 двух разных каталогов.
