@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="400" viewBox="0 0 940 400" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arrGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#15803d"/>
+    </marker>
+  </defs>
+
+  <rect width="940" height="400" fill="#ffffff"/>
+  <text x="470" y="36" text-anchor="middle" font-size="20" font-weight="600" fill="#0f172a">Пара ключей: что остаётся у вас, а что уезжает на сервер</text>
+
+  <!-- клиент -->
+  <rect x="30" y="66" width="370" height="252" rx="12" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="215" y="94" text-anchor="middle" font-size="17" font-weight="600" fill="#0f172a">Ваша машина (клиент)</text>
+
+  <rect x="55" y="112" width="320" height="82" rx="9" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="215" y="142" text-anchor="middle" font-size="15" font-weight="600" fill="#7f1d1d" font-family="ui-monospace, Menlo, Consolas, monospace">~/.ssh/course_ed25519</text>
+  <text x="215" y="166" text-anchor="middle" font-size="13" fill="#7f1d1d">закрытый ключ</text>
+  <text x="215" y="185" text-anchor="middle" font-size="13" fill="#7f1d1d">права 400 — только владельцу</text>
+
+  <rect x="55" y="212" width="320" height="82" rx="9" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+  <text x="215" y="242" text-anchor="middle" font-size="15" font-weight="600" fill="#14532d" font-family="ui-monospace, Menlo, Consolas, monospace">~/.ssh/course_ed25519.pub</text>
+  <text x="215" y="266" text-anchor="middle" font-size="13" fill="#14532d">открытый ключ</text>
+  <text x="215" y="285" text-anchor="middle" font-size="13" fill="#14532d">не секрет, можно показывать</text>
+
+  <!-- сервер -->
+  <rect x="540" y="66" width="370" height="252" rx="12" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="725" y="94" text-anchor="middle" font-size="17" font-weight="600" fill="#0f172a">Сервер</text>
+
+  <rect x="565" y="212" width="320" height="82" rx="9" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+  <text x="725" y="242" text-anchor="middle" font-size="15" font-weight="600" fill="#14532d" font-family="ui-monospace, Menlo, Consolas, monospace">~/.ssh/authorized_keys</text>
+  <text x="725" y="266" text-anchor="middle" font-size="13" fill="#14532d">одна строка — один открытый ключ</text>
+  <text x="725" y="285" text-anchor="middle" font-size="13" fill="#14532d">кому разрешён вход этим пользователем</text>
+
+  <rect x="565" y="112" width="320" height="82" rx="9" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="725" y="150" text-anchor="middle" font-size="14" fill="#64748b">закрытого ключа здесь нет</text>
+  <text x="725" y="172" text-anchor="middle" font-size="14" fill="#64748b">и быть не должно</text>
+
+  <!-- запрещённая стрелка -->
+  <line x1="380" y1="153" x2="560" y2="153" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 5"/>
+  <circle cx="470" cy="153" r="17" fill="#ffffff" stroke="#b91c1c" stroke-width="2"/>
+  <path d="M 461 144 L 479 162 M 479 144 L 461 162" stroke="#b91c1c" stroke-width="3"/>
+  <text x="470" y="122" text-anchor="middle" font-size="13" font-weight="600" fill="#b91c1c">никогда не копируем</text>
+
+  <!-- разрешённая стрелка -->
+  <line x1="380" y1="253" x2="558" y2="253" stroke="#15803d" stroke-width="2.5" marker-end="url(#arrGreen)"/>
+  <text x="469" y="235" text-anchor="middle" font-size="13" font-weight="600" fill="#15803d">ssh-copy-id</text>
+  <text x="469" y="276" text-anchor="middle" font-size="12" fill="#15803d">дописывает строку</text>
+
+  <text x="470" y="352" text-anchor="middle" font-size="14" fill="#334155">Вход устроен так: сервер шлёт задачу, клиент подписывает её закрытым ключом, сервер проверяет подпись открытым.</text>
+  <text x="470" y="378" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">На сервер уезжает только <tspan font-family="ui-monospace, Menlo, Consolas, monospace">.pub</tspan>; закрытый ключ не покидает вашу машину даже при входе.</text>
+</svg>
