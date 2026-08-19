@@ -418,20 +418,20 @@ def main():
 
     size = (args.size, args.size)
 
-    image = Image.open(args.image).resize(size, Image.BILINEAR)
+    image = Image.open(args.image).resize(size, Image.Resampling.BILINEAR)
     image.save("image-resized.png")
 
     mask = Image.open(args.mask)
     before = set(np.unique(np.asarray(mask)).tolist())
 
-    resized = mask.resize(size, Image.NEAREST)
+    resized = mask.resize(size, Image.Resampling.NEAREST)
     after = set(np.unique(np.asarray(resized)).tolist())
     resized.save("mask-resized.png")
 
     print("значения маски до:", sorted(before))
     print("значения маски после:", sorted(after))
 
-    wrong = set(np.unique(np.asarray(mask.resize(size, Image.BILINEAR))).tolist())
+    wrong = set(np.unique(np.asarray(mask.resize(size, Image.Resampling.BILINEAR))).tolist())
     print("а так было бы с BILINEAR:", len(wrong), "значений")
 
     if not after <= before:
