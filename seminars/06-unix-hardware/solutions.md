@@ -284,8 +284,10 @@ if ! command -v smartctl > /dev/null; then
 elif ! sudo -n smartctl -H "$disk" > /dev/null 2>&1; then
   echo "нет прав на чтение SMART у $disk: запустите через sudo" > smart.txt
 else
+  # Имена атрибутов различаются: у ATA это Power_On_Hours и Reallocated_Sector_Ct,
+  # у NVMe — «Power On Hours» через пробел, а переназначенных секторов нет вовсе.
   sudo smartctl -H -A "$disk" \
-    | grep -E 'result|Model|Power_On_Hours|Reallocated_Sector_Ct' > smart.txt
+    | grep -iE 'result|model|power.on.hours|reallocated|available spare' > smart.txt
 fi
 
 cat smart.txt
@@ -294,6 +296,11 @@ cat smart.txt
 Скрипт различает две разные причины неудачи: утилиты нет и прав не хватает.
 В обоих случаях он завершается нулевым кодом — отсутствие `smartctl` не повод
 ронять отчёт о машине.
+
+Шаблон намеренно нестрогий и с `-i`: у SATA-дисков атрибуты называются
+`Power_On_Hours` и `Reallocated_Sector_Ct`, у NVMe те же сведения выводятся как
+`Power On Hours` и `Available Spare`. Надёжнее всего разбирать
+`smartctl -j` — он отдаёт JSON с одинаковыми ключами для обоих типов.
 
 ## Сложное
 
