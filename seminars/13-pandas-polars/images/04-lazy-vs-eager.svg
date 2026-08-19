@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1020" height="500" viewBox="0 0 1020 500" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arrD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+  </defs>
+
+  <rect width="1020" height="500" fill="#ffffff"/>
+  <text x="510" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Немедленное исполнение против ленивого: кто сколько прочитает с диска</text>
+
+  <!-- ===== pandas ===== -->
+  <rect x="20" y="52" width="470" height="390" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="255" y="80" text-anchor="middle" font-size="16" font-weight="600" fill="#b45309">pandas: read_csv выполняет сразу</text>
+
+  <rect x="60" y="94" width="390" height="50" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+  <text x="255" y="115" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">runs.csv на диске</text>
+  <text x="255" y="134" text-anchor="middle" font-size="13" fill="#64748b">7 столбцов × 1 000 000 строк</text>
+
+  <line x1="255" y1="146" x2="255" y2="180" stroke="#334155" stroke-width="2" marker-end="url(#arrD)"/>
+  <text x="268" y="168" font-size="13" fill="#334155">read_csv("runs.csv")</text>
+
+  <rect x="60" y="186" width="390" height="60" rx="8" fill="#fee2e2" stroke="#b91c1c" stroke-width="1.5"/>
+  <text x="255" y="209" text-anchor="middle" font-size="14" font-weight="600" fill="#b91c1c">в памяти вся таблица целиком</text>
+  <text x="255" y="230" text-anchor="middle" font-size="13" fill="#334155">7 столбцов × 1 000 000 строк</text>
+
+  <line x1="255" y1="248" x2="255" y2="288" stroke="#334155" stroke-width="2" marker-end="url(#arrD)"/>
+  <text x="268" y="272" font-size="13" fill="#334155">df[df["val_acc"] &gt; 0.9]</text>
+
+  <rect x="60" y="294" width="390" height="60" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="1.5"/>
+  <text x="255" y="317" text-anchor="middle" font-size="14" font-weight="600" fill="#166534">то, что было нужно</text>
+  <text x="255" y="338" text-anchor="middle" font-size="13" fill="#334155">2 столбца × 40 000 строк</text>
+
+  <text x="255" y="386" text-anchor="middle" font-size="13" fill="#b45309">лишние 5 столбцов и 960 000 строк подняли с диска зря</text>
+  <text x="255" y="412" text-anchor="middle" font-size="13" fill="#b45309">библиотека узнала о фильтре, когда файл уже был в памяти</text>
+
+  <!-- ===== polars ===== -->
+  <rect x="530" y="52" width="470" height="390" rx="10" fill="#f0f9ff" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="765" y="80" text-anchor="middle" font-size="16" font-weight="600" fill="#1d4ed8">polars: scan_csv сначала строит план</text>
+
+  <rect x="570" y="94" width="390" height="50" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+  <text x="765" y="115" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">runs.csv на диске</text>
+  <text x="765" y="134" text-anchor="middle" font-size="13" fill="#64748b">тот же файл, ни байта пока не прочитано</text>
+
+  <line x1="765" y1="146" x2="765" y2="172" stroke="#334155" stroke-width="2" marker-end="url(#arrD)"/>
+  <text x="778" y="165" font-size="13" fill="#334155">scan_csv + filter + group_by</text>
+
+  <rect x="570" y="178" width="390" height="76" rx="8" fill="#e0e7ff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="765" y="200" text-anchor="middle" font-size="14" font-weight="600" fill="#1e3a8a">план запроса, данные не двигались</text>
+  <text x="765" y="221" text-anchor="middle" font-size="12" fill="#334155">SCAN → FILTER val_acc &gt; 0.9 → GROUP BY model</text>
+  <text x="765" y="242" text-anchor="middle" font-size="12" fill="#64748b">посмотреть глазами: q.explain()</text>
+
+  <line x1="765" y1="256" x2="765" y2="282" stroke="#334155" stroke-width="2" marker-end="url(#arrD)"/>
+  <text x="778" y="275" font-size="13" fill="#334155">оптимизация плана</text>
+
+  <rect x="570" y="288" width="390" height="70" rx="8" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="765" y="310" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a">отбор уехал внутрь чтения файла</text>
+  <text x="765" y="330" text-anchor="middle" font-size="12" fill="#334155">PROJECT 2/7 COLUMNS</text>
+  <text x="765" y="348" text-anchor="middle" font-size="12" fill="#334155">SELECTION: col("val_acc") &gt; 0.9</text>
+
+  <line x1="765" y1="362" x2="765" y2="382" stroke="#334155" stroke-width="2" marker-end="url(#arrD)"/>
+  <text x="778" y="378" font-size="13" fill="#334155">collect()</text>
+
+  <rect x="570" y="388" width="390" height="42" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="1.5"/>
+  <text x="765" y="414" text-anchor="middle" font-size="13" font-weight="600" fill="#166534">с диска поднято 2 столбца × 40 000 строк</text>
+
+  <text x="510" y="470" text-anchor="middle" font-size="14" fill="#0f172a">Ленивое исполнение выигрывает не скоростью операций, а тем, что видит весь запрос заранее и не читает лишнего.</text>
+  <text x="510" y="492" text-anchor="middle" font-size="13" fill="#64748b">На таблице из 12 строк разницы нет; на файле в гигабайты это разница между «влезло в память» и «не влезло»</text>
+</svg>

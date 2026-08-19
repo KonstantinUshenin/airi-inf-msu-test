@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="440" viewBox="0 0 940 440" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#166534"/>
+    </marker>
+    <marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309"/>
+    </marker>
+  </defs>
+
+  <rect width="940" height="440" fill="#ffffff"/>
+  <text x="470" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Анатомия DataFrame: столбцы, типы, индекс</text>
+
+  <!-- подсветка столбца val_acc -->
+  <rect x="440" y="96" width="150" height="240" fill="#dbeafe"/>
+  <!-- подсветка индекса -->
+  <rect x="120" y="96" width="80" height="240" fill="#fef3c7"/>
+
+  <!-- строка имён столбцов -->
+  <rect x="120" y="96" width="470" height="38" fill="none" stroke="#475569" stroke-width="2"/>
+  <text x="160" y="121" text-anchor="middle" font-size="14" fill="#94a3b8">—</text>
+  <text x="265" y="121" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">run_id</text>
+  <text x="380" y="121" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">model</text>
+  <text x="515" y="121" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">val_acc</text>
+
+  <!-- строка типов -->
+  <rect x="120" y="134" width="470" height="30" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="265" y="155" text-anchor="middle" font-size="13" fill="#64748b">str</text>
+  <text x="380" y="155" text-anchor="middle" font-size="13" fill="#64748b">str</text>
+  <text x="515" y="155" text-anchor="middle" font-size="13" fill="#64748b">float64</text>
+
+  <!-- данные -->
+  <g font-size="14" fill="#0f172a">
+    <rect x="120" y="164" width="470" height="43" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="160" y="192" text-anchor="middle" font-weight="600" fill="#92400e">0</text>
+    <text x="265" y="192" text-anchor="middle">r01</text>
+    <text x="380" y="192" text-anchor="middle">resnet18</text>
+    <text x="515" y="192" text-anchor="middle">0.872</text>
+
+    <rect x="120" y="207" width="470" height="43" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="160" y="235" text-anchor="middle" font-weight="600" fill="#92400e">1</text>
+    <text x="265" y="235" text-anchor="middle">r02</text>
+    <text x="380" y="235" text-anchor="middle">resnet18</text>
+    <text x="515" y="235" text-anchor="middle">0.901</text>
+
+    <rect x="120" y="250" width="470" height="43" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="160" y="278" text-anchor="middle" font-weight="600" fill="#92400e">2</text>
+    <text x="265" y="278" text-anchor="middle">r03</text>
+    <text x="380" y="278" text-anchor="middle">resnet50</text>
+    <text x="515" y="278" text-anchor="middle" fill="#b91c1c" font-weight="600">NaN</text>
+
+    <rect x="120" y="293" width="470" height="43" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="160" y="321" text-anchor="middle" font-weight="600" fill="#92400e">3</text>
+    <text x="265" y="321" text-anchor="middle">r04</text>
+    <text x="380" y="321" text-anchor="middle">resnet50</text>
+    <text x="515" y="321" text-anchor="middle">0.915</text>
+  </g>
+  <rect x="120" y="96" width="470" height="240" fill="none" stroke="#475569" stroke-width="2"/>
+
+  <!-- подпись «индекс» слева -->
+  <text x="18" y="245" font-size="14" font-weight="600" fill="#b45309">индекс</text>
+  <text x="18" y="264" font-size="12" fill="#b45309">метка строки,</text>
+  <text x="18" y="280" font-size="12" fill="#b45309">не её номер</text>
+  <line x1="112" y1="250" x2="132" y2="250" stroke="#b45309" stroke-width="2" marker-end="url(#arrA)"/>
+
+  <!-- подпись «имена столбцов» сверху -->
+  <text x="330" y="74" text-anchor="middle" font-size="13" font-weight="600" fill="#166534">имена столбцов — по ним и обращаемся</text>
+  <line x1="330" y1="80" x2="330" y2="92" stroke="#166534" stroke-width="2" marker-end="url(#arrG)"/>
+
+  <!-- подпись «dtype» -->
+  <text x="640" y="155" font-size="13" font-weight="600" fill="#64748b">dtypes: тип один на весь столбец</text>
+  <line x1="634" y1="150" x2="600" y2="150" stroke="#94a3b8" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- подпись Series -->
+  <rect x="640" y="196" width="284" height="96" rx="10" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="656" y="222" font-size="14" font-weight="600" fill="#1d4ed8">runs["val_acc"] → Series</text>
+  <text x="656" y="245" font-size="13" fill="#334155">один столбец + тот же индекс</text>
+  <text x="656" y="266" font-size="13" fill="#334155">runs[["val_acc"]] → DataFrame</text>
+  <text x="656" y="285" font-size="13" fill="#64748b">из одного столбца — это разные типы</text>
+  <line x1="634" y1="240" x2="596" y2="240" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- NaN -->
+  <text x="640" y="330" font-size="13" fill="#b91c1c">NaN живёт только в float:</text>
+  <text x="640" y="349" font-size="13" fill="#b91c1c">целый столбец с пропуском → float64</text>
+
+  <text x="470" y="392" text-anchor="middle" font-size="14" fill="#0f172a">Таблица — это столбцы с именами и типами плюс общий для всех столбцов индекс строк.</text>
+  <text x="470" y="418" text-anchor="middle" font-size="13" fill="#64748b">Индекс не пересчитывается при отборе строк — поэтому loc (по метке) и iloc (по позиции) после фильтра дают разное</text>
+</svg>
