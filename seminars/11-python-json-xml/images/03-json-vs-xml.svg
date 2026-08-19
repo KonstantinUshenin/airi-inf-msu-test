@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="430" viewBox="0 0 960 430" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arrTree" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="430" fill="#ffffff"/>
+  <text x="480" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Одна и та же книга в двух моделях данных</text>
+
+  <!-- левая колонка: JSON -->
+  <rect x="24" y="54" width="420" height="316" rx="10" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="234" y="82" text-anchor="middle" font-size="17" font-weight="600" fill="#0f172a">JSON</text>
+  <text x="234" y="103" text-anchor="middle" font-size="13" fill="#64748b">объекты, массивы и простые типы</text>
+
+  <rect x="48" y="118" width="372" height="122" rx="6" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="64" y="140" font-size="14" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">{</text>
+  <text x="80" y="162" font-size="14" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">"id": "b1",</text>
+  <text x="80" y="184" font-size="14" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">"title": "Python",</text>
+  <text x="80" y="206" font-size="14" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">"price": 1200</text>
+  <text x="64" y="228" font-size="14" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">}</text>
+
+  <text x="234" y="266" text-anchor="middle" font-size="14" font-weight="600" fill="#166534">после json.loads — dict</text>
+  <text x="64" y="292" font-size="13" fill="#334155">• все поля равноправны: только имя → значение</text>
+  <text x="64" y="314" font-size="13" fill="#334155">• 1200 приходит числом, кавычек вокруг него нет</text>
+  <text x="64" y="336" font-size="13" fill="#334155">• порядок полей значения не имеет</text>
+  <text x="64" y="358" font-size="13" fill="#334155">• комментарии и лишняя запятая запрещены</text>
+
+  <!-- правая колонка: XML -->
+  <rect x="516" y="54" width="420" height="316" rx="10" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="726" y="82" text-anchor="middle" font-size="17" font-weight="600" fill="#0f172a">XML</text>
+  <text x="726" y="103" text-anchor="middle" font-size="13" fill="#64748b">дерево элементов, атрибутов и текста</text>
+
+  <!-- дерево -->
+  <rect x="646" y="120" width="160" height="34" rx="6" fill="#e0e7ff" stroke="#4338ca" stroke-width="2"/>
+  <text x="726" y="142" text-anchor="middle" font-size="14" font-weight="600" fill="#312e81">&lt;book&gt;</text>
+  <text x="820" y="132" font-size="12" fill="#4338ca">элемент</text>
+
+  <rect x="536" y="120" width="96" height="34" rx="6" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+  <text x="584" y="142" text-anchor="middle" font-size="13" fill="#7c2d12">id="b1"</text>
+  <text x="584" y="172" text-anchor="middle" font-size="12" fill="#b45309">атрибут</text>
+  <line x1="636" y1="137" x2="642" y2="137" stroke="#b45309" stroke-width="2"/>
+
+  <line x1="686" y1="158" x2="640" y2="192" stroke="#475569" stroke-width="2" marker-end="url(#arrTree)"/>
+  <line x1="766" y1="158" x2="812" y2="192" stroke="#475569" stroke-width="2" marker-end="url(#arrTree)"/>
+
+  <rect x="560" y="198" width="150" height="34" rx="6" fill="#e0e7ff" stroke="#4338ca" stroke-width="2"/>
+  <text x="635" y="220" text-anchor="middle" font-size="14" font-weight="600" fill="#312e81">&lt;title&gt;</text>
+  <rect x="742" y="198" width="150" height="34" rx="6" fill="#e0e7ff" stroke="#4338ca" stroke-width="2"/>
+  <text x="817" y="220" text-anchor="middle" font-size="14" font-weight="600" fill="#312e81">&lt;price&gt;</text>
+
+  <line x1="635" y1="236" x2="635" y2="252" stroke="#475569" stroke-width="2" marker-end="url(#arrTree)"/>
+  <line x1="817" y1="236" x2="817" y2="252" stroke="#475569" stroke-width="2" marker-end="url(#arrTree)"/>
+
+  <rect x="570" y="258" width="130" height="30" rx="6" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="635" y="278" text-anchor="middle" font-size="13" fill="#14532d">"Python"</text>
+  <rect x="752" y="258" width="130" height="30" rx="6" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="817" y="278" text-anchor="middle" font-size="13" fill="#14532d">"1200"</text>
+  <text x="726" y="306" text-anchor="middle" font-size="12" fill="#166534">текст — всегда строка</text>
+
+  <text x="540" y="336" font-size="13" fill="#334155">• у элемента есть и атрибуты, и дети, и текст</text>
+  <text x="540" y="358" font-size="13" fill="#334155">• порядок детей — часть данных, его нельзя терять</text>
+
+  <text x="480" y="400" text-anchor="middle" font-size="13.5" fill="#0f172a">Один формат не «новее» другого: JSON знает типы, XML знает порядок и разметку документа</text>
+  <text x="480" y="420" text-anchor="middle" font-size="13" fill="#64748b">Отсюда и разница в коде: после json.load число уже число, а после findtext("price") его надо привести самому</text>
+</svg>

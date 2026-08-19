@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="440" viewBox="0 0 1000 440" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="domArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="440" fill="#ffffff"/>
+  <text x="500" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Селектор ищет по дереву, а не по тексту страницы</text>
+  <text x="500" y="54" text-anchor="middle" font-size="13" fill="#64748b">парсер превращает разметку в дерево узлов — дальше вы ходите по нему, а не режете строку</text>
+
+  <!-- исходная разметка -->
+  <rect x="30" y="82" width="310" height="178" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text x="44" y="104" font-size="12" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">&lt;div class="product"&gt;</text>
+  <text x="44" y="124" font-size="12" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">&#160;&#160;&#160;&lt;span class="name"&gt;Python&lt;/span&gt;</text>
+  <text x="44" y="144" font-size="12" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">&#160;&#160;&#160;&lt;a href="py.html"&gt;→&lt;/a&gt;</text>
+  <text x="44" y="164" font-size="12" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">&lt;/div&gt;</text>
+  <text x="44" y="188" font-size="12" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">&lt;div class="product"&gt;</text>
+  <text x="44" y="208" font-size="12" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">&#160;&#160;&#160;&lt;span class="name"&gt;Linux&lt;/span&gt;</text>
+  <text x="44" y="228" font-size="12" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">&#160;&#160;&#160;&lt;a href="/books/linux.html"&gt;→&lt;/a&gt;</text>
+  <text x="44" y="248" font-size="12" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">&lt;/div&gt;</text>
+
+  <line x1="348" y1="170" x2="382" y2="170" stroke="#475569" stroke-width="2" marker-end="url(#domArr)"/>
+
+  <!-- дерево -->
+  <rect x="388" y="154" width="86" height="32" rx="6" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="431" y="175" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">soup</text>
+
+  <path d="M 474 170 L 500 170 L 500 112 L 520 112" fill="none" stroke="#475569" stroke-width="1.5"/>
+  <path d="M 474 170 L 500 170 L 500 228 L 520 228" fill="none" stroke="#475569" stroke-width="1.5"/>
+
+  <rect x="520" y="96" width="126" height="32" rx="6" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="583" y="117" text-anchor="middle" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">div.product</text>
+  <rect x="520" y="212" width="126" height="32" rx="6" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="583" y="233" text-anchor="middle" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">div.product</text>
+
+  <path d="M 646 112 L 664 112 L 664 88 L 684 88" fill="none" stroke="#475569" stroke-width="1.5"/>
+  <path d="M 646 112 L 664 112 L 664 140 L 684 140" fill="none" stroke="#475569" stroke-width="1.5"/>
+  <path d="M 646 228 L 664 228 L 664 176 L 684 176" fill="none" stroke="#475569" stroke-width="1.5"/>
+  <path d="M 646 228 L 664 228 L 664 256 L 684 256" fill="none" stroke="#475569" stroke-width="1.5"/>
+
+  <rect x="684" y="72" width="286" height="32" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="696" y="93" font-size="12" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">span.name → "Python"</text>
+  <rect x="684" y="124" width="286" height="32" rx="6" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+  <text x="696" y="145" font-size="12" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#78350f">a href="py.html"</text>
+  <rect x="684" y="160" width="286" height="32" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="696" y="181" font-size="12" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">span.name → "Linux"</text>
+  <rect x="684" y="240" width="286" height="32" rx="6" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+  <text x="696" y="261" font-size="12" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#78350f">a href="/books/linux.html"</text>
+
+  <!-- легенда -->
+  <rect x="30" y="288" width="940" height="98" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+
+  <rect x="48" y="302" width="16" height="16" rx="3" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="76" y="315" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">shop.select(".product")</text>
+  <text x="330" y="315" font-size="12.5" fill="#334155">— список из двух узлов; обход в цикле идёт по карточкам</text>
+
+  <rect x="48" y="328" width="16" height="16" rx="3" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="76" y="341" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">card.select_one(".name")</text>
+  <text x="330" y="341" font-size="12.5" fill="#334155">— ищет только внутри своей карточки, чужой Linux не найдёт</text>
+
+  <rect x="48" y="354" width="16" height="16" rx="3" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+  <text x="76" y="367" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#78350f">card.select_one("a").get("href")</text>
+  <text x="330" y="367" font-size="12.5" fill="#334155">— атрибут узла, а не его текст: <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">get_text()</tspan> здесь вернул бы «→»</text>
+
+  <text x="500" y="412" text-anchor="middle" font-size="13.5" fill="#0f172a"><tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">select</tspan> всегда отдаёт список — возможно пустой; <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">select_one</tspan> отдаёт узел или <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">None</tspan>.</text>
+  <text x="500" y="432" text-anchor="middle" font-size="12.5" fill="#64748b">Поэтому <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">.get_text()</tspan> сразу после <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">select_one</tspan> — типовое место падения на странице, где узла нет.</text>
+</svg>

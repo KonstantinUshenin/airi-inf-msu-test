@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="400" viewBox="0 0 960 400" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arrApi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="400" fill="#ffffff"/>
+  <text x="480" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Что значит «OpenAI-compatible сервер»</text>
+  <text x="480" y="54" text-anchor="middle" font-size="13" fill="#64748b">один и тот же код клиента, три разных адреса</text>
+
+  <!-- клиент -->
+  <rect x="30" y="120" width="230" height="140" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="145" y="150" text-anchor="middle" font-size="16" font-weight="600" fill="#0f172a">ваш код</text>
+  <text x="145" y="176" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">OpenAI(base_url=…,</text>
+  <text x="145" y="196" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">api_key=…)</text>
+  <text x="145" y="222" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">.chat.completions</text>
+  <text x="145" y="242" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">.create(model=…)</text>
+
+  <!-- общий запрос -->
+  <rect x="300" y="150" width="270" height="80" rx="10" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="435" y="176" text-anchor="middle" font-size="14" font-weight="600" fill="#1e3a8a">одинаковый HTTP-запрос</text>
+  <text x="435" y="200" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">POST {base_url}/chat/completions</text>
+  <text x="435" y="220" text-anchor="middle" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">{"model": …, "messages": […]}</text>
+
+  <line x1="264" y1="190" x2="296" y2="190" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arrApi)"/>
+
+  <!-- три сервера -->
+  <line x1="574" y1="190" x2="640" y2="106" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arrApi)"/>
+  <line x1="574" y1="190" x2="640" y2="190" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arrApi)"/>
+  <line x1="574" y1="190" x2="640" y2="274" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arrApi)"/>
+
+  <rect x="648" y="80" width="288" height="56" rx="8" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="664" y="103" font-size="14" font-weight="600" fill="#0f172a">облако OpenAI</text>
+  <text x="664" y="124" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#475569">https://api.openai.com/v1/</text>
+
+  <rect x="648" y="164" width="288" height="56" rx="8" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="664" y="187" font-size="14" font-weight="600" fill="#0f172a">своя модель: vLLM, Ollama</text>
+  <text x="664" y="208" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#475569">http://localhost:8000/v1/</text>
+
+  <rect x="648" y="248" width="288" height="56" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="664" y="271" font-size="14" font-weight="600" fill="#14532d">учебный сервер семинара</text>
+  <text x="664" y="292" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">http://127.0.0.1:8000/v1/</text>
+
+  <text x="480" y="342" text-anchor="middle" font-size="13.5" fill="#0f172a">Меняются только три переменные окружения: OPENAI_BASE_URL, OPENAI_API_KEY, OPENAI_MODEL</text>
+  <text x="480" y="368" text-anchor="middle" font-size="13" fill="#64748b">«Совместимый» — про формат запроса и ответа, а не про то, что сервер поддерживает все возможности OpenAI</text>
+</svg>

@@ -19,13 +19,14 @@ COURSE_LEVEL='basic'
 echo "current=$COURSE_LEVEL" > course-level.txt
 bash -c 'echo "child-before=${COURSE_LEVEL:-missing}"' >> course-level.txt
 export COURSE_LEVEL
-bash -c 'echo "child-after=$COURSE_LEVEL"' >> course-level.txt
+echo "current-after=$COURSE_LEVEL" >> course-level.txt        # в текущей оболочке — как и была
+bash -c 'echo "child-after=$COURSE_LEVEL"' >> course-level.txt  # а вот дочерняя теперь её видит
 ```
 
 ### B3
 
 ```bash
-source course.env
+source assets/B3/course.env
 {
   echo "$COURSE_NAME"
   echo "$DATA_DIRECTORY"
@@ -48,13 +49,15 @@ uv python find 3.12 > after.txt
 
 ```bash
 mkdir course-project
-cd course-project
+cd course-project || exit 1
 uv init
 uv add requests
-uv run python --version > versions.txt
-uv run python -c 'import requests; print(requests.__version__)' >> versions.txt
-uv tree > dependency-tree.txt
-ls -l pyproject.toml uv.lock > project-files.txt
+
+mkdir -p evidence                       # задача просит сложить всё именно сюда
+uv run python --version > evidence/versions.txt
+uv run python -c 'import requests; print(requests.__version__)' >> evidence/versions.txt
+uv tree > evidence/dependency-tree.txt
+cp pyproject.toml uv.lock evidence/     # копии, а не ls: их потом читают глазами
 ```
 
 ## Среднее
@@ -69,7 +72,7 @@ apt list --upgradable > upgradable-packages.txt 2>> apt-errors.txt
 ### M2
 
 ```bash
-export PYTHONPATH="$PWD/modules"
+export PYTHONPATH="$PWD/assets/M2/modules"
 python3 -c 'import course_module; print(course_module.VALUE); print(course_module.__file__)' > import.txt
 ```
 
@@ -77,7 +80,7 @@ python3 -c 'import course_module; print(course_module.VALUE); print(course_modul
 
 ```bash
 mkdir project-restored
-cp project-source/pyproject.toml project-source/uv.lock project-restored/
+cp assets/M3/project-source/pyproject.toml assets/M3/project-source/uv.lock project-restored/
 cd project-restored
 uv sync
 uv run python --version > restored-versions.txt
@@ -87,8 +90,25 @@ uv run python -c 'import requests; print(requests.__version__)' >> restored-vers
 ### M4
 
 ```bash
-ldconfig -p > libraries-all.txt
-head -n 20 libraries-all.txt > libraries.txt
+# Два независимых проекта: у каждого свой .venv и своя версия requests.
+uv init --python 3.12 project-a
+cd project-a || exit 1
+uv add 'requests==2.31.0'
+uv run python -c 'import sys; print(sys.executable)' > ../project-a.txt
+uv run python --version >> ../project-a.txt
+uv run python -c 'import requests; print(requests.__version__)' >> ../project-a.txt
+cd ..
+
+uv init --python 3.12 project-b
+cd project-b || exit 1
+uv add 'requests>=2.32,<3'
+uv run python -c 'import sys; print(sys.executable)' > ../project-b.txt
+uv run python --version >> ../project-b.txt
+uv run python -c 'import requests; print(requests.__version__)' >> ../project-b.txt
+cd ..
+
+# Пути к python различаются — окружения независимы, версии requests тоже.
+diff project-a.txt project-b.txt || true
 ```
 
 ### M5
@@ -133,8 +153,8 @@ diff uv.lock.before uv.lock > lock-changes.txt || true
 ### H3
 
 ```bash
-PATH="$PWD/bin-one:$PWD/bin-two:$PATH" bash -c 'course-info; which course-info' > first.txt
-PATH="$PWD/bin-two:$PWD/bin-one:$PATH" bash -c 'course-info; which course-info' > second.txt
+PATH="$PWD/assets/H3/bin-one:$PWD/assets/H3/bin-two:$PATH" bash -c 'course-info; which course-info' > first.txt
+PATH="$PWD/assets/H3/bin-two:$PWD/assets/H3/bin-one:$PATH" bash -c 'course-info; which course-info' > second.txt
 ```
 
 ### H4
@@ -148,19 +168,34 @@ journalctl -u "$SERVICE_NAME" -n 100 --no-pager > service-journal.txt 2>> servic
 ### H5
 
 ```bash
+cd assets/H5/broken-project || exit 1
 mkdir -p report
+
+# Что было до починки: uv в PATH не находится, поэтому команда не работает.
 {
   echo "PATH=$PATH"
-  echo "PYTHONPATH=${PYTHONPATH:-}"
-  echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}"
-  which uv
-  uv --version
-  uv python find
-} > report/environment.txt 2> report/errors.txt
+  command -v uv || echo 'uv не найден в PATH'
+} > report/before.txt 2> errors.txt
 
-apt list --installed > report/installed-packages.txt 2>> report/errors.txt
-apt list --upgradable > report/upgradable-packages.txt 2>> report/errors.txt
-ldconfig -p > report/libraries.txt 2>> report/errors.txt
-systemctl --version > report/systemd.txt 2>> report/errors.txt
-systemctl is-system-running >> report/systemd.txt 2>> report/errors.txt || true
+# Чиним поиск: uv лежит в ~/.local/bin, этого каталога в PATH не было.
+export PATH="$HOME/.local/bin:$PATH"
+
+# Lock-файл устарел: в нём requests==2.31.0, а pyproject просит >=2.32,<3.
+# uv lock пересобирает его под текущий pyproject.toml.
+uv lock > sync.txt 2>> errors.txt
+uv lock --check > lock-check.txt 2>> errors.txt
+
+# Окружения не было — uv sync создаёт .venv по .python-version и уже
+# согласованному lock-файлу.
+uv sync >> sync.txt 2>> errors.txt
+uv run python app.py > app-stdout.txt 2>> errors.txt
+
+{
+  echo "PATH=$PATH"
+  command -v uv
+  uv --version
+  uv run python -c 'import sys; print(sys.executable)'
+  uv run python --version
+  uv tree
+} > report/after.txt 2>> errors.txt
 ```

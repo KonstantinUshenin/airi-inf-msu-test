@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="okArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#166534"/>
+    </marker>
+    <marker id="badArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="420" fill="#ffffff"/>
+  <text x="500" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Две разные беды: «не разобралось» и «разобралось не то»</text>
+  <text x="500" y="54" text-anchor="middle" font-size="13" fill="#64748b">ломается в разных местах, и ловить их надо по-разному</text>
+
+  <!-- конвейер -->
+  <rect x="40" y="90" width="230" height="70" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="155" y="118" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">Текст</text>
+  <text x="155" y="140" text-anchor="middle" font-size="12.5" fill="#475569">из файла или из сети</text>
+
+  <line x1="274" y1="125" x2="378" y2="125" stroke="#166534" stroke-width="2" marker-end="url(#okArr)"/>
+  <text x="326" y="114" text-anchor="middle" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#166534">json.loads</text>
+
+  <rect x="384" y="90" width="230" height="70" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="499" y="118" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">Объект Python</text>
+  <text x="499" y="140" text-anchor="middle" font-size="12.5" fill="#475569">dict, list, числа, None</text>
+
+  <line x1="618" y1="125" x2="722" y2="125" stroke="#166534" stroke-width="2" marker-end="url(#okArr)"/>
+  <text x="670" y="114" text-anchor="middle" font-size="12.5" fill="#166534">ваш код</text>
+
+  <rect x="728" y="90" width="230" height="70" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="843" y="118" text-anchor="middle" font-size="14" font-weight="600" fill="#14532d">Нужные поля</text>
+  <text x="843" y="140" text-anchor="middle" font-size="12.5" fill="#14532d">loss, accuracy, имена</text>
+
+  <!-- отказ 1 -->
+  <line x1="326" y1="166" x2="326" y2="206" stroke="#b91c1c" stroke-width="2" marker-end="url(#badArr)"/>
+  <rect x="40" y="212" width="420" height="128" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="60" y="238" font-size="14" font-weight="600" fill="#7f1d1d">1. Сломан синтаксис — разбор не начался</text>
+  <text x="60" y="262" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#7f1d1d">'{"name": "Анна", "score": 86,}'</text>
+  <text x="60" y="284" font-size="12.5" fill="#7f1d1d">лишняя запятая, кавычки-ёлочки, обрыв файла</text>
+  <rect x="60" y="296" width="380" height="30" rx="6" fill="#fee2e2" stroke="#b91c1c"/>
+  <text x="72" y="316" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#7f1d1d">json.JSONDecodeError — с номером строки и колонки</text>
+
+  <!-- отказ 2 -->
+  <line x1="670" y1="166" x2="670" y2="206" stroke="#b91c1c" stroke-width="2" marker-end="url(#badArr)"/>
+  <rect x="540" y="212" width="420" height="128" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="560" y="238" font-size="14" font-weight="600" fill="#7f1d1d">2. Синтаксис цел — структура не та</text>
+  <text x="560" y="262" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#7f1d1d">{"name": "delta", "metrics": null}</text>
+  <text x="560" y="284" font-size="12.5" fill="#7f1d1d">ключа нет, значение null, число пришло строкой</text>
+  <rect x="560" y="296" width="380" height="30" rx="6" fill="#fee2e2" stroke="#b91c1c"/>
+  <text x="572" y="316" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#7f1d1d">KeyError · TypeError · AttributeError — позже и не здесь</text>
+
+  <text x="500" y="372" text-anchor="middle" font-size="13.5" fill="#0f172a"><tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">json.loads</tspan> проверяет грамматику, а не смысл: валидный JSON ещё не значит ожидаемую структуру.</text>
+  <text x="500" y="398" text-anchor="middle" font-size="12.5" fill="#64748b">Поэтому первую беду ловят <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">except JSONDecodeError</tspan> вокруг разбора, а вторую — проверкой полей после него.</text>
+</svg>

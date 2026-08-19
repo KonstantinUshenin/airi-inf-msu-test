@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="450" viewBox="0 0 1000 450" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <rect width="1000" height="450" fill="#ffffff"/>
+  <text x="500" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Четыре функции json, две оси различия</text>
+  <text x="500" y="54" text-anchor="middle" font-size="13" fill="#64748b">«s» на конце — работа со строкой (string); без «s» — работа с открытым файлом</text>
+
+  <!-- заголовки столбцов -->
+  <text x="430" y="94" text-anchor="middle" font-size="14.5" font-weight="600" fill="#334155">файл на диске</text>
+  <text x="740" y="94" text-anchor="middle" font-size="14.5" font-weight="600" fill="#334155">строка в памяти</text>
+
+  <!-- строка 1: читаем -->
+  <text x="60" y="158" font-size="14.5" font-weight="600" fill="#334155">Читаем</text>
+  <text x="60" y="178" font-size="12.5" fill="#64748b">JSON → объект Python</text>
+
+  <rect x="280" y="110" width="300" height="90" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="300" y="140" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">json.load(file)</text>
+  <text x="300" y="164" font-size="12.5" fill="#334155">аргумент — открытый файловый объект</text>
+  <text x="300" y="186" font-size="12.5" fill="#334155">возвращает dict или list</text>
+
+  <rect x="600" y="110" width="300" height="90" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="620" y="140" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">json.loads(text)</text>
+  <text x="620" y="164" font-size="12.5" fill="#334155">аргумент — строка str (или bytes)</text>
+  <text x="620" y="186" font-size="12.5" fill="#334155">возвращает dict или list</text>
+
+  <!-- строка 2: пишем -->
+  <text x="60" y="268" font-size="14.5" font-weight="600" fill="#334155">Пишем</text>
+  <text x="60" y="288" font-size="12.5" fill="#64748b">объект Python → JSON</text>
+
+  <rect x="280" y="220" width="300" height="90" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="300" y="250" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">json.dump(obj, file)</text>
+  <text x="300" y="274" font-size="12.5" fill="#334155">пишет прямо в файл</text>
+  <text x="300" y="296" font-size="12.5" fill="#334155">возвращает None — результата нет</text>
+
+  <rect x="600" y="220" width="300" height="90" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="620" y="250" font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">json.dumps(obj)</text>
+  <text x="620" y="274" font-size="12.5" fill="#334155">на диск не пишет ничего</text>
+  <text x="620" y="296" font-size="12.5" fill="#334155">возвращает готовую строку str</text>
+
+  <!-- ошибки от перепутанной пары -->
+  <rect x="60" y="334" width="880" height="76" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="80" y="358" font-size="13.5" font-weight="600" fill="#7f1d1d">Если перепутать столбец, ошибка приходит сразу и говорит именно об этом:</text>
+  <text x="80" y="380" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#7f1d1d">json.load(text)  → AttributeError: 'str' object has no attribute 'read'</text>
+  <text x="80" y="400" font-size="12.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#7f1d1d">json.loads(file) → TypeError: the JSON object must be str, bytes or bytearray</text>
+
+  <text x="500" y="436" text-anchor="middle" font-size="13" fill="#64748b">Ответ из сети: <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">response.text</tspan> — строка, значит <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">loads</tspan>; у requests для этого есть готовый <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">response.json()</tspan>.</text>
+</svg>
