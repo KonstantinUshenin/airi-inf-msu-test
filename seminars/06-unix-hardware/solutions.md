@@ -70,15 +70,17 @@ cat saved-cpu.txt
 
 set -uo pipefail
 
-if command -v nvidia-smi > /dev/null; then
-  nvidia-smi > gpu-check.txt
+if command -v nvidia-smi > /dev/null && nvidia-smi > gpu-check.txt 2>/dev/null; then
+  : # вывод уже записан
 else
   echo 'gpu=none' > gpu-check.txt
 fi
 ```
 
-`command -v` проверяет, есть ли программа в `PATH`, и не запускает её. Простой
-вызов `nvidia-smi` на машине без драйвера завершился бы ошибкой.
+Двух проверок мало по отдельности: `command -v` ловит случай «программы нет»,
+но `nvidia-smi` бывает установлена при незагруженном драйвере — тогда она
+существует, а завершается ненулевым кодом. Условие покрывает оба случая, и
+скрипт в любом из них возвращает `0`, как требует задание.
 
 ## Среднее
 
@@ -212,9 +214,12 @@ if __name__ == "__main__":
 ### M5
 
 ```bash
+# Первый НАСТОЯЩИЙ диск: без фильтра по типу на Ubuntu первым идёт loop0 со snap.
+disk=$(lsblk -dn -o PATH,TYPE | awk '$2 == "disk" {print $1; exit}')
+
 {
-  ls -l /dev/null /dev/random          # первая буква строки: c — символьное устройство
-  lsblk -a -d -o NAME,MAJ:MIN,TYPE | head -n 2   # у диска тип disk и своя пара major:minor
+  ls -l /dev/null /dev/random "$disk"   # первая буква: c — символьное, b — блочное
+  lsblk -dn -o NAME,MAJ:MIN,TYPE "$disk"
 } > devices.txt
 
 cat devices.txt
@@ -270,7 +275,9 @@ python3 disks.py assets/lsblk.json
 
 set -uo pipefail
 
-disk=$(lsblk -dn -o NAME,TYPE | awk '$2 == "disk" {print "/dev/" $1; exit}')
+# Системный диск — тот, на котором смонтирован корень, а не первый в списке.
+root_part=$(findmnt -n -o SOURCE /)                 # например /dev/nvme0n1p2
+disk="/dev/$(lsblk -no PKNAME "$root_part")"        # PKNAME — родительское устройство раздела
 
 if ! command -v smartctl > /dev/null; then
   echo 'smartctl не установлен: sudo apt install smartmontools' > smart.txt
