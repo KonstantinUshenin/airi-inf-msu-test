@@ -1,5 +1,7 @@
 # Примеры решений
 
+Решения записаны так, будто вы уже находитесь в каталоге задачи внутри `~/seminar-05/`.
+
 ## База
 
 ### B1
@@ -8,7 +10,7 @@
 {
   echo "$PATH"
   which python3
-  which "$SHELL"
+  echo "$SHELL"
 } > paths.txt
 ```
 
@@ -57,6 +59,22 @@ uv tree > dependency-tree.txt
 ls -l pyproject.toml uv.lock > project-files.txt
 ```
 
+### B6
+
+```bash
+mkdir -p bin
+cat > bin/course-info <<'EOF'
+#!/usr/bin/env bash
+echo "course-info: моя команда"
+EOF
+chmod +x bin/course-info
+
+command -v course-info > lookup.txt || echo 'course-info: not found' > lookup.txt
+export PATH="$PWD/bin:$PATH"
+command -v course-info >> lookup.txt
+course-info >> lookup.txt
+```
+
 ## Среднее
 
 ### M1
@@ -79,9 +97,9 @@ python3 -c 'import course_module; print(course_module.VALUE); print(course_modul
 mkdir project-restored
 cp project-source/pyproject.toml project-source/uv.lock project-restored/
 cd project-restored
-uv sync
-uv run python --version > restored-versions.txt
-uv run python -c 'import requests; print(requests.__version__)' >> restored-versions.txt
+uv sync --no-install-project   # ставим только зависимости: код самого проекта мы не переносили
+.venv/bin/python --version > restored-versions.txt
+.venv/bin/python -c 'import requests; print(requests.__version__)' >> restored-versions.txt
 ```
 
 ### M4
@@ -89,6 +107,7 @@ uv run python -c 'import requests; print(requests.__version__)' >> restored-vers
 ```bash
 ldconfig -p > libraries-all.txt
 head -n 20 libraries-all.txt > libraries.txt
+ldd /usr/bin/head > head-libs.txt
 ```
 
 ### M5
@@ -98,6 +117,17 @@ systemctl --version > systemd.txt
 systemctl status systemd-journald --no-pager >> systemd.txt 2>&1 || echo "$?" >> systemd.txt
 journalctl -u systemd-journald -n 20 --no-pager > service-journal.txt 2>&1
 systemctl list-units --type=service --no-pager > system-services.txt 2>&1
+```
+
+### M6
+
+```bash
+printf 'requests==2.31.0\n' > requirements.txt
+python3 -m venv .venv                          # окружение средствами самого Python
+source .venv/bin/activate                      # дальше python и pip — из .venv
+python -m pip install -q -r requirements.txt
+python -m pip freeze > installed-versions.txt
+deactivate
 ```
 
 ## Сложное
@@ -133,8 +163,13 @@ diff uv.lock.before uv.lock > lock-changes.txt || true
 ### H3
 
 ```bash
-PATH="$PWD/bin-one:$PWD/bin-two:$PATH" bash -c 'course-info; which course-info' > first.txt
-PATH="$PWD/bin-two:$PWD/bin-one:$PATH" bash -c 'course-info; which course-info' > second.txt
+mkdir -p bin-one bin-two
+printf '#!/usr/bin/env bash\necho one\n' > bin-one/course-info
+printf '#!/usr/bin/env bash\necho two\n' > bin-two/course-info
+chmod +x bin-one/course-info bin-two/course-info
+
+PATH="$PWD/bin-one:$PWD/bin-two:$PATH" bash -c 'course-info; command -v course-info' > first.txt
+PATH="$PWD/bin-two:$PWD/bin-one:$PATH" bash -c 'course-info; command -v course-info' > second.txt
 ```
 
 ### H4

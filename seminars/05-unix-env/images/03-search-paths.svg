@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <rect width="960" height="500" fill="#ffffff"/>
+  <text x="480" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Три списка путей — три разных искателя</text>
+  <text x="480" y="56" text-anchor="middle" font-size="13" fill="#64748b">переменные похожи по виду (каталоги через «:»), но их читают разные программы и в разные моменты</text>
+
+  <!-- PATH -->
+  <rect x="24" y="76" width="296" height="316" rx="12" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2.5"/>
+  <text x="172" y="106" text-anchor="middle" font-size="17" font-weight="700" fill="#1d4ed8" font-family="monospace">PATH</text>
+  <text x="172" y="132" text-anchor="middle" font-size="13" fill="#334155">кто ищет: <tspan font-weight="600">оболочка</tspan> (bash)</text>
+  <text x="172" y="154" text-anchor="middle" font-size="13" fill="#334155">когда: вы набрали команду</text>
+  <line x1="44" y1="170" x2="300" y2="170" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="172" y="194" text-anchor="middle" font-size="13" fill="#334155">что ищет: исполняемый файл</text>
+  <text x="172" y="216" text-anchor="middle" font-size="13" font-family="monospace" fill="#0f172a">course-info, python, ls</text>
+  <line x1="44" y1="232" x2="300" y2="232" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="172" y="256" text-anchor="middle" font-size="13" fill="#334155">чем посмотреть выбор:</text>
+  <text x="172" y="278" text-anchor="middle" font-size="13" font-family="monospace" fill="#0f172a">which / command -v</text>
+  <line x1="44" y1="294" x2="300" y2="294" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="172" y="318" text-anchor="middle" font-size="13" font-weight="600" fill="#b91c1c">как выглядит промах:</text>
+  <text x="172" y="342" text-anchor="middle" font-size="12.5" font-family="monospace" fill="#7f1d1d">bash: course-info:</text>
+  <text x="172" y="360" text-anchor="middle" font-size="12.5" font-family="monospace" fill="#7f1d1d">command not found</text>
+  <text x="172" y="382" text-anchor="middle" font-size="12" fill="#64748b">чинит: PATH или venv</text>
+
+  <!-- PYTHONPATH -->
+  <rect x="332" y="76" width="296" height="316" rx="12" fill="#f5f3ff" stroke="#6d28d9" stroke-width="2.5"/>
+  <text x="480" y="106" text-anchor="middle" font-size="17" font-weight="700" fill="#6d28d9" font-family="monospace">PYTHONPATH</text>
+  <text x="480" y="132" text-anchor="middle" font-size="13" fill="#334155">кто ищет: <tspan font-weight="600">интерпретатор</tspan> Python</text>
+  <text x="480" y="154" text-anchor="middle" font-size="13" fill="#334155">когда: выполняется import</text>
+  <line x1="352" y1="170" x2="608" y2="170" stroke="#c4b5fd" stroke-width="1.5"/>
+  <text x="480" y="194" text-anchor="middle" font-size="13" fill="#334155">что ищет: модуль или пакет</text>
+  <text x="480" y="216" text-anchor="middle" font-size="13" font-family="monospace" fill="#0f172a">course_app, requests</text>
+  <line x1="352" y1="232" x2="608" y2="232" stroke="#c4b5fd" stroke-width="1.5"/>
+  <text x="480" y="256" text-anchor="middle" font-size="13" fill="#334155">чем посмотреть выбор:</text>
+  <text x="480" y="278" text-anchor="middle" font-size="12.5" font-family="monospace" fill="#0f172a">print(module.__file__)</text>
+  <line x1="352" y1="294" x2="608" y2="294" stroke="#c4b5fd" stroke-width="1.5"/>
+  <text x="480" y="318" text-anchor="middle" font-size="13" font-weight="600" fill="#b91c1c">как выглядит промах:</text>
+  <text x="480" y="342" text-anchor="middle" font-size="12.5" font-family="monospace" fill="#7f1d1d">ModuleNotFoundError:</text>
+  <text x="480" y="360" text-anchor="middle" font-size="12.5" font-family="monospace" fill="#7f1d1d">No module named 'requests'</text>
+  <text x="480" y="382" text-anchor="middle" font-size="12" fill="#64748b">чинит: .venv и uv add</text>
+
+  <!-- LD_LIBRARY_PATH -->
+  <rect x="640" y="76" width="296" height="316" rx="12" fill="#fff7ed" stroke="#b45309" stroke-width="2.5"/>
+  <text x="788" y="106" text-anchor="middle" font-size="17" font-weight="700" fill="#b45309" font-family="monospace">LD_LIBRARY_PATH</text>
+  <text x="788" y="132" text-anchor="middle" font-size="13" fill="#334155">кто ищет: <tspan font-weight="600">загрузчик</tspan> ld.so</text>
+  <text x="788" y="154" text-anchor="middle" font-size="13" fill="#334155">когда: программа стартует</text>
+  <line x1="660" y1="170" x2="916" y2="170" stroke="#fdba74" stroke-width="1.5"/>
+  <text x="788" y="194" text-anchor="middle" font-size="13" fill="#334155">что ищет: библиотеку .so</text>
+  <text x="788" y="216" text-anchor="middle" font-size="13" font-family="monospace" fill="#0f172a">libc.so.6, libcudnn.so.9</text>
+  <line x1="660" y1="232" x2="916" y2="232" stroke="#fdba74" stroke-width="1.5"/>
+  <text x="788" y="256" text-anchor="middle" font-size="13" fill="#334155">чем посмотреть выбор:</text>
+  <text x="788" y="278" text-anchor="middle" font-size="13" font-family="monospace" fill="#0f172a">ldd / ldconfig -p</text>
+  <line x1="660" y1="294" x2="916" y2="294" stroke="#fdba74" stroke-width="1.5"/>
+  <text x="788" y="318" text-anchor="middle" font-size="13" font-weight="600" fill="#b91c1c">как выглядит промах:</text>
+  <text x="788" y="342" text-anchor="middle" font-size="12.5" font-family="monospace" fill="#7f1d1d">error while loading shared</text>
+  <text x="788" y="360" text-anchor="middle" font-size="12.5" font-family="monospace" fill="#7f1d1d">libraries: libfoo.so.1</text>
+  <text x="788" y="382" text-anchor="middle" font-size="12" fill="#64748b">чинит: пакет ОС и ldconfig</text>
+
+  <!-- порядок для ld.so -->
+  <rect x="24" y="408" width="912" height="46" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="40" y="428" font-size="12.5" fill="#334155">Порядок для библиотек: сначала LD_LIBRARY_PATH, потом кэш <tspan font-family="monospace">/etc/ld.so.cache</tspan> (его печатает <tspan font-family="monospace">ldconfig -p</tspan>), потом стандартные пути.</text>
+  <text x="40" y="446" font-size="12.5" fill="#334155">Поэтому LD_LIBRARY_PATH — временный обход для одного запуска, а не постоянная настройка в <tspan font-family="monospace">~/.bashrc</tspan>.</text>
+
+  <text x="480" y="480" text-anchor="middle" font-size="13" fill="#64748b">Текст ошибки сам называет искателя: command not found → PATH, ModuleNotFoundError → venv, loading shared libraries → ld.so</text>
+</svg>
