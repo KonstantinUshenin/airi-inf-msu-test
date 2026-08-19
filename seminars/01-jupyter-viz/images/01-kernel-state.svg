@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="470" viewBox="0 0 940 470" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="940" height="470" fill="#ffffff"/>
+  <text x="470" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Ноутбук — это текст, а состояние живёт в памяти ядра</text>
+
+  <!-- ── кадр 1 ── -->
+  <text x="30" y="68" font-size="15" font-weight="600" fill="#0f172a">1. Запустили все три ячейки сверху вниз</text>
+
+  <g font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace" font-size="15">
+    <rect x="40" y="82" width="300" height="38" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+    <text x="54" y="106" fill="#0f172a">[1]  answer = 42</text>
+    <rect x="40" y="128" width="300" height="38" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+    <text x="54" y="152" fill="#0f172a">[2]  answer = 0</text>
+    <rect x="40" y="174" width="300" height="38" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+    <text x="54" y="198" fill="#0f172a">[3]  print(answer)</text>
+  </g>
+
+  <line x1="352" y1="155" x2="468" y2="155" stroke="#475569" stroke-width="2" marker-end="url(#a1)"/>
+
+  <rect x="480" y="100" width="250" height="110" rx="10" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="605" y="130" text-anchor="middle" font-size="15" font-weight="600" fill="#166534">Память ядра</text>
+  <text x="605" y="164" text-anchor="middle" font-size="17" fill="#0f172a" font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace">answer = 0</text>
+  <text x="605" y="190" text-anchor="middle" font-size="11" fill="#475569">последнее выполненное присваивание</text>
+
+  <text x="752" y="146" font-size="13" fill="#0f172a">ячейка [3]</text>
+  <text x="752" y="166" font-size="13" fill="#0f172a">печатает <tspan font-weight="600">0</tspan></text>
+
+  <line x1="30" y1="236" x2="910" y2="236" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- ── кадр 2 ── -->
+  <text x="30" y="262" font-size="15" font-weight="600" fill="#0f172a">2. Поправили вторую ячейку, но не запустили её</text>
+
+  <g font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace" font-size="15">
+    <rect x="40" y="276" width="300" height="38" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+    <text x="54" y="300" fill="#0f172a">[1]  answer = 42</text>
+    <rect x="40" y="322" width="300" height="38" rx="6" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+    <text x="54" y="346" fill="#0f172a">[ ]  answer = 100</text>
+    <text x="222" y="346" font-size="11" fill="#b45309" font-family="system-ui, Arial, sans-serif">не запущена</text>
+    <rect x="40" y="368" width="300" height="38" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+    <text x="54" y="392" fill="#0f172a">[4]  print(answer)</text>
+  </g>
+
+  <line x1="352" y1="349" x2="468" y2="349" stroke="#475569" stroke-width="2" marker-end="url(#a1)"/>
+
+  <rect x="480" y="294" width="250" height="110" rx="10" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="605" y="324" text-anchor="middle" font-size="15" font-weight="600" fill="#b91c1c">Память ядра</text>
+  <text x="605" y="358" text-anchor="middle" font-size="17" fill="#0f172a" font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace">answer = 0</text>
+  <text x="605" y="384" text-anchor="middle" font-size="11" fill="#475569">текст ячейки изменился, память — нет</text>
+
+  <text x="752" y="340" font-size="13" fill="#0f172a">ячейка [4]</text>
+  <text x="752" y="360" font-size="13" fill="#0f172a">печатает <tspan font-weight="600">0</tspan>, а не 100</text>
+
+  <text x="470" y="444" text-anchor="middle" font-size="14" fill="#334155">Номер [N] — порядок запуска, а не позиция в ноутбуке; сойтись с текстом его заставляет только Restart &amp; Run All.</text>
+</svg>

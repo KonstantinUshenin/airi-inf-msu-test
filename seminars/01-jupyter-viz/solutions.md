@@ -1,5 +1,17 @@
 # Примеры решений
 
+Решения, которые сохраняют файлы, пишут их в `~/seminar-01/` — предполагается,
+что ноутбук в начале перешёл в этот каталог:
+
+```python
+from pathlib import Path
+import os
+
+work_dir = Path.home() / "seminar-01"
+work_dir.mkdir(exist_ok=True)
+os.chdir(work_dir)
+```
+
 ## База
 
 ### B1
@@ -72,6 +84,8 @@ print(x[x % 2 == 0])   # [0 2 4 6 8]
 ### B6
 
 ```python
+from pathlib import Path
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -81,7 +95,7 @@ plt.xlabel("x")
 plt.ylabel("sin(x)")
 plt.title("y = sin(x)")
 plt.grid(True)
-plt.savefig("sin.png", dpi=150)   # сохранить ДО show
+plt.savefig(Path.home() / "seminar-01" / "sin.png", dpi=150)   # сохранить ДО show
 plt.show()
 ```
 
@@ -126,6 +140,8 @@ print(M.argmax())      # 5        — индекс максимума (в раз
 ### M4
 
 ```python
+from pathlib import Path
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -148,7 +164,7 @@ for ax in axes.flat:
     ax.grid(True)
 
 fig.tight_layout()
-fig.savefig("subplots.png", dpi=150)
+fig.savefig(Path.home() / "seminar-01" / "subplots.png", dpi=150)
 plt.show()
 ```
 
@@ -321,6 +337,8 @@ print("std :", np.round(Xz.std(axis=0), 6))    # ~ [1 1 1 1]
 ### H6
 
 ```python
+from pathlib import Path
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, PillowWriter
@@ -338,6 +356,6 @@ def update(frame):
     return (line,)
 
 anim = FuncAnimation(fig, update, frames=60, interval=50, blit=True)
-anim.save("wave.gif", writer=PillowWriter(fps=20))
+anim.save(Path.home() / "seminar-01" / "wave.gif", writer=PillowWriter(fps=20))
 plt.close(fig)
 ```

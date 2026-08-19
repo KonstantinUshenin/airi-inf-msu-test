@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="640" viewBox="0 0 940 640" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="bd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+  </defs>
+
+  <rect width="940" height="640" fill="#ffffff"/>
+  <text x="470" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Broadcasting: формы сравниваются справа налево</text>
+  <text x="470" y="58" text-anchor="middle" font-size="14" fill="#475569">по каждой оси размеры либо равны, либо один из них 1 — эта ось и растягивается</text>
+
+  <!-- ── случай 1 ── -->
+  <text x="40" y="96" font-size="16" font-weight="600" fill="#166534">✔  (3, 4)  +  (4,)  →  (3, 4)</text>
+
+  <rect x="248" y="108" width="46" height="76" rx="6" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <g font-size="17" font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace">
+    <text x="40" y="134" font-size="13" font-family="system-ui, Arial, sans-serif" fill="#475569">table</text>
+    <text x="205" y="134" text-anchor="middle" fill="#0f172a">3</text>
+    <text x="271" y="134" text-anchor="middle" fill="#0f172a">4</text>
+    <text x="40" y="172" font-size="13" font-family="system-ui, Arial, sans-serif" fill="#475569">col_mean</text>
+    <text x="205" y="172" text-anchor="middle" fill="#94a3b8">·</text>
+    <text x="271" y="172" text-anchor="middle" fill="#0f172a">4</text>
+  </g>
+  <text x="205" y="200" text-anchor="middle" font-size="11" fill="#475569">оси нет → 1</text>
+  <text x="271" y="200" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">4 = 4</text>
+
+  <g font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace">
+    <rect x="470" y="100" width="160" height="30" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+    <line x1="510" y1="100" x2="510" y2="130" stroke="#1d4ed8" stroke-width="1.2"/>
+    <line x1="550" y1="100" x2="550" y2="130" stroke="#1d4ed8" stroke-width="1.2"/>
+    <line x1="590" y1="100" x2="590" y2="130" stroke="#1d4ed8" stroke-width="1.2"/>
+  </g>
+  <text x="644" y="120" font-size="13" fill="#334155">col_mean — одна строка (4,)</text>
+  <line x1="490" y1="134" x2="490" y2="154" stroke="#1d4ed8" stroke-width="2" marker-end="url(#bd)"/>
+
+  <g>
+    <rect x="470" y="158" width="160" height="90" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+    <g stroke="#1d4ed8" stroke-width="1.2" stroke-dasharray="4 3">
+      <line x1="470" y1="188" x2="630" y2="188"/>
+      <line x1="470" y1="218" x2="630" y2="218"/>
+    </g>
+    <g stroke="#1d4ed8" stroke-width="1.2">
+      <line x1="510" y1="158" x2="510" y2="248"/>
+      <line x1="550" y1="158" x2="550" y2="248"/>
+      <line x1="590" y1="158" x2="590" y2="248"/>
+    </g>
+  </g>
+  <text x="644" y="198" font-size="13" fill="#334155">та же строка повторилась 3 раза</text>
+  <text x="644" y="218" font-size="13" fill="#334155">и вычлась из каждой строки table</text>
+  <text x="644" y="240" font-size="12" fill="#64748b">копии в памяти при этом не создаются</text>
+
+  <line x1="40" y1="272" x2="900" y2="272" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- ── случай 2 ── -->
+  <text x="40" y="306" font-size="16" font-weight="600" fill="#b91c1c">✘  (3, 4)  +  (3,)  →  ValueError</text>
+
+  <rect x="248" y="318" width="46" height="76" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <g font-size="17" font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace">
+    <text x="205" y="344" text-anchor="middle" fill="#0f172a">3</text>
+    <text x="271" y="344" text-anchor="middle" fill="#0f172a">4</text>
+    <text x="205" y="382" text-anchor="middle" fill="#94a3b8">·</text>
+    <text x="271" y="382" text-anchor="middle" fill="#0f172a">3</text>
+  </g>
+  <text x="271" y="410" text-anchor="middle" font-size="11" font-weight="600" fill="#b91c1c">4 ≠ 3</text>
+
+  <text x="400" y="344" font-size="13" fill="#334155">Самая правая ось: 4 против 3. Размеры не равны,</text>
+  <text x="400" y="364" font-size="13" fill="#334155">и ни один из них не равен 1 — растягивать нечего.</text>
+  <text x="400" y="392" font-size="12" fill="#b91c1c" font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace">operands could not be broadcast together</text>
+  <text x="400" y="410" font-size="12" fill="#b91c1c" font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace">with shapes (3,4) (3,)</text>
+
+  <line x1="40" y1="432" x2="900" y2="432" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- ── случай 3 ── -->
+  <text x="40" y="466" font-size="16" font-weight="600" fill="#166534">✔  (2, 1)  +  (1, 3)  →  (2, 3): растягиваются оба</text>
+
+  <g font-size="15" font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace">
+    <rect x="60" y="486" width="34" height="60" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+    <line x1="60" y1="516" x2="94" y2="516" stroke="#b45309" stroke-width="1.2"/>
+    <text x="77" y="508" text-anchor="middle" fill="#0f172a">10</text>
+    <text x="77" y="538" text-anchor="middle" fill="#0f172a">20</text>
+    <text x="77" y="566" text-anchor="middle" font-size="12" font-family="system-ui, Arial, sans-serif" fill="#475569">(2, 1)</text>
+
+    <text x="120" y="522" font-size="20" fill="#0f172a">+</text>
+
+    <rect x="150" y="486" width="102" height="30" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+    <line x1="184" y1="486" x2="184" y2="516" stroke="#1d4ed8" stroke-width="1.2"/>
+    <line x1="218" y1="486" x2="218" y2="516" stroke="#1d4ed8" stroke-width="1.2"/>
+    <text x="167" y="508" text-anchor="middle" fill="#0f172a">1</text>
+    <text x="201" y="508" text-anchor="middle" fill="#0f172a">2</text>
+    <text x="235" y="508" text-anchor="middle" fill="#0f172a">3</text>
+    <text x="201" y="566" text-anchor="middle" font-size="12" font-family="system-ui, Arial, sans-serif" fill="#475569">(1, 3)</text>
+
+    <text x="278" y="522" font-size="20" fill="#0f172a">=</text>
+
+    <rect x="310" y="486" width="102" height="60" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+    <line x1="344" y1="486" x2="344" y2="546" stroke="#166534" stroke-width="1.2"/>
+    <line x1="378" y1="486" x2="378" y2="546" stroke="#166534" stroke-width="1.2"/>
+    <line x1="310" y1="516" x2="412" y2="516" stroke="#166534" stroke-width="1.2"/>
+    <text x="327" y="508" text-anchor="middle" fill="#0f172a">11</text>
+    <text x="361" y="508" text-anchor="middle" fill="#0f172a">12</text>
+    <text x="395" y="508" text-anchor="middle" fill="#0f172a">13</text>
+    <text x="327" y="538" text-anchor="middle" fill="#0f172a">21</text>
+    <text x="361" y="538" text-anchor="middle" fill="#0f172a">22</text>
+    <text x="395" y="538" text-anchor="middle" fill="#0f172a">23</text>
+    <text x="361" y="566" text-anchor="middle" font-size="12" font-family="system-ui, Arial, sans-serif" fill="#475569">(2, 3)</text>
+  </g>
+
+  <text x="470" y="498" font-size="13" fill="#334155">Столбец растянулся вправо, строка — вниз:</text>
+  <text x="470" y="518" font-size="13" fill="#334155">так из двух одномерных массивов получается</text>
+  <text x="470" y="538" font-size="13" fill="#334155">таблица всех попарных сумм — без единого цикла.</text>
+  <text x="470" y="566" font-size="12" fill="#64748b" font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace">b[:, None] + a[None, :]</text>
+
+  <text x="470" y="612" text-anchor="middle" font-size="14" fill="#334155">Не сошлось — печатайте <tspan font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace">.shape</tspan> обоих массивов: почти всегда нужная ось оказалась не с той стороны.</text>
+</svg>
