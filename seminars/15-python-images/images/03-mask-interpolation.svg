@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="416" viewBox="0 0 980 416" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#166534"/>
+    </marker>
+    <marker id="arr-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309"/>
+    </marker>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/>
+    </marker>
+    <marker id="arr-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="980" height="416" fill="#ffffff"/>
+  <text x="490" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Почему маску уменьшают только NEAREST</text>
+
+  <rect x="330" y="62" width="300" height="56" rx="6" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="480" y="86" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">маска сегментации 128×128</text>
+  <text x="480" y="106" text-anchor="middle" font-size="12" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">значения: 0, 128, 255</text>
+  <text x="480" y="134" text-anchor="middle" font-size="12" fill="#64748b">это номера классов, а не яркость</text>
+  <line x1="400" y1="146" x2="260" y2="186" stroke="#166534" stroke-width="2" marker-end="url(#arr-green)"/>
+  <line x1="560" y1="146" x2="700" y2="186" stroke="#b91c1c" stroke-width="2" marker-end="url(#arr-red)"/>
+  <rect x="40" y="194" width="400" height="176" rx="10" fill="#ffffff" stroke="#166534" stroke-width="2"/>
+  <text x="240" y="222" text-anchor="middle" font-size="14" fill="#166534" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">resize(..., NEAREST)</text>
+  <text x="240" y="244" text-anchor="middle" font-size="12" fill="#64748b">берёт значение ближайшего пикселя</text>
+  <rect x="80" y="260" width="90" height="44" rx="6" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="125" y="288" text-anchor="middle" font-size="13" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">0</text>
+  <rect x="190" y="260" width="90" height="44" rx="6" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="235" y="288" text-anchor="middle" font-size="13" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">128</text>
+  <rect x="300" y="260" width="90" height="44" rx="6" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="345" y="288" text-anchor="middle" font-size="13" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">255</text>
+  <text x="240" y="330" text-anchor="middle" font-size="13" fill="#166534" font-weight="600">3 значения — ровно те же классы</text>
+  <text x="240" y="352" text-anchor="middle" font-size="12" fill="#64748b">разметка осталась разметкой</text>
+  <rect x="540" y="194" width="400" height="176" rx="10" fill="#ffffff" stroke="#b91c1c" stroke-width="2"/>
+  <text x="740" y="222" text-anchor="middle" font-size="14" fill="#b91c1c" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">resize(..., BILINEAR)</text>
+  <text x="740" y="244" text-anchor="middle" font-size="12" fill="#64748b">усредняет соседние значения</text>
+  <rect x="566" y="260" width="52" height="44" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="1"/>
+  <text x="592" y="288" text-anchor="middle" font-size="12" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">0</text>
+  <rect x="628" y="260" width="52" height="44" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="1"/>
+  <text x="654" y="288" text-anchor="middle" font-size="12" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">2</text>
+  <rect x="690" y="260" width="52" height="44" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="1"/>
+  <text x="716" y="288" text-anchor="middle" font-size="12" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">8</text>
+  <rect x="752" y="260" width="52" height="44" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="1"/>
+  <text x="778" y="288" text-anchor="middle" font-size="12" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">…</text>
+  <rect x="814" y="260" width="52" height="44" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="1"/>
+  <text x="840" y="288" text-anchor="middle" font-size="12" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">251</text>
+  <rect x="876" y="260" width="52" height="44" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="1"/>
+  <text x="902" y="288" text-anchor="middle" font-size="12" fill="#0f172a" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">255</text>
+  <text x="740" y="330" text-anchor="middle" font-size="13" fill="#b91c1c" font-weight="600">53 значения — 50 несуществующих классов</text>
+  <text x="740" y="352" text-anchor="middle" font-size="12" fill="#64748b">ошибки не будет, метрики просто хуже</text>
+
+  <text x="490" y="400" text-anchor="middle" font-size="13" fill="#64748b">Среднее между классом 0 и классом 128 — это не «немного класс», это класс, которого в разметке нет</text>
+</svg>
