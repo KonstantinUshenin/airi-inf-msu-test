@@ -35,6 +35,10 @@ os.chdir(work_dir)
 стал правильным. Объясните в комментарии, почему результат ноутбука зависит не от
 того, что в ячейках написано, а от того, в каком порядке их запускали.
 
+Учтите: после Restart & Run All вывод с ошибкой из ноутбука исчезнет, поэтому
+скопируйте текст ошибки в соседнюю markdown-ячейку — иначе в сдаваемом ноутбуке
+от первой половины задачи не останется следа.
+
 **Пример:** запуск второй ячейки первой печатает
 `NameError: name 'answer' is not defined`; после Restart Kernel и Run All —
 `42`.
@@ -45,10 +49,15 @@ os.chdir(work_dir)
 
 Покажите работу магий и shell в ноутбуке: узнайте текущий каталог (`%pwd`),
 список определённых переменных (`%who`), версию Python через shell (`!`) и
-замерьте время выражения (`%timeit`).
+замерьте время выражения (`%timeit`). Затем покажите **ячейковую** магию:
+сохраните ячейку в файл `script.py` через `%%writefile` и запустите его через
+`%run`. Проверьте, что будет, если поставить `%%writefile` не первой строкой
+ячейки, и объясните результат в комментарии.
 
 **Пример:** после `x = 5` магия `%who` выводит строку с `x`; `%timeit sum(range(10**6))`
-печатает усреднённое время одного запуска.
+печатает усреднённое время одного запуска; `%run script.py` печатает то, что
+скрипт выводит; `%%writefile` во второй строке даёт
+`UsageError: Line magic function `%%writefile` not found`.
 
 ### B3. Создание массивов NumPy
 
@@ -89,6 +98,20 @@ os.chdir(work_dir)
 
 **Пример:** после решения файл `~/seminar-01/sin.png` существует и не пустой;
 линия гладкая.
+
+### B7. Интерактивный график в plotly
+
+**need:** `plotly` (`!pip install plotly`, в Colab уже стоит).
+
+Постройте интерактивную диаграмму рассеяния по встроенному набору
+`px.data.iris()`: `sepal_width` по горизонтали, `sepal_length` по вертикали,
+цвет — вид ириса (`species`). Наведите курсор на точку и напишите в комментарии,
+какие значения показывает подсказка и чего в этом графике не может статичная
+картинка matplotlib.
+
+**Пример:** `px.scatter(px.data.iris(), x="sepal_width", y="sepal_length", color="species").show()`
+→ график с тремя цветами в легенде; при наведении всплывает подсказка со
+значениями обеих координат и названием вида.
 
 ## Среднее
 
@@ -150,18 +173,32 @@ os.chdir(work_dir)
 **need:** аккаунт Google; ноутбук из предыдущих задач.
 
 Загрузите свой ноутбук в Google Colab и добейтесь, чтобы он выполнялся там
-сверху вниз без правок кода. Проверьте, какая версия Python и какие версии
-`numpy`/`matplotlib` стоят в Colab, и установите недостающий пакет прямо из
-ноутбука. Сохраните результат работы (картинку или файл) так, чтобы он не
-пропал после отключения сессии, и объясните в комментарии, почему файл в рабочем
-каталоге Colab пропадает, а на Google Drive — нет.
+сверху вниз без правок кода. Проверьте, какие версии Python, `numpy` и
+`matplotlib` стоят в Colab и чем они отличаются от версий на вашей машине.
+Найдите библиотеку, которой в Colab нет (например, `humanize` или `lolviz`), и
+доустановите её прямо из ноутбука. Сохраните результат работы (картинку или
+файл) так, чтобы он не пропал после отключения сессии, и объясните в
+комментарии, почему файл в рабочем каталоге Colab пропадает, а на Google
+Drive — нет.
 
 **Пример:** `!python --version` в Colab печатает версию Python рантайма,
-`!pip install plotly` доустанавливает пакет, а `plt.savefig` с путём внутри
-подключённого `/content/drive/MyDrive/...` оставляет картинку после закрытия
-сессии.
+`!pip show numpy | grep Version` — версию numpy, `!pip install -q humanize`
+доустанавливает отсутствующий пакет (после чего `import humanize` работает), а
+`plt.savefig` с путём внутри подключённого `/content/drive/MyDrive/...`
+оставляет картинку после закрытия сессии.
 
 ## Сложное
+
+Сложные задачи специально выходят за пределы микро-лекции: часть нужных функций
+в ней не разбиралась, и их надо найти в документации. Опоры:
+[np.meshgrid](https://numpy.org/doc/stable/reference/generated/numpy.meshgrid.html),
+[np.cumsum](https://numpy.org/doc/stable/reference/generated/numpy.cumsum.html),
+[imshow](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.imshow.html),
+[contourf](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.contourf.html),
+[colorbar](https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.colorbar),
+[полярные оси](https://matplotlib.org/stable/gallery/pie_and_polar_charts/polar_demo.html),
+[раскраска scatter по значению (`c` и `cmap`)](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.scatter.html),
+[FuncAnimation](https://matplotlib.org/stable/api/_as_gen/matplotlib.animation.FuncAnimation.html).
 
 ### H1. Функция двух переменных
 
