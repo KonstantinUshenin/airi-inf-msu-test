@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="430" viewBox="0 0 940 430" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="pOut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#166534"/>
+    </marker>
+    <marker id="pErr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/>
+    </marker>
+  </defs>
+  <rect width="940" height="430" fill="#ffffff"/>
+  <text x="470" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Пайплайн: stdout одного процесса становится stdin следующего</text>
+  <text x="470" y="62" text-anchor="middle" font-size="16" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">cat os-release-copy.txt | head -n 5 | wc -l</text>
+
+  <!-- процессы -->
+  <rect x="40" y="96" width="220" height="80" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="150" y="132" text-anchor="middle" font-size="16" font-weight="600" fill="#0f172a">cat</text>
+  <text x="150" y="156" text-anchor="middle" font-size="12" fill="#475569">читает файл целиком</text>
+
+  <rect x="360" y="96" width="220" height="80" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="470" y="132" text-anchor="middle" font-size="16" font-weight="600" fill="#0f172a">head -n 5</text>
+  <text x="470" y="156" text-anchor="middle" font-size="12" fill="#475569">оставляет 5 строк</text>
+
+  <rect x="680" y="96" width="220" height="80" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="790" y="132" text-anchor="middle" font-size="16" font-weight="600" fill="#0f172a">wc -l</text>
+  <text x="790" y="156" text-anchor="middle" font-size="12" fill="#475569">считает строки</text>
+
+  <!-- трубы -->
+  <line x1="264" y1="126" x2="356" y2="126" stroke="#166534" stroke-width="3" marker-end="url(#pOut)"/>
+  <text x="310" y="112" text-anchor="middle" font-size="20" fill="#166534" font-weight="700">|</text>
+  <text x="310" y="152" text-anchor="middle" font-size="12" fill="#166534">1 → 0</text>
+
+  <line x1="584" y1="126" x2="676" y2="126" stroke="#166534" stroke-width="3" marker-end="url(#pOut)"/>
+  <text x="630" y="112" text-anchor="middle" font-size="20" fill="#166534" font-weight="700">|</text>
+  <text x="630" y="152" text-anchor="middle" font-size="12" fill="#166534">1 → 0</text>
+
+  <!-- stdout последнего -->
+  <line x1="790" y1="180" x2="790" y2="256" stroke="#166534" stroke-width="2" marker-end="url(#pOut)"/>
+  <text x="800" y="222" font-size="12" fill="#166534">1</text>
+
+  <!-- stderr мимо трубы -->
+  <path d="M 150 180 L 150 220 L 440 220 L 440 256" fill="none" stroke="#b91c1c" stroke-width="2" marker-end="url(#pErr)"/>
+  <path d="M 470 180 L 470 256" fill="none" stroke="#b91c1c" stroke-width="2" marker-end="url(#pErr)"/>
+  <path d="M 700 180 L 700 220 L 500 220 L 500 256" fill="none" stroke="#b91c1c" stroke-width="2" marker-end="url(#pErr)"/>
+  <text x="196" y="212" font-size="12" fill="#b91c1c">2 stderr</text>
+
+  <!-- терминал -->
+  <rect x="380" y="264" width="180" height="56" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="470" y="298" text-anchor="middle" font-size="15" font-weight="600" fill="#7f1d1d">экран</text>
+
+  <rect x="700" y="264" width="180" height="56" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="790" y="298" text-anchor="middle" font-size="15" font-weight="600" fill="#14532d">результат</text>
+
+  <text x="470" y="360" text-anchor="middle" font-size="14" fill="#334155">По трубе идёт только stdout. Ошибки любой части пайплайна летят мимо трубы, прямо в терминал.</text>
+  <text x="470" y="388" text-anchor="middle" font-size="14" fill="#334155">Код завершения пайплайна — это код последней команды; set -o pipefail заставляет учитывать все.</text>
+  <text x="470" y="414" text-anchor="middle" font-size="13" fill="#64748b">Поэтому упавший cat в начале трубы легко не заметить: wc отработал успешно, и код будет нулевым.</text>
+</svg>

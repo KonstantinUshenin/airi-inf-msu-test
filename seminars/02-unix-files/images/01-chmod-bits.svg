@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="580" viewBox="0 0 940 580" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <rect width="940" height="580" fill="#ffffff"/>
+  <text x="470" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Как читать права в выводе ls -l</text>
+
+  <!-- подписи над тройками -->
+  <text x="215" y="70" text-anchor="middle" font-size="13" fill="#64748b">тип объекта</text>
+  <text x="355" y="70" text-anchor="middle" font-size="13" fill="#64748b">владелец (u)</text>
+  <text x="525" y="70" text-anchor="middle" font-size="13" fill="#64748b">группа (g)</text>
+  <text x="695" y="70" text-anchor="middle" font-size="13" fill="#64748b">остальные (o)</text>
+
+  <!-- сама строка прав -->
+  <rect x="170" y="80" width="90" height="70" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="215" y="128" text-anchor="middle" font-size="34" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">-</text>
+
+  <rect x="280" y="80" width="150" height="70" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="355" y="128" text-anchor="middle" font-size="34" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">rw-</text>
+
+  <rect x="450" y="80" width="150" height="70" rx="8" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="525" y="128" text-anchor="middle" font-size="34" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">r--</text>
+
+  <rect x="620" y="80" width="150" height="70" rx="8" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="695" y="128" text-anchor="middle" font-size="34" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">---</text>
+
+  <!-- числа под тройками -->
+  <text x="215" y="180" text-anchor="middle" font-size="13" fill="#334155">обычный файл</text>
+  <text x="355" y="180" text-anchor="middle" font-size="15" font-weight="600" fill="#166534">4 + 2 = 6</text>
+  <text x="525" y="180" text-anchor="middle" font-size="15" font-weight="600" fill="#1d4ed8">4</text>
+  <text x="695" y="180" text-anchor="middle" font-size="15" font-weight="600" fill="#b91c1c">0</text>
+
+  <text x="470" y="214" text-anchor="middle" font-size="17" fill="#0f172a">то же самое числом: <tspan font-weight="700">chmod 640 report.txt</tspan></text>
+
+  <!-- вес битов -->
+  <rect x="170" y="238" width="190" height="46" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="265" y="267" text-anchor="middle" font-size="15" fill="#0f172a">r = 4 (читать)</text>
+  <rect x="375" y="238" width="190" height="46" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="470" y="267" text-anchor="middle" font-size="15" fill="#0f172a">w = 2 (менять)</text>
+  <rect x="580" y="238" width="190" height="46" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="675" y="267" text-anchor="middle" font-size="15" fill="#0f172a">x = 1 (см. ниже)</text>
+
+  <!-- то, что путают -->
+  <text x="470" y="326" text-anchor="middle" font-size="16" font-weight="600" fill="#0f172a">Одни и те же буквы значат разное у файла и у каталога</text>
+
+  <rect x="60" y="344" width="390" height="180" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="255" y="374" text-anchor="middle" font-size="16" font-weight="600" fill="#7c2d12">файл</text>
+  <text x="82" y="406" font-size="14" fill="#0f172a"><tspan font-weight="700">r</tspan> — прочитать содержимое</text>
+  <text x="82" y="436" font-size="14" fill="#0f172a"><tspan font-weight="700">w</tspan> — изменить содержимое</text>
+  <text x="82" y="466" font-size="14" fill="#0f172a"><tspan font-weight="700">x</tspan> — запустить как программу</text>
+  <text x="82" y="500" font-size="12" fill="#78350f">удалить файл позволяет w каталога, а не файла</text>
+
+  <rect x="490" y="344" width="390" height="180" rx="10" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="685" y="374" text-anchor="middle" font-size="16" font-weight="600" fill="#1e3a8a">каталог</text>
+  <text x="512" y="406" font-size="14" fill="#0f172a"><tspan font-weight="700">r</tspan> — увидеть список имён</text>
+  <text x="512" y="436" font-size="14" fill="#0f172a"><tspan font-weight="700">w</tspan> — создать и удалить запись</text>
+  <text x="512" y="466" font-size="14" fill="#0f172a"><tspan font-weight="700">x</tspan> — войти, пройти по пути</text>
+  <text x="512" y="500" font-size="12" fill="#1e3a8a">x нужен на каждом каталоге пути, иначе доступа нет</text>
+
+  <text x="470" y="558" text-anchor="middle" font-size="14" fill="#334155">Права читаются тройками слева направо: владелец, группа, все остальные; x у каталога — это «войти», а не «запустить».</text>
+</svg>
