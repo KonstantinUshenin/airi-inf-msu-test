@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="990" height="384" viewBox="0 0 990 384" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#166534"/>
+    </marker>
+    <marker id="arr-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309"/>
+    </marker>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/>
+    </marker>
+    <marker id="arr-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="990" height="384" fill="#ffffff"/>
+  <text x="495" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">fork, exec и wait: как запускается любая команда</text>
+
+  <text x="135" y="74" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">1. до fork</text>
+  <rect x="60" y="90" width="150" height="66" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="135" y="116" text-anchor="middle" font-size="13" fill="#0f172a" font-weight="600">родитель</text>
+  <text x="135" y="138" text-anchor="middle" font-size="12" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">pid=100</text>
+  <text x="375" y="74" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">2. fork()</text>
+  <rect x="300" y="90" width="150" height="66" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="375" y="116" text-anchor="middle" font-size="13" fill="#0f172a" font-weight="600">родитель</text>
+  <text x="375" y="138" text-anchor="middle" font-size="12" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">pid=100</text>
+  <rect x="300" y="180" width="150" height="66" rx="10" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="375" y="206" text-anchor="middle" font-size="13" fill="#1d4ed8" font-weight="600">ребёнок</text>
+  <text x="375" y="228" text-anchor="middle" font-size="12" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">pid=101</text>
+  <text x="615" y="74" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">3. exec()</text>
+  <rect x="540" y="90" width="150" height="66" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="615" y="116" text-anchor="middle" font-size="13" fill="#0f172a" font-weight="600">родитель</text>
+  <text x="615" y="138" text-anchor="middle" font-size="12" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">pid=100</text>
+  <rect x="540" y="180" width="150" height="66" rx="10" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="615" y="206" text-anchor="middle" font-size="13" fill="#1d4ed8" font-weight="600">ps -e</text>
+  <text x="615" y="228" text-anchor="middle" font-size="12" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">тот же pid=101</text>
+  <text x="855" y="74" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">4. wait()</text>
+  <rect x="780" y="90" width="150" height="66" rx="10" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="855" y="116" text-anchor="middle" font-size="13" fill="#0f172a" font-weight="600">родитель</text>
+  <text x="855" y="138" text-anchor="middle" font-size="12" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">получил код</text>
+  <line x1="216" y1="123" x2="292" y2="123" stroke="#475569" stroke-width="2" marker-end="url(#arr-grey)"/>
+  <line x1="456" y1="123" x2="532" y2="123" stroke="#475569" stroke-width="2" marker-end="url(#arr-grey)"/>
+  <line x1="696" y1="123" x2="772" y2="123" stroke="#475569" stroke-width="2" marker-end="url(#arr-grey)"/>
+  <line x1="456" y1="213" x2="532" y2="213" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <line x1="696" y1="213" x2="800" y2="168" stroke="#166534" stroke-width="2" marker-end="url(#arr-green)"/>
+  <text x="255" y="172" text-anchor="middle" font-size="12" fill="#64748b">копия</text>
+  <text x="495" y="262" text-anchor="middle" font-size="12" fill="#1d4ed8">образ заменён</text>
+  <text x="770" y="258" text-anchor="middle" font-size="12" fill="#166534">ребёнок завершился</text>
+  <rect x="60" y="286" width="870" height="44" rx="6" fill="#ffffff" stroke="#b91c1c" stroke-width="2"/>
+  <text x="495" y="314" text-anchor="middle" font-size="13" fill="#b91c1c" font-weight="600">без wait() завершившийся ребёнок остаётся зомби в таблице процессов</text>
+
+  <text x="495" y="368" text-anchor="middle" font-size="13" fill="#64748b">subprocess.run делает ровно эти четыре шага: копия процесса, замена образа, ожидание, код возврата</text>
+</svg>
