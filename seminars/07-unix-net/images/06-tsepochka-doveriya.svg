@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="470" viewBox="0 0 960 470" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="cGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a"/>
+    </marker>
+    <marker id="cRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="470" fill="#ffffff"/>
+  <text x="480" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Цепочка доверия — и что от неё остаётся у «человека посередине»</text>
+
+  <!-- ================= ПАНЕЛЬ A: настоящий сайт ================= -->
+  <rect x="24" y="52" width="440" height="346" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="244" y="78" text-anchor="middle" font-size="14.5" font-weight="600" fill="#166534">Настоящий сайт: цепочка доходит до корня</text>
+
+  <rect x="64" y="94" width="360" height="52" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
+  <text x="244" y="116" text-anchor="middle" font-size="13" font-weight="600" fill="#0f172a">Корневой УЦ</text>
+  <text x="244" y="135" text-anchor="middle" font-size="11" fill="#475569">уже лежит у нас: /etc/ssl/certs, ~150 штук</text>
+
+  <line x1="244" y1="146" x2="244" y2="172" stroke="#16a34a" stroke-width="2.2" marker-end="url(#cGreen)"/>
+  <text x="256" y="166" font-size="11.5" fill="#15803d">подписал</text>
+
+  <rect x="64" y="174" width="360" height="52" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
+  <text x="244" y="196" text-anchor="middle" font-size="13" font-weight="600" fill="#0f172a">Промежуточный УЦ</text>
+  <text x="244" y="215" text-anchor="middle" font-size="11" fill="#475569">сервер прислал его сам, в рукопожатии</text>
+
+  <line x1="244" y1="226" x2="244" y2="252" stroke="#16a34a" stroke-width="2.2" marker-end="url(#cGreen)"/>
+  <text x="256" y="246" font-size="11.5" fill="#15803d">подписал</text>
+
+  <rect x="64" y="254" width="360" height="52" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
+  <text x="244" y="276" text-anchor="middle" font-size="13" font-weight="600" fill="#0f172a">Сертификат example.com</text>
+  <text x="244" y="295" text-anchor="middle" font-size="11" fill="#475569">имя в поле SAN + срок действия</text>
+
+  <rect x="64" y="320" width="360" height="60" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="244" y="343" text-anchor="middle" font-size="12.5" fill="#15803d" font-family="ui-monospace, 'DejaVu Sans Mono', monospace">Verify return code: 0 (ok)</text>
+  <text x="244" y="365" text-anchor="middle" font-size="12" fill="#0f172a">цепочка сошлась — клиент продолжает разговор</text>
+
+  <!-- ================= ПАНЕЛЬ B: MITM ================= -->
+  <rect x="496" y="52" width="440" height="346" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="716" y="78" text-anchor="middle" font-size="14.5" font-weight="600" fill="#991b1b">Человек посередине: подписать нечем</text>
+
+  <rect x="536" y="94" width="360" height="52" rx="8" fill="#ffffff" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="7 5"/>
+  <text x="716" y="116" text-anchor="middle" font-size="13" font-weight="600" fill="#991b1b">Известного УЦ здесь нет</text>
+  <text x="716" y="135" text-anchor="middle" font-size="11" fill="#475569">взять подпись, которой мы верим, негде</text>
+
+  <line x1="716" y1="146" x2="716" y2="172" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="5 5"/>
+  <text x="734" y="166" font-size="17" font-weight="700" fill="#dc2626">✗</text>
+
+  <rect x="536" y="174" width="360" height="52" rx="8" fill="#ffffff" stroke="#dc2626" stroke-width="1.8"/>
+  <text x="716" y="196" text-anchor="middle" font-size="13" font-weight="600" fill="#0f172a">Сертификат CN=localhost</text>
+  <text x="716" y="215" text-anchor="middle" font-size="11" fill="#475569">issuer совпал с subject: подписал сам себя</text>
+
+  <line x1="716" y1="226" x2="716" y2="252" stroke="#dc2626" stroke-width="2.2" marker-end="url(#cRed)"/>
+  <text x="728" y="246" font-size="11.5" fill="#991b1b">предъявил клиенту</text>
+
+  <rect x="536" y="254" width="360" height="52" rx="8" fill="#ffffff" stroke="#dc2626" stroke-width="1.8"/>
+  <text x="716" y="276" text-anchor="middle" font-size="13" font-weight="600" fill="#0f172a">Клиент ищет издателя в хранилище</text>
+  <text x="716" y="295" text-anchor="middle" font-size="11" fill="#475569">и не находит — доверять нечему</text>
+
+  <rect x="536" y="320" width="360" height="60" rx="8" fill="#ffffff" stroke="#dc2626" stroke-width="1.6"/>
+  <text x="716" y="343" text-anchor="middle" font-size="12.5" fill="#991b1b" font-family="ui-monospace, 'DejaVu Sans Mono', monospace">curl: (60) SSL certificate problem</text>
+  <text x="716" y="365" text-anchor="middle" font-size="12" fill="#0f172a">соединение разорвано — так и должно быть</text>
+
+  <text x="480" y="424" text-anchor="middle" font-size="13.5" fill="#0f172a">Клиент верит не сертификату, а цепочке подписей: доверяю корню из системного хранилища — доверяю всем, кого он подписал.</text>
+  <text x="480" y="448" text-anchor="middle" font-size="12.5" fill="#64748b">Проверок три: подпись цепочки, имя из SAN и срок. Самоподписанный рвёт первую — снаружи это неотличимо от подмены.</text>
+</svg>
