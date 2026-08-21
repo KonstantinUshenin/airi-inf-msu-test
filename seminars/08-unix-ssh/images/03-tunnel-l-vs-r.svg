@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="500" viewBox="0 0 1000 500" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="tArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+    <marker id="tUse" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c3aed"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="500" fill="#ffffff"/>
+  <text x="500" y="34" text-anchor="middle" font-size="20" font-weight="600" fill="#0f172a">Туннели: <tspan font-family="ui-monospace, Menlo, Consolas, monospace">-L</tspan> и <tspan font-family="ui-monospace, Menlo, Consolas, monospace">-R</tspan> — где открывается слушающий порт</text>
+
+  <!-- ЛЕВАЯ ПАНЕЛЬ: -L -->
+  <rect x="20" y="56" width="465" height="330" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="20" y="56" width="465" height="42" rx="12" fill="#eef2ff"/>
+  <text x="252" y="84" text-anchor="middle" font-size="15" font-weight="600" fill="#3730a3" font-family="ui-monospace, Menlo, Consolas, monospace">ssh -L 9000:127.0.0.1:8888 course</text>
+
+  <rect x="45" y="150" width="175" height="86" rx="9" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="132" y="180" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Ваша машина</text>
+  <rect x="58" y="192" width="149" height="32" rx="6" fill="#fde68a" stroke="#b45309" stroke-width="2"/>
+  <text x="132" y="214" text-anchor="middle" font-size="13" font-weight="600" fill="#78350f">слушает :9000</text>
+
+  <rect x="285" y="150" width="175" height="86" rx="9" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="372" y="180" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Сервер course</text>
+  <rect x="298" y="192" width="149" height="32" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <text x="372" y="214" text-anchor="middle" font-size="12" fill="#334155" font-family="ui-monospace, Menlo, Consolas, monospace">127.0.0.1:8888</text>
+
+  <line x1="224" y1="168" x2="281" y2="168" stroke="#475569" stroke-width="2" marker-end="url(#tArr)"/>
+  <text x="252" y="126" text-anchor="middle" font-size="12" fill="#475569">ssh-соединение</text>
+  <text x="252" y="141" text-anchor="middle" font-size="12" fill="#475569">запускаете вы</text>
+
+  <path d="M 132 250 L 132 286 L 372 286 L 372 240" fill="none" stroke="#7c3aed" stroke-width="2" marker-end="url(#tUse)"/>
+  <text x="252" y="306" text-anchor="middle" font-size="12.5" fill="#7c3aed">байты из :9000 выходят на сервере</text>
+
+  <rect x="45" y="322" width="415" height="48" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="252" y="342" text-anchor="middle" font-size="13" fill="#334155">Ваш браузер идёт на <tspan font-family="ui-monospace, Menlo, Consolas, monospace">http://127.0.0.1:9000</tspan></text>
+  <text x="252" y="361" text-anchor="middle" font-size="13" fill="#334155">и попадает в Jupyter, который слушает только на сервере</text>
+
+  <!-- ПРАВАЯ ПАНЕЛЬ: -R -->
+  <rect x="515" y="56" width="465" height="330" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="515" y="56" width="465" height="42" rx="12" fill="#fef2f2"/>
+  <text x="747" y="84" text-anchor="middle" font-size="15" font-weight="600" fill="#9f1239" font-family="ui-monospace, Menlo, Consolas, monospace">ssh -R 9000:127.0.0.1:8888 course</text>
+
+  <rect x="540" y="150" width="175" height="86" rx="9" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="627" y="180" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Ваша машина</text>
+  <rect x="553" y="192" width="149" height="32" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <text x="627" y="214" text-anchor="middle" font-size="12" fill="#334155" font-family="ui-monospace, Menlo, Consolas, monospace">127.0.0.1:8888</text>
+
+  <rect x="780" y="150" width="175" height="86" rx="9" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="867" y="180" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Сервер course</text>
+  <rect x="793" y="192" width="149" height="32" rx="6" fill="#fde68a" stroke="#b45309" stroke-width="2"/>
+  <text x="867" y="214" text-anchor="middle" font-size="13" font-weight="600" fill="#78350f">слушает :9000</text>
+
+  <line x1="719" y1="168" x2="776" y2="168" stroke="#475569" stroke-width="2" marker-end="url(#tArr)"/>
+  <text x="747" y="126" text-anchor="middle" font-size="12" fill="#475569">ssh-соединение</text>
+  <text x="747" y="141" text-anchor="middle" font-size="12" fill="#475569">по-прежнему запускаете вы</text>
+
+  <path d="M 867 250 L 867 286 L 627 286 L 627 240" fill="none" stroke="#7c3aed" stroke-width="2" marker-end="url(#tUse)"/>
+  <text x="747" y="306" text-anchor="middle" font-size="12.5" fill="#7c3aed">байты из :9000 выходят у вас</text>
+
+  <rect x="540" y="322" width="415" height="48" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="747" y="342" text-anchor="middle" font-size="13" fill="#334155">Кто-то на сервере идёт на <tspan font-family="ui-monospace, Menlo, Consolas, monospace">http://127.0.0.1:9000</tspan></text>
+  <text x="747" y="361" text-anchor="middle" font-size="13" fill="#334155">и попадает в сервис, поднятый на вашем ноутбуке</text>
+
+  <!-- вывод -->
+  <text x="500" y="420" text-anchor="middle" font-size="14.5" font-weight="600" fill="#0f172a">Различие ровно одно: жёлтый порт. <tspan fill="#3730a3">-L</tspan> открывает слушающий порт у вас, <tspan fill="#9f1239">-R</tspan> — на сервере.</text>
+  <text x="500" y="448" text-anchor="middle" font-size="13.5" fill="#334155">Направление самого ssh-соединения в обоих случаях одинаковое: клиент — вы, сервер — <tspan font-family="ui-monospace, Menlo, Consolas, monospace">course</tspan>.</text>
+  <text x="500" y="472" text-anchor="middle" font-size="13.5" fill="#334155">Первое число в аргументе — всегда порт, который открывается; адрес после двоеточия — куда идти с другой стороны.</text>
+</svg>

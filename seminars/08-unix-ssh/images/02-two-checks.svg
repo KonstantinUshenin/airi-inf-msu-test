@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="440" viewBox="0 0 960 440" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+    <marker id="arrAmber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="440" fill="#ffffff"/>
+  <text x="480" y="36" text-anchor="middle" font-size="20" font-weight="600" fill="#0f172a">Два разных ключа и две встречные проверки</text>
+
+  <!-- клиент -->
+  <rect x="25" y="70" width="255" height="250" rx="12" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="152" y="98" text-anchor="middle" font-size="16" font-weight="600" fill="#0f172a">Ваша машина</text>
+  <rect x="45" y="115" width="215" height="66" rx="8" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="152" y="139" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a" font-family="ui-monospace, Menlo, Consolas, monospace">~/.ssh/course_ed25519</text>
+  <text x="152" y="162" text-anchor="middle" font-size="12" fill="#1e3a8a">ваш закрытый ключ</text>
+  <rect x="45" y="228" width="215" height="66" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+  <text x="152" y="252" text-anchor="middle" font-size="13" font-weight="600" fill="#78350f" font-family="ui-monospace, Menlo, Consolas, monospace">~/.ssh/known_hosts</text>
+  <text x="152" y="275" text-anchor="middle" font-size="12" fill="#78350f">ключи машин, куда вы ходили</text>
+
+  <!-- сервер -->
+  <rect x="680" y="70" width="255" height="250" rx="12" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="807" y="98" text-anchor="middle" font-size="16" font-weight="600" fill="#0f172a">Сервер</text>
+  <rect x="700" y="115" width="215" height="66" rx="8" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="807" y="139" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a" font-family="ui-monospace, Menlo, Consolas, monospace">~/.ssh/authorized_keys</text>
+  <text x="807" y="162" text-anchor="middle" font-size="12" fill="#1e3a8a">открытые ключи людей</text>
+  <rect x="700" y="228" width="215" height="66" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+  <text x="807" y="248" text-anchor="middle" font-size="12" font-weight="600" fill="#78350f" font-family="ui-monospace, Menlo, Consolas, monospace">/etc/ssh/ssh_host_*_key</text>
+  <text x="807" y="270" text-anchor="middle" font-size="12" fill="#78350f">закрытый ключ самой машины</text>
+  <text x="807" y="288" text-anchor="middle" font-size="12" fill="#78350f">(host key)</text>
+
+  <!-- проверка 1 -->
+  <line x1="285" y1="148" x2="694" y2="148" stroke="#1d4ed8" stroke-width="2.5" marker-end="url(#arrBlue)"/>
+  <text x="487" y="128" text-anchor="middle" font-size="14" font-weight="600" fill="#1d4ed8">1. «я тот, за кого себя выдаю»</text>
+  <text x="487" y="172" text-anchor="middle" font-size="13" fill="#334155">клиент подписывает закрытым ключом,</text>
+  <text x="487" y="191" text-anchor="middle" font-size="13" fill="#334155">сервер сверяет с <tspan font-family="ui-monospace, Menlo, Consolas, monospace">authorized_keys</tspan></text>
+
+  <!-- проверка 2 -->
+  <line x1="694" y1="261" x2="286" y2="261" stroke="#b45309" stroke-width="2.5" marker-end="url(#arrAmber)"/>
+  <text x="487" y="241" text-anchor="middle" font-size="14" font-weight="600" fill="#b45309">2. «это точно тот сервер»</text>
+  <text x="487" y="285" text-anchor="middle" font-size="13" fill="#334155">сервер подписывает host key,</text>
+  <text x="487" y="304" text-anchor="middle" font-size="13" fill="#334155">клиент сверяет с <tspan font-family="ui-monospace, Menlo, Consolas, monospace">known_hosts</tspan></text>
+
+  <text x="480" y="360" text-anchor="middle" font-size="14" fill="#334155">Проверки независимы: ключ пользователя не защищает от подмены сервера, а host key ничего не говорит о том, кто вошёл.</text>
+  <text x="480" y="392" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a"><tspan font-family="ui-monospace, Menlo, Consolas, monospace">authorized_keys</tspan> живёт на сервере и хранит ключи людей;</text>
+  <text x="480" y="414" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a"><tspan font-family="ui-monospace, Menlo, Consolas, monospace">known_hosts</tspan> живёт у вас и хранит ключи машин.</text>
+</svg>
