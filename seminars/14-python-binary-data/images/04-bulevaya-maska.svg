@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="mkArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="430" fill="#ffffff"/>
+  <text x="500" y="30" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Две маски выглядят одинаково, а достают разное</text>
+  <text x="500" y="52" text-anchor="middle" font-size="13" fill="#64748b">в обоих случаях в скобках булев массив — но форма результата разная</text>
+
+  <line x1="500" y1="72" x2="500" y2="350" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- ================= ЛЕВО: маска по элементам ================= -->
+  <text x="260" y="92" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Маска той же формы — по элементам</text>
+  <text x="260" y="112" text-anchor="middle" font-size="13.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">data[data &gt; 22]</text>
+
+  <rect x="64" y="128" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="88" y="149" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">10</text>
+  <rect x="112" y="128" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="136" y="149" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">20</text>
+  <rect x="160" y="128" width="48" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="184" y="149" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">30</text>
+  <rect x="64" y="160" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="88" y="181" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">12</text>
+  <rect x="112" y="160" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="136" y="181" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">18</text>
+  <rect x="160" y="160" width="48" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="184" y="181" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">33</text>
+  <rect x="64" y="192" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="88" y="213" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">14</text>
+  <rect x="112" y="192" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="136" y="213" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">22</text>
+  <rect x="160" y="192" width="48" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="184" y="213" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">27</text>
+  <text x="136" y="240" text-anchor="middle" font-size="12.5" fill="#475569">data — форма (3, 3)</text>
+
+  <line x1="214" y1="176" x2="244" y2="176" stroke="#475569" stroke-width="2" marker-end="url(#mkArr)"/>
+
+  <rect x="248" y="128" width="52" height="32" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="274" y="149" text-anchor="middle" font-size="11.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#64748b">False</text>
+  <rect x="300" y="128" width="52" height="32" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="326" y="149" text-anchor="middle" font-size="11.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#64748b">False</text>
+  <rect x="352" y="128" width="52" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="378" y="149" text-anchor="middle" font-size="11.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">True</text>
+  <rect x="248" y="160" width="52" height="32" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="274" y="181" text-anchor="middle" font-size="11.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#64748b">False</text>
+  <rect x="300" y="160" width="52" height="32" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="326" y="181" text-anchor="middle" font-size="11.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#64748b">False</text>
+  <rect x="352" y="160" width="52" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="378" y="181" text-anchor="middle" font-size="11.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">True</text>
+  <rect x="248" y="192" width="52" height="32" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="274" y="213" text-anchor="middle" font-size="11.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#64748b">False</text>
+  <rect x="300" y="192" width="52" height="32" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="326" y="213" text-anchor="middle" font-size="11.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#64748b">False</text>
+  <rect x="352" y="192" width="52" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="378" y="213" text-anchor="middle" font-size="11.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">True</text>
+  <text x="326" y="240" text-anchor="middle" font-size="12.5" fill="#475569">маска — тоже (3, 3)</text>
+
+  <line x1="260" y1="250" x2="260" y2="278" stroke="#475569" stroke-width="2" marker-end="url(#mkArr)"/>
+
+  <rect x="176" y="284" width="56" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="204" y="305" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">30.</text>
+  <rect x="232" y="284" width="56" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="260" y="305" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">33.</text>
+  <rect x="288" y="284" width="56" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="316" y="305" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">27.</text>
+
+  <text x="260" y="338" text-anchor="middle" font-size="13" font-weight="600" fill="#166534">форма (3,) — плоский список значений</text>
+  <text x="260" y="358" text-anchor="middle" font-size="12.5" fill="#475569">из какой строки пришло число — уже не узнать</text>
+
+  <!-- ================= ПРАВО: маска по строкам ================= -->
+  <text x="740" y="92" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Маска по первой оси — по строкам</text>
+  <text x="740" y="112" text-anchor="middle" font-size="13.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#334155">both = (data[:, 0] &gt; 11) &amp; (data[:, 2] &lt; 30)</text>
+
+  <rect x="560" y="128" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="584" y="149" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">10</text>
+  <rect x="608" y="128" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="632" y="149" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">20</text>
+  <rect x="656" y="128" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="680" y="149" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">30</text>
+  <rect x="560" y="160" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="584" y="181" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">12</text>
+  <rect x="608" y="160" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="632" y="181" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">18</text>
+  <rect x="656" y="160" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="680" y="181" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">33</text>
+  <rect x="560" y="192" width="48" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="584" y="213" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">14</text>
+  <rect x="608" y="192" width="48" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="632" y="213" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">22</text>
+  <rect x="656" y="192" width="48" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="680" y="213" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">27</text>
+  <text x="632" y="240" text-anchor="middle" font-size="12.5" fill="#475569">data — форма (3, 3)</text>
+
+  <line x1="710" y1="176" x2="740" y2="176" stroke="#475569" stroke-width="2" marker-end="url(#mkArr)"/>
+
+  <rect x="744" y="128" width="56" height="32" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="772" y="149" text-anchor="middle" font-size="11.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#64748b">False</text>
+  <rect x="744" y="160" width="56" height="32" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="772" y="181" text-anchor="middle" font-size="11.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#64748b">False</text>
+  <rect x="744" y="192" width="56" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="772" y="213" text-anchor="middle" font-size="11.5" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">True</text>
+  <text x="772" y="240" text-anchor="middle" font-size="12.5" fill="#475569">маска — (3,)</text>
+
+  <line x1="740" y1="250" x2="740" y2="278" stroke="#475569" stroke-width="2" marker-end="url(#mkArr)"/>
+
+  <rect x="668" y="284" width="48" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="692" y="305" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">14.</text>
+  <rect x="716" y="284" width="48" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="740" y="305" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">22.</text>
+  <rect x="764" y="284" width="48" height="32" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="788" y="305" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#14532d">27.</text>
+
+  <text x="740" y="338" text-anchor="middle" font-size="13" font-weight="600" fill="#166534">форма (1, 3) — строка целиком</text>
+  <text x="740" y="358" text-anchor="middle" font-size="12.5" fill="#475569">видно, что это была третья строка таблицы</text>
+
+  <text x="500" y="396" text-anchor="middle" font-size="13.5" fill="#0f172a">Маска той же формы, что массив, — выбирает элементы; маска длины N по первой оси — выбирает строки.</text>
+  <text x="500" y="416" text-anchor="middle" font-size="12.5" fill="#64748b">Номера подходящих строк, а не сами значения, даёт <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">np.nonzero(both)[0]</tspan> → [2]</text>
+</svg>

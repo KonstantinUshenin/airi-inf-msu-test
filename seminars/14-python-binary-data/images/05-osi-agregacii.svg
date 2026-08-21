@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="axArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="420" fill="#ffffff"/>
+  <text x="500" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">В axis стоит номер оси, которая исчезает</text>
+  <text x="500" y="54" text-anchor="middle" font-size="13" fill="#64748b">один и тот же массив <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">data</tspan> формы (3, 3) — три способа усреднить</text>
+
+  <line x1="337" y1="76" x2="337" y2="356" stroke="#e2e8f0" stroke-width="2"/>
+  <line x1="672" y1="76" x2="672" y2="356" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- ================= axis=0 ================= -->
+  <text x="175" y="98" text-anchor="middle" font-size="15" font-weight="600" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">data.mean(axis=0)</text>
+
+  <rect x="103" y="120" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="127" y="141" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">10</text>
+  <rect x="151" y="120" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="175" y="141" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">20</text>
+  <rect x="199" y="120" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="223" y="141" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">30</text>
+  <rect x="103" y="152" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="127" y="173" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">12</text>
+  <rect x="151" y="152" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="175" y="173" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">18</text>
+  <rect x="199" y="152" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="223" y="173" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">33</text>
+  <rect x="103" y="184" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="127" y="205" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">14</text>
+  <rect x="151" y="184" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="175" y="205" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">22</text>
+  <rect x="199" y="184" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="223" y="205" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">27</text>
+
+  <line x1="127" y1="222" x2="127" y2="248" stroke="#1d4ed8" stroke-width="2" marker-end="url(#axArr)"/>
+  <line x1="175" y1="222" x2="175" y2="248" stroke="#1d4ed8" stroke-width="2" marker-end="url(#axArr)"/>
+  <line x1="223" y1="222" x2="223" y2="248" stroke="#1d4ed8" stroke-width="2" marker-end="url(#axArr)"/>
+
+  <rect x="103" y="252" width="48" height="32" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="127" y="273" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">12.</text>
+  <rect x="151" y="252" width="48" height="32" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="175" y="273" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">20.</text>
+  <rect x="199" y="252" width="48" height="32" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="223" y="273" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">30.</text>
+
+  <text x="175" y="308" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1d4ed8">форма (3,) — число на столбец</text>
+  <text x="175" y="330" text-anchor="middle" font-size="12.5" fill="#475569">ось 0 (строки) схлопнулась</text>
+
+  <!-- ================= axis=1 ================= -->
+  <text x="470" y="98" text-anchor="middle" font-size="15" font-weight="600" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">data.mean(axis=1)</text>
+
+  <rect x="380" y="120" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="404" y="141" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">10</text>
+  <rect x="428" y="120" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="452" y="141" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">20</text>
+  <rect x="476" y="120" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="500" y="141" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">30</text>
+  <rect x="380" y="152" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="404" y="173" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">12</text>
+  <rect x="428" y="152" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="452" y="173" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">18</text>
+  <rect x="476" y="152" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="500" y="173" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">33</text>
+  <rect x="380" y="184" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="404" y="205" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">14</text>
+  <rect x="428" y="184" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="452" y="205" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">22</text>
+  <rect x="476" y="184" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="500" y="205" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">27</text>
+
+  <line x1="530" y1="136" x2="556" y2="136" stroke="#1d4ed8" stroke-width="2" marker-end="url(#axArr)"/>
+  <line x1="530" y1="168" x2="556" y2="168" stroke="#1d4ed8" stroke-width="2" marker-end="url(#axArr)"/>
+  <line x1="530" y1="200" x2="556" y2="200" stroke="#1d4ed8" stroke-width="2" marker-end="url(#axArr)"/>
+
+  <rect x="560" y="120" width="48" height="32" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="584" y="141" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">20.</text>
+  <rect x="560" y="152" width="48" height="32" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="584" y="173" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">21.</text>
+  <rect x="560" y="184" width="48" height="32" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="584" y="205" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">21.</text>
+
+  <text x="494" y="308" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1d4ed8">форма (3,) — число на строку</text>
+  <text x="494" y="330" text-anchor="middle" font-size="12.5" fill="#475569">ось 1 (столбцы) схлопнулась</text>
+
+  <!-- ================= без axis ================= -->
+  <text x="836" y="98" text-anchor="middle" font-size="15" font-weight="600" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">data.mean()</text>
+
+  <rect x="764" y="120" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="788" y="141" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">10</text>
+  <rect x="812" y="120" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="836" y="141" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">20</text>
+  <rect x="860" y="120" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="884" y="141" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">30</text>
+  <rect x="764" y="152" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="788" y="173" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">12</text>
+  <rect x="812" y="152" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="836" y="173" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">18</text>
+  <rect x="860" y="152" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="884" y="173" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">33</text>
+  <rect x="764" y="184" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="788" y="205" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">14</text>
+  <rect x="812" y="184" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="836" y="205" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">22</text>
+  <rect x="860" y="184" width="48" height="32" fill="#f1f5f9" stroke="#475569"/>
+  <text x="884" y="205" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#0f172a">27</text>
+
+  <line x1="836" y1="222" x2="836" y2="248" stroke="#1d4ed8" stroke-width="2" marker-end="url(#axArr)"/>
+
+  <rect x="788" y="252" width="96" height="32" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="836" y="273" text-anchor="middle" font-size="13" font-family="ui-monospace, 'DejaVu Sans Mono', monospace" fill="#1e3a8a">20.67</text>
+
+  <text x="836" y="308" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1d4ed8">форма () — одно число</text>
+  <text x="836" y="330" text-anchor="middle" font-size="12.5" fill="#475569">схлопнулись обе оси</text>
+
+  <text x="500" y="380" text-anchor="middle" font-size="13.5" fill="#0f172a">Отсюда и памятка про <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">argmax</tspan>: <tspan font-family="ui-monospace, 'DejaVu Sans Mono', monospace">argmax(axis=1)</tspan> даёт номер столбца внутри каждой строки, а не координаты.</text>
+  <text x="500" y="402" text-anchor="middle" font-size="13" fill="#64748b">Проверка себя: назовите форму результата до того, как запустите код.</text>
+</svg>

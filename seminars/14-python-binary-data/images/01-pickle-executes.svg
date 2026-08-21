@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="330" viewBox="0 0 820 330" font-family="system-ui, Arial, sans-serif">
+  <rect x="0" y="0" width="820" height="330" fill="#ffffff"/>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 z" fill="#444444"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+
+  <text x="20" y="30" font-size="16" font-weight="bold" fill="#111111">Что происходит при чтении файла</text>
+
+  <!-- ряд 1: обычный формат -->
+  <rect x="20" y="55" width="150" height="70" rx="6" fill="#eaf3ff" stroke="#2f6fb5" stroke-width="1.5"/>
+  <text x="95" y="82" font-size="14" font-weight="bold" text-anchor="middle" fill="#1b3f66">features.npy</text>
+  <text x="95" y="103" font-size="12" text-anchor="middle" fill="#1b3f66">только байты чисел</text>
+
+  <line x1="172" y1="90" x2="248" y2="90" stroke="#444444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="210" y="80" font-size="12" text-anchor="middle" fill="#444444">np.load</text>
+
+  <rect x="250" y="55" width="200" height="70" rx="6" fill="#f4f4f4" stroke="#777777" stroke-width="1.5"/>
+  <text x="350" y="82" font-size="13" text-anchor="middle" fill="#333333">разбор байтов по формату</text>
+  <text x="350" y="103" font-size="13" text-anchor="middle" fill="#333333">(чужой код не запускается)</text>
+
+  <line x1="452" y1="90" x2="528" y2="90" stroke="#444444" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="530" y="55" width="170" height="70" rx="6" fill="#e8f6ec" stroke="#2e8b57" stroke-width="1.5"/>
+  <text x="615" y="88" font-size="14" font-weight="bold" text-anchor="middle" fill="#1d5c39">массив в памяти</text>
+  <text x="615" y="108" font-size="12" text-anchor="middle" fill="#1d5c39">и больше ничего</text>
+
+  <!-- разделитель -->
+  <line x1="20" y1="150" x2="800" y2="150" stroke="#dddddd" stroke-width="1"/>
+
+  <!-- ряд 2: pickle -->
+  <rect x="20" y="175" width="150" height="70" rx="6" fill="#fdeceb" stroke="#c0392b" stroke-width="1.5"/>
+  <text x="95" y="202" font-size="14" font-weight="bold" text-anchor="middle" fill="#8c2519">dangerous.pkl</text>
+  <text x="95" y="223" font-size="12" text-anchor="middle" fill="#8c2519">данные + инструкции</text>
+
+  <line x1="172" y1="210" x2="248" y2="210" stroke="#c0392b" stroke-width="2" marker-end="url(#arrowRed)"/>
+  <text x="210" y="200" font-size="12" text-anchor="middle" fill="#c0392b">pickle.load</text>
+
+  <rect x="250" y="175" width="200" height="70" rx="6" fill="#fdeceb" stroke="#c0392b" stroke-width="1.5"/>
+  <text x="350" y="202" font-size="13" text-anchor="middle" fill="#8c2519">выполнение инструкций</text>
+  <text x="350" y="223" font-size="13" text-anchor="middle" fill="#8c2519">восстановления объекта</text>
+
+  <line x1="452" y1="210" x2="528" y2="210" stroke="#c0392b" stroke-width="2" marker-end="url(#arrowRed)"/>
+
+  <rect x="530" y="163" width="170" height="46" rx="6" fill="#e8f6ec" stroke="#2e8b57" stroke-width="1.5"/>
+  <text x="615" y="191" font-size="13" text-anchor="middle" fill="#1d5c39">объект в памяти</text>
+
+  <rect x="530" y="215" width="170" height="46" rx="6" fill="#fdeceb" stroke="#c0392b" stroke-width="1.5"/>
+  <text x="615" y="234" font-size="13" text-anchor="middle" fill="#8c2519">и чужой вызов,</text>
+  <text x="615" y="251" font-size="13" text-anchor="middle" fill="#8c2519">указанный в файле</text>
+
+  <text x="20" y="295" font-size="13" fill="#111111">Опасное действие начинается прямо внутри pickle.load, до того как вы посмотрите на содержимое.</text>
+  <text x="20" y="316" font-size="13" fill="#111111">Поэтому чужой pickle нельзя «просто открыть и глянуть», а np.load с allow_pickle=False — можно.</text>
+</svg>
