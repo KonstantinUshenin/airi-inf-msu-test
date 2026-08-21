@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="700" viewBox="0 0 960 700" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="aOut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#166534"/>
+    </marker>
+    <marker id="aErr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/>
+    </marker>
+    <marker id="aIn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+    </marker>
+  </defs>
+  <rect width="960" height="700" fill="#ffffff"/>
+  <text x="480" y="32" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Три потока процесса и куда их уводят перенаправления</text>
+
+  <!-- по умолчанию -->
+  <rect x="40" y="52" width="880" height="126" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="60" y="76" font-size="14" font-weight="600" fill="#334155">По умолчанию все три потока связаны с терминалом</text>
+
+  <rect x="400" y="88" width="160" height="72" rx="8" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="480" y="132" text-anchor="middle" font-size="16" font-weight="600" fill="#0f172a">процесс</text>
+
+  <text x="150" y="112" text-anchor="middle" font-size="14" fill="#1d4ed8" font-weight="600">клавиатура</text>
+  <line x1="220" y1="124" x2="396" y2="124" stroke="#1d4ed8" stroke-width="2" marker-end="url(#aIn)"/>
+  <text x="308" y="118" text-anchor="middle" font-size="13" fill="#1d4ed8">0 stdin</text>
+
+  <line x1="564" y1="112" x2="740" y2="112" stroke="#166534" stroke-width="2" marker-end="url(#aOut)"/>
+  <text x="652" y="105" text-anchor="middle" font-size="13" fill="#166534">1 stdout</text>
+  <line x1="564" y1="146" x2="740" y2="146" stroke="#b91c1c" stroke-width="2" marker-end="url(#aErr)"/>
+  <text x="652" y="139" text-anchor="middle" font-size="13" fill="#b91c1c">2 stderr</text>
+  <text x="800" y="134" text-anchor="middle" font-size="14" fill="#334155" font-weight="600">экран</text>
+
+  <!-- панель A -->
+  <rect x="40" y="196" width="430" height="200" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="60" y="224" font-size="15" font-weight="700" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">cmd &gt; out.txt</text>
+  <rect x="62" y="248" width="120" height="66" rx="8" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="122" y="288" text-anchor="middle" font-size="15" fill="#0f172a">процесс</text>
+  <line x1="186" y1="266" x2="300" y2="266" stroke="#166534" stroke-width="2" marker-end="url(#aOut)"/>
+  <text x="243" y="259" text-anchor="middle" font-size="12" fill="#166534">1</text>
+  <text x="374" y="271" text-anchor="middle" font-size="14" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">out.txt</text>
+  <line x1="186" y1="300" x2="300" y2="300" stroke="#b91c1c" stroke-width="2" marker-end="url(#aErr)"/>
+  <text x="243" y="293" text-anchor="middle" font-size="12" fill="#b91c1c">2</text>
+  <text x="374" y="305" text-anchor="middle" font-size="14" fill="#334155">экран</text>
+  <text x="60" y="352" font-size="13" fill="#475569">Только stdout ушёл в файл. Ошибки по-прежнему</text>
+  <text x="60" y="372" font-size="13" fill="#475569">видны в терминале — и в файл не попадут.</text>
+
+  <!-- панель B -->
+  <rect x="490" y="196" width="430" height="200" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="510" y="224" font-size="15" font-weight="700" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">cmd &gt; out.txt 2&gt; err.txt</text>
+  <rect x="512" y="248" width="120" height="66" rx="8" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="572" y="288" text-anchor="middle" font-size="15" fill="#0f172a">процесс</text>
+  <line x1="636" y1="266" x2="750" y2="266" stroke="#166534" stroke-width="2" marker-end="url(#aOut)"/>
+  <text x="693" y="259" text-anchor="middle" font-size="12" fill="#166534">1</text>
+  <text x="824" y="271" text-anchor="middle" font-size="14" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">out.txt</text>
+  <line x1="636" y1="300" x2="750" y2="300" stroke="#b91c1c" stroke-width="2" marker-end="url(#aErr)"/>
+  <text x="693" y="293" text-anchor="middle" font-size="12" fill="#b91c1c">2</text>
+  <text x="824" y="305" text-anchor="middle" font-size="14" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">err.txt</text>
+  <text x="510" y="352" font-size="13" fill="#475569">Результат и диагностика разъехались по разным</text>
+  <text x="510" y="372" font-size="13" fill="#475569">файлам: результат можно обрабатывать дальше.</text>
+
+  <!-- панель C -->
+  <rect x="40" y="416" width="430" height="200" rx="10" fill="#f0fdf4" stroke="#166534" stroke-width="1.5"/>
+  <text x="60" y="444" font-size="15" font-weight="700" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">cmd &gt; all.txt 2&gt;&amp;1</text>
+  <rect x="62" y="468" width="120" height="66" rx="8" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="122" y="508" text-anchor="middle" font-size="15" fill="#0f172a">процесс</text>
+  <line x1="186" y1="486" x2="300" y2="486" stroke="#166534" stroke-width="2" marker-end="url(#aOut)"/>
+  <text x="243" y="479" text-anchor="middle" font-size="12" fill="#166534">1</text>
+  <path d="M 186 520 L 250 520 L 250 492" fill="none" stroke="#b91c1c" stroke-width="2" marker-end="url(#aErr)"/>
+  <text x="204" y="538" font-size="12" fill="#b91c1c">2 → туда же, куда 1</text>
+  <text x="374" y="491" text-anchor="middle" font-size="14" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">all.txt</text>
+  <text x="60" y="572" font-size="13" fill="#475569">Сначала 1 отправили в файл, потом 2 скопировал</text>
+  <text x="60" y="592" font-size="13" fill="#475569">текущее назначение 1. Оба потока в одном файле.</text>
+
+  <!-- панель D -->
+  <rect x="490" y="416" width="430" height="200" rx="10" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5"/>
+  <text x="510" y="444" font-size="15" font-weight="700" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">cmd 2&gt;&amp;1 &gt; all.txt</text>
+  <rect x="512" y="468" width="120" height="66" rx="8" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+  <text x="572" y="508" text-anchor="middle" font-size="15" fill="#0f172a">процесс</text>
+  <line x1="636" y1="486" x2="750" y2="486" stroke="#166534" stroke-width="2" marker-end="url(#aOut)"/>
+  <text x="693" y="479" text-anchor="middle" font-size="12" fill="#166534">1</text>
+  <text x="824" y="491" text-anchor="middle" font-size="14" fill="#0f172a" font-family="'DejaVu Sans Mono', ui-monospace, monospace">all.txt</text>
+  <line x1="636" y1="520" x2="750" y2="520" stroke="#b91c1c" stroke-width="2" marker-end="url(#aErr)"/>
+  <text x="693" y="513" text-anchor="middle" font-size="12" fill="#b91c1c">2</text>
+  <text x="824" y="525" text-anchor="middle" font-size="14" fill="#334155">экран</text>
+  <text x="510" y="572" font-size="13" fill="#7f1d1d">Ловушка: в момент 2&gt;&amp;1 поток 1 ещё смотрел в</text>
+  <text x="510" y="592" font-size="13" fill="#7f1d1d">терминал — туда stderr и остался.</text>
+
+  <text x="480" y="654" text-anchor="middle" font-size="14" fill="#334155">Перенаправления применяются слева направо, и 2&gt;&amp;1 копирует то назначение stdout, которое есть сейчас, а не будущее.</text>
+  <text x="480" y="678" text-anchor="middle" font-size="13" fill="#64748b">Отсюда правило: сначала &gt; файл, только потом 2&gt;&amp;1.</text>
+</svg>
