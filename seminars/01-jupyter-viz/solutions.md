@@ -1,5 +1,17 @@
 # Примеры решений
 
+Решения, которые сохраняют файлы, пишут их в `~/seminar-01/` — предполагается,
+что ноутбук в начале перешёл в этот каталог:
+
+```python
+from pathlib import Path
+import os
+
+work_dir = Path.home() / "seminar-01"
+work_dir.mkdir(exist_ok=True)
+os.chdir(work_dir)
+```
+
 ## База
 
 ### B1
@@ -31,6 +43,22 @@ x = 5
 !python --version
 %timeit sum(range(10**6))
 ```
+
+Ячейковая магия — отдельной ячейкой, первой строкой:
+
+```python
+%%writefile script.py
+print("привет из скрипта")
+```
+
+```python
+%run script.py     # печатает: привет из скрипта
+```
+
+Если поставить `%%writefile` второй строкой, IPython ищет уже **строчную** магию
+с таким именем и падает: `UsageError: Line magic function `%%writefile` not
+found`. Ячейковая магия распознаётся только в первой строке ячейки — потому что
+она относится ко всему её содержимому.
 
 ### B3
 
@@ -72,6 +100,8 @@ print(x[x % 2 == 0])   # [0 2 4 6 8]
 ### B6
 
 ```python
+from pathlib import Path
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -81,9 +111,24 @@ plt.xlabel("x")
 plt.ylabel("sin(x)")
 plt.title("y = sin(x)")
 plt.grid(True)
-plt.savefig("sin.png", dpi=150)   # сохранить ДО show
+plt.savefig(Path.home() / "seminar-01" / "sin.png", dpi=150)   # сохранить ДО show
 plt.show()
 ```
+
+### B7
+
+```python
+import plotly.express as px
+
+df = px.data.iris()                       # таблица pandas со встроенным набором
+fig = px.scatter(df, x="sepal_width", y="sepal_length", color="species")
+fig.show()
+```
+
+Подсказка при наведении показывает `sepal_width`, `sepal_length` и `species`
+конкретного цветка — то есть по точке видно само наблюдение, а не только его
+положение. Плюс зум и панорама: плотное облако можно приблизить. Статичная
+картинка matplotlib этого не даёт, зато переносится в PDF и в печатный отчёт.
 
 ## Среднее
 
@@ -126,6 +171,8 @@ print(M.argmax())      # 5        — индекс максимума (в раз
 ### M4
 
 ```python
+from pathlib import Path
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -148,7 +195,7 @@ for ax in axes.flat:
     ax.grid(True)
 
 fig.tight_layout()
-fig.savefig("subplots.png", dpi=150)
+fig.savefig(Path.home() / "seminar-01" / "subplots.png", dpi=150)
 plt.show()
 ```
 
@@ -174,7 +221,8 @@ plt.show()
 ```python
 !python --version
 !pip show numpy matplotlib | grep -E "Name|Version"
-!pip install -q plotly            # доустановка недостающего пакета
+!pip install -q humanize          # пакета в Colab нет — доустанавливаем
+import humanize                   # теперь импорт работает
 
 from google.colab import drive
 drive.mount("/content/drive")     # запросит доступ к диску
@@ -256,15 +304,17 @@ re = np.linspace(-2, 1, 800)
 im = np.linspace(-1.5, 1.5, 800)
 C = re[np.newaxis, :] + 1j * im[:, np.newaxis]
 
+max_iter = 100
 Z = np.zeros_like(C)
-iters = np.zeros(C.shape, dtype=int)
+# не разошедшимся сразу ставим max_iter: иначе они сольются с теми,
+# кто разошёлся на первой же итерации, и граница фрактала «поплывёт»
+iters = np.full(C.shape, max_iter, dtype=int)
 alive = np.ones(C.shape, dtype=bool)
 
-max_iter = 100
-for i in range(max_iter):                 # цикл только по итерациям
+for i in range(1, max_iter + 1):          # цикл только по итерациям
     Z[alive] = Z[alive] ** 2 + C[alive]   # z = z^2 + c
     diverged = np.abs(Z) > 2
-    iters[alive & diverged] = i
+    iters[alive & diverged] = i           # номер итерации, на которой точка сбежала
     alive &= ~diverged
 
 plt.figure(figsize=(9, 7))
@@ -321,6 +371,8 @@ print("std :", np.round(Xz.std(axis=0), 6))    # ~ [1 1 1 1]
 ### H6
 
 ```python
+from pathlib import Path
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, PillowWriter
@@ -338,6 +390,6 @@ def update(frame):
     return (line,)
 
 anim = FuncAnimation(fig, update, frames=60, interval=50, blit=True)
-anim.save("wave.gif", writer=PillowWriter(fps=20))
+anim.save(Path.home() / "seminar-01" / "wave.gif", writer=PillowWriter(fps=20))
 plt.close(fig)
 ```

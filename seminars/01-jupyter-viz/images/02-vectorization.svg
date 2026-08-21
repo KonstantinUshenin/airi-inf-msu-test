@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="440" viewBox="0 0 940 440" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="v1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309"/>
+    </marker>
+    <marker id="v2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#166534"/>
+    </marker>
+  </defs>
+
+  <rect width="940" height="440" fill="#ffffff"/>
+  <text x="470" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Почему NumPy обгоняет цикл Python на тех же числах</text>
+
+  <line x1="470" y1="60" x2="470" y2="368" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- ── слева: список Python ── -->
+  <text x="240" y="82" text-anchor="middle" font-size="16" font-weight="600" fill="#b45309">list — массив указателей</text>
+  <text x="240" y="104" text-anchor="middle" font-size="13" fill="#475569" font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace">sum(i * i for i in range(N))</text>
+
+  <g>
+    <rect x="60" y="124" width="360" height="40" rx="6" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+    <line x1="132" y1="124" x2="132" y2="164" stroke="#b45309" stroke-width="1.5"/>
+    <line x1="204" y1="124" x2="204" y2="164" stroke="#b45309" stroke-width="1.5"/>
+    <line x1="276" y1="124" x2="276" y2="164" stroke="#b45309" stroke-width="1.5"/>
+    <line x1="348" y1="124" x2="348" y2="164" stroke="#b45309" stroke-width="1.5"/>
+    <text x="96" y="150" text-anchor="middle" font-size="15" fill="#0f172a">ptr</text>
+    <text x="168" y="150" text-anchor="middle" font-size="15" fill="#0f172a">ptr</text>
+    <text x="240" y="150" text-anchor="middle" font-size="15" fill="#0f172a">ptr</text>
+    <text x="312" y="150" text-anchor="middle" font-size="15" fill="#0f172a">ptr</text>
+    <text x="384" y="150" text-anchor="middle" font-size="15" fill="#0f172a">ptr</text>
+  </g>
+
+  <g stroke="#b45309" stroke-width="1.6" fill="none">
+    <line x1="96" y1="166" x2="82" y2="212" marker-end="url(#v1)"/>
+    <line x1="168" y1="166" x2="176" y2="212" marker-end="url(#v1)"/>
+    <line x1="240" y1="166" x2="262" y2="212" marker-end="url(#v1)"/>
+    <line x1="312" y1="166" x2="300" y2="212" marker-end="url(#v1)"/>
+    <line x1="384" y1="166" x2="398" y2="212" marker-end="url(#v1)"/>
+  </g>
+
+  <g font-size="12">
+    <rect x="46" y="216" width="72" height="30" rx="5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.6"/>
+    <text x="82" y="236" text-anchor="middle" fill="#0f172a">int-объект</text>
+    <rect x="140" y="216" width="72" height="30" rx="5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.6"/>
+    <text x="176" y="236" text-anchor="middle" fill="#0f172a">int-объект</text>
+    <rect x="226" y="216" width="72" height="30" rx="5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.6"/>
+    <text x="262" y="236" text-anchor="middle" fill="#0f172a">int-объект</text>
+    <rect x="306" y="252" width="72" height="30" rx="5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.6"/>
+    <text x="342" y="272" text-anchor="middle" fill="#0f172a">int-объект</text>
+    <rect x="362" y="216" width="72" height="30" rx="5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.6"/>
+    <text x="398" y="236" text-anchor="middle" fill="#0f172a">int-объект</text>
+  </g>
+  <line x1="300" y1="214" x2="342" y2="250" stroke="#b45309" stroke-width="1.6" fill="none" marker-end="url(#v1)"/>
+
+  <text x="240" y="312" text-anchor="middle" font-size="13" fill="#334155">объекты разбросаны по куче, у каждого свой заголовок</text>
+  <text x="240" y="334" text-anchor="middle" font-size="13" fill="#334155">на каждый элемент — шаг интерпретатора: перейти</text>
+  <text x="240" y="354" text-anchor="middle" font-size="13" fill="#334155">по указателю, проверить тип, создать новый объект</text>
+
+  <!-- ── справа: ndarray ── -->
+  <text x="706" y="82" text-anchor="middle" font-size="16" font-weight="600" fill="#166534">ndarray — непрерывный блок чисел</text>
+  <text x="706" y="104" text-anchor="middle" font-size="13" fill="#475569" font-family="ui-monospace, 'DejaVu Sans Mono', Consolas, monospace">(big * big).sum()</text>
+
+  <g>
+    <rect x="526" y="124" width="360" height="40" rx="6" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+    <line x1="598" y1="124" x2="598" y2="164" stroke="#166534" stroke-width="1.5"/>
+    <line x1="670" y1="124" x2="670" y2="164" stroke="#166534" stroke-width="1.5"/>
+    <line x1="742" y1="124" x2="742" y2="164" stroke="#166534" stroke-width="1.5"/>
+    <line x1="814" y1="124" x2="814" y2="164" stroke="#166534" stroke-width="1.5"/>
+    <text x="562" y="150" text-anchor="middle" font-size="15" fill="#0f172a">0</text>
+    <text x="634" y="150" text-anchor="middle" font-size="15" fill="#0f172a">1</text>
+    <text x="706" y="150" text-anchor="middle" font-size="15" fill="#0f172a">2</text>
+    <text x="778" y="150" text-anchor="middle" font-size="15" fill="#0f172a">3</text>
+    <text x="850" y="150" text-anchor="middle" font-size="15" fill="#0f172a">4</text>
+  </g>
+  <text x="706" y="188" text-anchor="middle" font-size="12" fill="#475569">dtype=int64 — один тип на весь массив, по 8 байт подряд</text>
+
+  <line x1="526" y1="232" x2="886" y2="232" stroke="#166534" stroke-width="3" marker-end="url(#v2)"/>
+  <text x="706" y="222" text-anchor="middle" font-size="13" font-weight="600" fill="#166534">один проход</text>
+
+  <text x="706" y="272" text-anchor="middle" font-size="13" fill="#334155">Python вызывается один раз — дальше цикл идёт</text>
+  <text x="706" y="292" text-anchor="middle" font-size="13" fill="#334155">внутри скомпилированного кода C, без объектов</text>
+  <text x="706" y="312" text-anchor="middle" font-size="13" fill="#334155">на каждый элемент и без проверок типа</text>
+  <text x="706" y="348" text-anchor="middle" font-size="13" font-weight="600" fill="#166534">на миллионе чисел это разница в десятки раз</text>
+
+  <text x="470" y="404" text-anchor="middle" font-size="14" fill="#334155">Ускоряет не «магия NumPy», а расположение данных: подряд лежащие числа одного типа обходятся одним циклом в C.</text>
+</svg>
