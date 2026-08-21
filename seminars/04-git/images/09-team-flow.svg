@@ -15,7 +15,7 @@
   <text x="450" y="30" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Как работает команда: все ветвятся от main и вливаются обратно</text>
 
   <!-- ветка Ани: свой файл -->
-  <path d="M 150 250 C 195 250 200 130 250 130 L 470 130 C 520 130 525 250 570 250" fill="none" stroke="#15803d" stroke-width="3" marker-end="url(#g)"/>
+  <path d="M 150 250 C 195 250 200 130 250 130 L 560 130 C 610 130 615 250 660 250" fill="none" stroke="#15803d" stroke-width="3" marker-end="url(#g)"/>
   <circle cx="300" cy="130" r="7" fill="#15803d"/>
   <circle cx="400" cy="130" r="7" fill="#15803d"/>
   <text x="256" y="112" font-size="13" font-weight="600" fill="#15803d">feature/plot — Аня правит plot.py</text>
@@ -31,12 +31,12 @@
   <circle cx="150" cy="250" r="8" fill="#334155"/>
   <circle cx="210" cy="250" r="8" fill="#334155"/>
   <circle cx="290" cy="250" r="8" fill="#334155"/>
-  <circle cx="570" cy="250" r="9" fill="#15803d"/>
   <circle cx="620" cy="250" r="9" fill="#15803d"/>
+  <circle cx="660" cy="250" r="9" fill="#15803d"/>
   <circle cx="760" cy="250" r="9" fill="#be123c"/>
   <text x="66" y="278" font-size="14" font-weight="600" fill="#334155">main</text>
-  <text x="455" y="292" font-size="12" fill="#15803d">слилось само, без конфликта</text>
-  <text x="770" y="292" text-anchor="middle" font-size="12" font-weight="600" fill="#be123c">конфликт: править руками</text>
+  <text x="505" y="292" font-size="12" fill="#15803d">слилось само, без конфликта</text>
+  <text x="770" y="232" text-anchor="middle" font-size="12" font-weight="600" fill="#be123c">конфликт: править руками</text>
 
   <!-- ветка Веры: тот же файл, что у Ани -->
   <path d="M 290 250 C 335 250 340 350 390 350 L 660 350 C 710 350 715 250 760 250" fill="none" stroke="#be123c" stroke-width="3" stroke-dasharray="7 4" marker-end="url(#r)"/>

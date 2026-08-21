@@ -42,6 +42,7 @@
   <text x="605" y="171" text-anchor="middle" font-size="13" font-weight="600" fill="#0f172a">M</text>
   <text x="605" y="222" text-anchor="middle" font-size="13" font-weight="600" fill="#0f172a">коммит слияния</text>
   <text x="605" y="240" text-anchor="middle" font-size="12" fill="#64748b">два родителя</text>
+  <text x="592" y="262" text-anchor="middle" font-size="12" fill="#1d4ed8">после слияния main — здесь</text>
 
   <!-- пояснение -->
   <line x1="690" y1="70" x2="690" y2="300" stroke="#e2e8f0" stroke-width="2"/>
